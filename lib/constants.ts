@@ -20,7 +20,7 @@ export const SOCIAL_URLS = {
 export const NAV_HEIGHT = 80;
 
 // Price Calculator Constants
-export const PRICE_PER_METER = 2.5; // Rp per meter
+export const PRICE_PER_KM = 2500; // Rp per kilometer (2.5 per meter * 1000)
 export const MINIMUM_PRICE = 5000;
 export const JASTIP_FEE = 1000;
 export const RAINY_FEE = 2000;

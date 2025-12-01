@@ -187,16 +187,28 @@ export default function PricelistSection({
             {/* Distance Input */}
             <div className="mb-6">
               <h4 className="text-sm font-medium text-foreground mb-3">
-                Jarak (Meter)
+                Jarak (KM)
               </h4>
-              <input
-                type="number"
-                value={distance}
-                onChange={(e) => setDistance(e.target.value)}
-                placeholder="0"
-                min="0"
-                className="w-full px-4 py-3 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={distance}
+                  onChange={(e) => {
+                    // Only allow numbers, comma, and dot
+                    const value = e.target.value.replace(/[^0-9.,]/g, "");
+                    setDistance(value);
+                  }}
+                  placeholder="0"
+                  className="w-full px-4 py-3 pr-12 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">
+                  KM
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Contoh: 1,5 atau 2.4
+              </p>
             </div>
 
             {/* Optional Conditions */}

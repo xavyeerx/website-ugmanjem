@@ -7,7 +7,7 @@ import type {
   PriceCalculatorResult,
 } from "@/types";
 import {
-  PRICE_PER_METER,
+  PRICE_PER_KM,
   MINIMUM_PRICE,
   JASTIP_FEE,
   RAINY_FEE,
@@ -47,10 +47,12 @@ export function usePriceCalculator() {
   };
 
   const result: PriceCalculatorResult = useMemo(() => {
-    const distanceNum = parseFloat(state.distance) || 0;
+    // Handle comma input (e.g., "2,4" -> "2.4")
+    const normalizedDistance = state.distance.replace(",", ".");
+    const distanceNum = parseFloat(normalizedDistance) || 0;
 
-    // Calculate base price (1000 meter = Rp 2.500, so 1 meter = Rp 2.5)
-    let basePrice = distanceNum * PRICE_PER_METER;
+    // Calculate base price (1 km = Rp 2.500)
+    let basePrice = distanceNum * PRICE_PER_KM;
 
     // Apply minimum price
     if (basePrice < MINIMUM_PRICE) {
@@ -87,4 +89,3 @@ export function usePriceCalculator() {
     priceBreakdown: result.breakdown,
   };
 }
-
