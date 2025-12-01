@@ -42,8 +42,7 @@ Buka: `http://localhost:3000`
 components/
 ├── preloader.tsx          → Logo preloader
 ├── fade-in.tsx           → Scroll animations
-├── parallax-section.tsx  → Parallax effects
-└── animated-card.tsx     → Card animations
+└── parallax-section.tsx  → Parallax effects
 ```
 
 ---

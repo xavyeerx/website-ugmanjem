@@ -208,20 +208,21 @@ setTimeout(() => setIsLoading(false), 1500); // ← Edit angka ini
 ## 📁 File Structure
 
 ```
-anjem-v1/
+anjemugm-v1/
 ├── app/
 │   ├── layout.tsx              ← Integrated Preloader
 │   ├── page.tsx                ← All animations implemented
 │   └── globals.css
 ├── components/
-│   ├── preloader.tsx           ← NEW: Preloader component
-│   ├── fade-in.tsx             ← NEW: Scroll animation
-│   ├── parallax-section.tsx    ← NEW: Parallax effect
-│   ├── animated-card.tsx       ← NEW: Card animations
-│   └── ui/                     ← Existing UI components
-├── ANIMATION_GUIDE.md          ← NEW: Complete guide
-├── QUICK_START.md              ← NEW: Quick reference
-├── IMPLEMENTATION_SUMMARY.md   ← NEW: This file
+│   ├── preloader.tsx           ← Preloader component
+│   ├── fade-in.tsx             ← Scroll animation
+│   ├── parallax-section.tsx    ← Parallax effect
+│   ├── layout/                 ← Layout components (navbar, footer, etc.)
+│   ├── sections/               ← All section components
+│   └── ui/                     ← UI components
+├── ANIMATION_GUIDE.md          ← Complete guide
+├── QUICK_START.md              ← Quick reference
+├── IMPLEMENTATION_SUMMARY.md   ← This file
 └── package.json                ← Updated with framer-motion
 ```
 

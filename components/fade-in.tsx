@@ -9,29 +9,26 @@ interface FadeInProps {
   delay?: number;
   duration?: number;
   className?: string;
-  once?: boolean;
 }
 
 export default function FadeIn({
   children,
   direction = "up",
   delay = 0,
-  duration = 0.6,
+  duration = 0.5,
   className = "",
-  once = true,
 }: FadeInProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, {
-    once,
-    margin: "-50px",
-    amount: 0.3,
+    once: true,
+    margin: "-100px",
   });
 
   const directions = {
-    up: { y: 40, x: 0 },
-    down: { y: -40, x: 0 },
-    left: { y: 0, x: 40 },
-    right: { y: 0, x: -40 },
+    up: { y: 20, x: 0 },
+    down: { y: -20, x: 0 },
+    left: { y: 0, x: 20 },
+    right: { y: 0, x: -20 },
   };
 
   return (
@@ -41,15 +38,11 @@ export default function FadeIn({
         opacity: 0,
         ...directions[direction],
       }}
-      animate={{
-        opacity: isInView ? 1 : 0,
-        y: isInView ? 0 : directions[direction].y,
-        x: isInView ? 0 : directions[direction].x,
-      }}
+      animate={isInView ? { opacity: 1, y: 0, x: 0 } : {}}
       transition={{
         duration,
         delay,
-        ease: [0.25, 0.4, 0.25, 1],
+        ease: "easeOut",
       }}
       className={className}
     >

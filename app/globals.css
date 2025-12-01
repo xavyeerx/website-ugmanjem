@@ -1,83 +1,138 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Gilroy Font Family */
+@font-face {
+  font-family: "Gilroy";
+  src: url("https://fonts.cdnfonts.com/s/16219/Gilroy-Light.woff")
+    format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("https://fonts.cdnfonts.com/s/16219/Gilroy-Regular.woff")
+    format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("https://fonts.cdnfonts.com/s/16219/Gilroy-Medium.woff")
+    format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("https://fonts.cdnfonts.com/s/16219/Gilroy-SemiBold.woff")
+    format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("https://fonts.cdnfonts.com/s/16219/Gilroy-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("https://fonts.cdnfonts.com/s/16219/Gilroy-ExtraBold.woff")
+    format("woff");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated design tokens untuk color scheme Anjem */
-  --background: #FAFAFA;
-  --foreground: #1a1a1a;
-  --card: #FFFFFF;
-  --card-foreground: #1a1a1a;
-  --popover: #FFFFFF;
-  --popover-foreground: #1a1a1a;
-  --primary: #39BFDF;
-  --primary-foreground: #FFFFFF;
-  --secondary: #89DCED;
-  --secondary-foreground: #1a1a1a;
-  --muted: #f0f0f0;
-  --muted-foreground: #666;
-  --accent: #39BFDF;
-  --accent-foreground: #FFFFFF;
+  /* Light theme untuk Anjem UGM dengan primary navy blue #103959 */
+  --background: #ffffff;
+  --foreground: #1e1e1e;
+  --card: #f8fafc;
+  --card-foreground: #1e1e1e;
+  --popover: #ffffff;
+  --popover-foreground: #1e1e1e;
+  --primary: #103959;
+  --primary-foreground: #ffffff;
+  --secondary: #1e5a8a;
+  --secondary-foreground: #ffffff;
+  --muted: #f1f5f9;
+  --muted-foreground: #8d8d8d;
+  --accent: #103959;
+  --accent-foreground: #ffffff;
   --destructive: #ef4444;
-  --destructive-foreground: #FFFFFF;
-  --border: #e5e5e5;
-  --input: #FFFFFF;
-  --ring: #39BFDF;
-  --chart-1: #39BFDF;
-  --chart-2: #89DCED;
-  --chart-3: #1a1a1a;
-  --chart-4: #666;
-  --chart-5: #999;
+  --destructive-foreground: #ffffff;
+  --border: #e2e8f0;
+  --input: #f8fafc;
+  --ring: #103959;
+  --chart-1: #103959;
+  --chart-2: #1e5a8a;
+  --chart-3: #2d7ab8;
+  --chart-4: #8d8d8d;
+  --chart-5: #1e1e1e;
   --radius: 0.625rem;
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #1a1a1a;
-  --sidebar-primary: #39BFDF;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #89DCED;
-  --sidebar-accent-foreground: #1a1a1a;
-  --sidebar-border: #e5e5e5;
-  --sidebar-ring: #39BFDF;
+  --sidebar: #103959;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #103959;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1e5a8a;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #1e5a8a;
+  --sidebar-ring: #ffffff;
 }
 
 .dark {
-  --background: #1a1a1a;
-  --foreground: #FFFFFF;
-  --card: #2a2a2a;
-  --card-foreground: #FFFFFF;
-  --popover: #2a2a2a;
-  --popover-foreground: #FFFFFF;
-  --primary: #39BFDF;
-  --primary-foreground: #1a1a1a;
-  --secondary: #89DCED;
-  --secondary-foreground: #1a1a1a;
-  --muted: #3a3a3a;
-  --muted-foreground: #aaa;
-  --accent: #39BFDF;
-  --accent-foreground: #1a1a1a;
+  --background: #0d1b2a;
+  --foreground: #f8fafc;
+  --card: #1b2838;
+  --card-foreground: #f8fafc;
+  --popover: #1b2838;
+  --popover-foreground: #f8fafc;
+  --primary: #103959;
+  --primary-foreground: #ffffff;
+  --secondary: #1e5a8a;
+  --secondary-foreground: #ffffff;
+  --muted: #1b2838;
+  --muted-foreground: #8d8d8d;
+  --accent: #103959;
+  --accent-foreground: #ffffff;
   --destructive: #ff6b6b;
-  --destructive-foreground: #1a1a1a;
-  --border: #3a3a3a;
-  --input: #2a2a2a;
-  --ring: #39BFDF;
-  --chart-1: #39BFDF;
-  --chart-2: #89DCED;
-  --chart-3: #FFFFFF;
-  --chart-4: #aaa;
-  --chart-5: #666;
-  --sidebar: #2a2a2a;
-  --sidebar-foreground: #FFFFFF;
-  --sidebar-primary: #39BFDF;
-  --sidebar-primary-foreground: #1a1a1a;
-  --sidebar-accent: #89DCED;
-  --sidebar-accent-foreground: #1a1a1a;
-  --sidebar-border: #3a3a3a;
-  --sidebar-ring: #39BFDF;
+  --destructive-foreground: #ffffff;
+  --border: #2a3f54;
+  --input: #1b2838;
+  --ring: #103959;
+  --chart-1: #103959;
+  --chart-2: #1e5a8a;
+  --chart-3: #f8fafc;
+  --chart-4: #8d8d8d;
+  --chart-5: #1e1e1e;
+  --sidebar: #1b2838;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #103959;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1e5a8a;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2a3f54;
+  --sidebar-ring: #103959;
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --font-sans: "Gilroy", var(--font-geist-sans), "Geist", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "Geist Mono", "Geist Mono Fallback",
+    monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

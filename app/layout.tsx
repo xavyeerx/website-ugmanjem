@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import Preloader from "@/components/preloader";
 import "./globals.css";
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+});
 
 export const metadata: Metadata = {
-  title: "UNS Anjem - Antar Jempput & Jastip Mahasiswa UNS",
+  title: "UGM Anjem - Antar Jemput & Jastip Mahasiswa UGM",
   description:
-    "Solusi mobilitas & jastipan terpercaya untuk mahasiswa UNS. Pesan antar jempput dan jastip dengan mudah hanya melalui satu aplikasi.",
-  generator: "v0.app",
+    "Solusi mobilitas & jastipan terpercaya untuk mahasiswa UGM. Pesan antar jemput dan jastip dengan mudah hanya melalui satu chat.",
   icons: {
     icon: [
       {
@@ -38,7 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className={`font-sans antialiased`}>
+      <body className={`${geistMono.variable} font-sans antialiased`}>
         <Preloader />
         {children}
         <Analytics />

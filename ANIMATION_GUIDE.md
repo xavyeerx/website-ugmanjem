@@ -75,8 +75,7 @@ Menggunakan komponen `ParallaxSection`:
 components/
 ├── preloader.tsx           # Komponen preloader utama
 ├── fade-in.tsx            # Komponen scroll animation
-├── parallax-section.tsx   # Komponen parallax effect
-└── animated-card.tsx      # Komponen card dengan animasi (opsional)
+└── parallax-section.tsx   # Komponen parallax effect
 
 app/
 ├── layout.tsx            # Integrated dengan Preloader

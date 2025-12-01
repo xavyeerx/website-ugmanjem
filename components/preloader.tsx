@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { LOGO_URL } from "@/lib/constants";
 
 export default function Preloader() {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,7 +24,7 @@ export default function Preloader() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-b from-[#39BFDF] to-[#89DCED]"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-b from-primary to-secondary"
         >
           <motion.div
             initial={{ scale: 0.5, opacity: 0, y: 20 }}
@@ -53,12 +54,13 @@ export default function Preloader() {
               }}
             >
               <Image
-                src="/images/logo-anjem-putih.png"
-                alt="UNS Anjem"
-                width={200}
-                height={100}
+                src={LOGO_URL}
+                alt="UGM Anjem"
+                width={400}
+                height={160}
                 priority
-                className="w-auto h-24 md:h-32 drop-shadow-2xl"
+                unoptimized
+                className="w-auto h-20 md:h-32 lg:h-40 object-contain drop-shadow-xl"
               />
             </motion.div>
 
