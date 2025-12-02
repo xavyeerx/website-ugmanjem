@@ -33,7 +33,7 @@ export const tutorialSteps: TutorialStep[] = [
       "Join WA Group komunitas UGM Anjem bareng mahasiswa UGM lainnya dengan",
     link: {
       text: "klik disini",
-      url: "http://wa.me/6282123035583?text=Halo%20Min,%20mau%20link%20grup%20Anjem%20UGM%20dong",
+      url: "https://chat.whatsapp.com/KsDOcqlQ5y6LBGKvoH792S",
     },
   },
   {

@@ -1,6 +1,9 @@
 // External URLs
 export const WHATSAPP_ORDER_URL =
-  "http://wa.me/6282123035583?text=Halo%20Min,%20mau%20link%20grup%20Anjem%20UGM%20dong";
+  "https://chat.whatsapp.com/KsDOcqlQ5y6LBGKvoH792S";
+
+export const WHATSAPP_ADMIN_URL =
+  "https://api.whatsapp.com/send?phone=6282123035583&text=haloo%20min%2C%20mau%20link%20grup%20UGM%20Anjem%20dong!";
 
 export const DRIVER_REGISTRATION_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSfOiP7z21-m6B42Xi2107Zq6mWJwvzFOD2a1uuNjEtfPcOK5g/viewform?usp=send_form";
@@ -11,7 +14,7 @@ export const HERO_BACKGROUND_URL = "/images/background.png";
 
 // Social Media URLs
 export const SOCIAL_URLS = {
-  whatsapp: WHATSAPP_ORDER_URL,
+  whatsapp: WHATSAPP_ADMIN_URL,
   instagram: "https://instagram.com/ugm.anjem",
   tiktok: "https://tiktok.com/@ugm.anjem",
 } as const;
