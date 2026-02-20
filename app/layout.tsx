@@ -14,21 +14,6 @@ export const metadata: Metadata = {
   title: "UGM Anjem - Antar Jemput & Jastip Mahasiswa UGM",
   description:
     "Solusi mobilitas & jastipan terpercaya untuk mahasiswa UGM. Pesan antar jemput dan jastip dengan mudah hanya melalui satu chat.",
-  icons: {
-    icon: [
-      {
-        url: "/favicon-32x32.png",
-        sizes: "32x32",
-        type: "image/png",
-      },
-      {
-        url: "/icon.png",
-        sizes: "192x192",
-        type: "image/png",
-      },
-    ],
-    apple: "/apple-icon.png",
-  },
 };
 
 export default function RootLayout({
