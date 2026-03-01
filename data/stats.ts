@@ -2,7 +2,7 @@ import type { Stat, Feature, TutorialStep } from "@/types";
 
 export const stats: Stat[] = [
   { value: "20", label: "Driver Active" },
-  { value: "2", label: "WA Group" },
+  { value: "3", label: "WA Group" },
   { value: "3000+", label: "Order Complete" },
   { value: "2000+", label: "Members Group" },
 ];
