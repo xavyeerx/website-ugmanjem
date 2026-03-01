@@ -1,10 +1,10 @@
 import type { Stat, Feature, TutorialStep } from "@/types";
 
 export const stats: Stat[] = [
-  { value: "13", label: "Driver Active" },
+  { value: "20", label: "Driver Active" },
   { value: "2", label: "WA Group" },
-  { value: "1000+", label: "Order Complete" },
-  { value: "1000+", label: "Members Group" },
+  { value: "3000+", label: "Order Complete" },
+  { value: "2000+", label: "Members Group" },
 ];
 
 export const features: Feature[] = [
