@@ -3,6 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import Preloader from "@/components/preloader";
 import { WhatsAppFloat } from "@/components/shared/whatsapp-float";
+import ChatWidget from "@/components/chatbot/chat-widget";
 import "./globals.css";
 
 const geistMono = Geist_Mono({
@@ -26,6 +27,7 @@ export default function RootLayout({
       <body className={`${geistMono.variable} font-sans antialiased`}>
         <Preloader />
         {children}
+        <ChatWidget />
         <WhatsAppFloat />
         <Analytics />
       </body>

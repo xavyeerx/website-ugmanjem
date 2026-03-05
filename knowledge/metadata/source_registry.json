@@ -1,0 +1,34 @@
+{
+  "version": "1.0.0",
+  "built_at": "2026-03-03T00:39:34.792930",
+  "embedding_model": "models/text-embedding-004 (Google Gemini)",
+  "total_chunks": 126,
+  "sources": {
+    "pdf_panduan": {
+      "chunks": 15,
+      "last_extracted": "2026-03-03"
+    },
+    "website": {
+      "chunks": 17,
+      "last_extracted": "2026-03-03"
+    },
+    "faq_csv": {
+      "chunks": 85,
+      "last_extracted": "2026-03-03"
+    },
+    "sop_driver": {
+      "chunks": 9,
+      "last_extracted": "2026-03-03"
+    }
+  },
+  "category_distribution": {
+    "driver": 31,
+    "tarif": 27,
+    "umum": 24,
+    "layanan": 17,
+    "order": 8,
+    "kontak": 8,
+    "keamanan": 6,
+    "pembayaran": 5
+  }
+}

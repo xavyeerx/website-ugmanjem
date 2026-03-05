@@ -76,6 +76,18 @@ export interface TutorialStep {
   };
 }
 
+// Chat Types
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  sources?: ChatSource[];
+}
+
+export interface ChatSource {
+  source: string;
+  section: string;
+}
+
 // Price Calculator Types
 export type ServiceType = "antar-jemput" | "jastip";
 

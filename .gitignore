@@ -1,7 +1,24 @@
 node_modules/
 .next/
 dist/
-.env*.local
 .vercel
 *.log
 .DS_Store
+
+# Environment & secrets — NEVER commit these
+.env
+.env.*
+.env*.local
+backend/.env
+!.env.example
+!backend/.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Vector store (large binary, rebuild via embed_knowledge.py)
+vectorstore/chroma_db/

@@ -1,0 +1,162 @@
+[
+  {
+    "content": "Pendaftaran & Administrasi Mitra Driver UGM Anjem: Driver harus merupakan mahasiswa aktif atau alumni UGM. Iuran kemitraan dibayarkan setiap 2 minggu sekali.",
+    "section": "SOP Driver - Pendaftaran & Administrasi",
+    "sop_section": "Pendaftaran & Administrasi",
+    "severity": "medium",
+    "tags": [
+      "pendaftaran",
+      "administrasi",
+      "iuran"
+    ],
+    "category": "driver",
+    "subcategory": "sop",
+    "audience": "driver",
+    "source": "sop_driver",
+    "source_file": "SOP Mitra Driver UGM Anjem",
+    "extracted_at": "2026-03-03T00:39:09.771298"
+  },
+  {
+    "content": "Kesiapan & Perlengkapan Driver: Kendaraan harus layak jalan dan surat-surat lengkap. WAJIB pakai helm dan sediakan helm untuk customer. Pakaian bebas sopan, rapi, dan wangi (nilai plus).",
+    "section": "SOP Driver - Kesiapan & Perlengkapan",
+    "sop_section": "Kesiapan & Perlengkapan",
+    "severity": "high",
+    "tags": [
+      "perlengkapan",
+      "kendaraan",
+      "helm",
+      "penampilan"
+    ],
+    "category": "driver",
+    "subcategory": "sop",
+    "audience": "driver",
+    "source": "sop_driver",
+    "source_file": "SOP Mitra Driver UGM Anjem",
+    "extracted_at": "2026-03-03T00:39:09.771298"
+  },
+  {
+    "content": "Penerimaan Order Driver: WAJIB react pesan order di grup sebelum jemput customer. Boleh menumpuk order maksimal 2 order, tetapi tetap dikondisikan.",
+    "section": "SOP Driver - Penerimaan Order",
+    "sop_section": "Penerimaan Order",
+    "severity": "high",
+    "tags": [
+      "order",
+      "react",
+      "numpuk_order"
+    ],
+    "category": "driver",
+    "subcategory": "sop",
+    "audience": "driver",
+    "source": "sop_driver",
+    "source_file": "SOP Mitra Driver UGM Anjem",
+    "extracted_at": "2026-03-03T00:39:09.771298"
+  },
+  {
+    "content": "Etika Pelayanan Driver: Tepat waktu jemput (keterlambatan maksimal 5-10 menit). Ramah: senyum, sapa, sopan. Utamakan kenyamanan dan keselamatan customer. Dilarang merokok, berkata kasar, atau main HP berlebihan saat berkendara. Jika telat, wajib menginformasikan ke customer.",
+    "section": "SOP Driver - Etika Pelayanan",
+    "sop_section": "Etika Pelayanan",
+    "severity": "high",
+    "tags": [
+      "etika",
+      "pelayanan",
+      "keramahan",
+      "keselamatan"
+    ],
+    "category": "driver",
+    "subcategory": "sop",
+    "audience": "driver",
+    "source": "sop_driver",
+    "source_file": "SOP Mitra Driver UGM Anjem",
+    "extracted_at": "2026-03-03T00:39:09.771298"
+  },
+  {
+    "content": "Pembayaran & Tarif Driver: Tarif harus sesuai pricelist resmi UGM Anjem. Tarif di luar pricelist harus didiskusikan di grup driver. Iuran wajib disetor tepat waktu, maksimal H+3 dari jadwal.",
+    "section": "SOP Driver - Pembayaran & Tarif",
+    "sop_section": "Pembayaran & Tarif",
+    "severity": "high",
+    "tags": [
+      "tarif",
+      "pembayaran",
+      "iuran",
+      "pricelist"
+    ],
+    "category": "driver",
+    "subcategory": "sop",
+    "audience": "driver",
+    "source": "sop_driver",
+    "source_file": "SOP Mitra Driver UGM Anjem",
+    "extracted_at": "2026-03-03T00:39:09.771298"
+  },
+  {
+    "content": "Komunikasi & Koordinasi Driver: Komunikasi dilakukan di grup driver (termasuk info on/off status). Jika lama tidak aktif (off), wajib meminta izin ke admin.",
+    "section": "SOP Driver - Komunikasi & Koordinasi",
+    "sop_section": "Komunikasi & Koordinasi",
+    "severity": "medium",
+    "tags": [
+      "komunikasi",
+      "koordinasi",
+      "grup_driver"
+    ],
+    "category": "driver",
+    "subcategory": "sop",
+    "audience": "driver",
+    "source": "sop_driver",
+    "source_file": "SOP Mitra Driver UGM Anjem",
+    "extracted_at": "2026-03-03T00:39:09.771298"
+  },
+  {
+    "content": "Sanksi & Pelanggaran Driver UGM Anjem: 1) Teguran Lisan: keterlambatan ringan, komunikasi buruk, jarang ON. 2) Teguran Tertulis: menolak order tanpa alasan, markup tarif. 3) Suspensi Sementara: pelanggaran etika atau keselamatan. 4) Pemutusan Kemitraan: pelanggaran berat (penipuan, pelecehan, tidak setor iuran).",
+    "section": "SOP Driver - Sanksi & Pelanggaran",
+    "sop_section": "Sanksi & Pelanggaran",
+    "severity": "critical",
+    "tags": [
+      "sanksi",
+      "pelanggaran",
+      "teguran",
+      "suspensi",
+      "pemutusan"
+    ],
+    "category": "driver",
+    "subcategory": "sop",
+    "audience": "driver",
+    "source": "sop_driver",
+    "source_file": "SOP Mitra Driver UGM Anjem",
+    "extracted_at": "2026-03-03T00:39:09.771298"
+  },
+  {
+    "content": "PERINGATAN untuk Driver - Modus Penipuan Jastip: Tolak semua pesanan jastip dalam bentuk top up apapun modusnya. Tanyakan ke grup driver jika ada jastip dengan harga tidak wajar. Modus biasanya dimulai dari jastip kartu ke konter atau jastip makanan ke Indomaret. Cara deteksi: 1) Pura-pura bilang sudah di lokasi (Indomaret/konter). 2) Tanyakan apakah ada tambahan. 3) Jika customer minta top up pulsa atau sejenisnya, blok dan laporkan di grup driver. 4) Jika tidak ada tambahan top up, jastip aman untuk diambil.",
+    "section": "SOP Driver - WASPADA - Modus Penipuan Jastip",
+    "sop_section": "WASPADA - Modus Penipuan Jastip",
+    "severity": "critical",
+    "tags": [
+      "waspada",
+      "penipuan",
+      "top_up",
+      "jastip",
+      "modus"
+    ],
+    "category": "driver",
+    "subcategory": "sop",
+    "audience": "driver",
+    "source": "sop_driver",
+    "source_file": "SOP Mitra Driver UGM Anjem",
+    "extracted_at": "2026-03-03T00:39:09.771298"
+  },
+  {
+    "content": "SOP Lengkap Mitra Driver UGM Anjem:\n\n[Pendaftaran & Administrasi]\nPendaftaran & Administrasi Mitra Driver UGM Anjem: Driver harus merupakan mahasiswa aktif atau alumni UGM. Iuran kemitraan dibayarkan setiap 2 minggu sekali.\n\n[Kesiapan & Perlengkapan]\nKesiapan & Perlengkapan Driver: Kendaraan harus layak jalan dan surat-surat lengkap. WAJIB pakai helm dan sediakan helm untuk customer. Pakaian bebas sopan, rapi, dan wangi (nilai plus).\n\n[Penerimaan Order]\nPenerimaan Order Driver: WAJIB react pesan order di grup sebelum jemput customer. Boleh menumpuk order maksimal 2 order, tetapi tetap dikondisikan.\n\n[Etika Pelayanan]\nEtika Pelayanan Driver: Tepat waktu jemput (keterlambatan maksimal 5-10 menit). Ramah: senyum, sapa, sopan. Utamakan kenyamanan dan keselamatan customer. Dilarang merokok, berkata kasar, atau main HP berlebihan saat berkendara. Jika telat, wajib menginformasikan ke customer.\n\n[Pembayaran & Tarif]\nPembayaran & Tarif Driver: Tarif harus sesuai pricelist resmi UGM Anjem. Tarif di luar pricelist harus didiskusikan di grup driver. Iuran wajib disetor tepat waktu, maksimal H+3 dari jadwal.\n\n[Komunikasi & Koordinasi]\nKomunikasi & Koordinasi Driver: Komunikasi dilakukan di grup driver (termasuk info on/off status). Jika lama tidak aktif (off), wajib meminta izin ke admin.\n\n[Sanksi & Pelanggaran]\nSanksi & Pelanggaran Driver UGM Anjem: 1) Teguran Lisan: keterlambatan ringan, komunikasi buruk, jarang ON. 2) Teguran Tertulis: menolak order tanpa alasan, markup tarif. 3) Suspensi Sementara: pelanggaran etika atau keselamatan. 4) Pemutusan Kemitraan: pelanggaran berat (penipuan, pelecehan, tidak setor iuran).\n\n[WASPADA - Modus Penipuan Jastip]\nPERINGATAN untuk Driver - Modus Penipuan Jastip: Tolak semua pesanan jastip dalam bentuk top up apapun modusnya. Tanyakan ke grup driver jika ada jastip dengan harga tidak wajar. Modus biasanya dimulai dari jastip kartu ke konter atau jastip makanan ke Indomaret. Cara deteksi: 1) Pura-pura bilang sudah di lokasi (Indomaret/konter). 2) Tanyakan apakah ada tambahan. 3) Jika customer minta top up pulsa atau sejenisnya, blok dan laporkan di grup driver. 4) Jika tidak ada tambahan top up, jastip aman untuk diambil.",
+    "section": "SOP Driver - Lengkap",
+    "sop_section": "Lengkap",
+    "severity": "high",
+    "tags": [
+      "sop",
+      "lengkap",
+      "driver"
+    ],
+    "category": "driver",
+    "subcategory": "sop_lengkap",
+    "audience": "driver",
+    "source": "sop_driver",
+    "source_file": "SOP Mitra Driver UGM Anjem",
+    "extracted_at": "2026-03-03T00:39:09.771298"
+  }
+]

@@ -1,0 +1,155 @@
+[
+  {
+    "content": "Statistik UGM Anjem: Driver Active: 20, WA Group: 3, Order Complete: 3000+, Members Group: 2000+",
+    "section": "Statistik",
+    "category": "umum",
+    "subcategory": "statistik",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Keunggulan UGM Anjem - Driver Mahasiswa: Driver kami 100% mahasiswa UGM, jadi lebih paham wilayah dalam kampus, bonus dapet relasi deh..",
+    "section": "Keunggulan",
+    "category": "umum",
+    "subcategory": "keunggulan",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Keunggulan UGM Anjem - Aman, Satset, Fleksibel: Tinggal chat grup, kami bisa bantuin segala kebutuhanmu, penolong banget buat anak perantauan.",
+    "section": "Keunggulan",
+    "category": "umum",
+    "subcategory": "keunggulan",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Keunggulan UGM Anjem - Terjangkau & Mudah Diakses: Bantu kamu lebih irit di perantauan dengan tarif yang terjangkau.",
+    "section": "Keunggulan",
+    "category": "umum",
+    "subcategory": "keunggulan",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Cara Order UGM Anjem:\nLangkah 1: Join WA Group - Join WA Group komunitas UGM Anjem bareng mahasiswa UGM lainnya dengan\nLangkah 2: Chat Order via Group\",\n    description:\n      'Kirim pesan di group untuk dapat terhubung dengan driver ready dengan menyebutkan kebutuhanmu. Example: \"Mau anjem dari FEB ke kos dong\"',\n  },\n  {\n    step: 3,\n    title: \"Driver Akan Take Order - Driver ready akan membales pesananmu via Personal Chat (PC) dan melanjutkan detail pemesanan via PC.\nLangkah 4: OTW! Bayar Langsung ke Driver - Shareloc dan driver kami siap menjemput, bayar dengan tunai atau QRIS.",
+    "section": "Tutorial Order",
+    "category": "order",
+    "subcategory": "cara_order",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Syarat menjadi driver UGM Anjem: Mahasiswa UGM; Memiliki kendaraan bersurat lengkap; Komitmen dan banyak waktu luang.",
+    "section": "Syarat Driver",
+    "category": "driver",
+    "subcategory": "syarat",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Layanan Antar Jemput: Harga mulai dari RP 5K, sudah 2.500+ trip selesai. Rating: 5/5. Kategori: anjem.",
+    "section": "Layanan Antar Jemput",
+    "category": "layanan",
+    "subcategory": "anjem",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Layanan Jasa Titip: Harga mulai dari RP 6k, sudah 350+ trip selesai. Rating: 5/5. Kategori: jastip.",
+    "section": "Layanan Jasa Titip",
+    "category": "layanan",
+    "subcategory": "jastip",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Layanan Survei Kost: Harga mulai dari RP 15k, sudah 50+ trip selesai. Rating: 5/5. Kategori: survei.",
+    "section": "Layanan Survei Kost",
+    "category": "layanan",
+    "subcategory": "survei",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Layanan Urus Berkas Kampus: Harga mulai dari RP 15k, sudah 100+ trip selesai. Rating: 5/5. Kategori: berkas.",
+    "section": "Layanan Urus Berkas Kampus",
+    "category": "layanan",
+    "subcategory": "berkas",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Deskripsi layanan antar-jemput: Butuh dianter atau dijemput ke kampus? Kamu bisa pesan driver buat antar sampai tujuan kok!",
+    "section": "Deskripsi antar-jemput",
+    "category": "layanan",
+    "subcategory": "antar_jemput",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Pricelist UGM Anjem tersedia dalam bentuk poster untuk area: Sendowo, Klebengan, Pogung. Poster pricelist dapat dilihat di website anjemugm.vercel.app bagian Pricelist.",
+    "section": "Pricelist",
+    "category": "tarif",
+    "subcategory": "pricelist",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Kontak & Media Sosial UGM Anjem:\n- Website: anjemugm.vercel.app\n- Instagram: https://instagram.com/ugm.anjem\n- TikTok: https://tiktok.com/@ugm.anjem\n- Link Grup WhatsApp: https://chat.whatsapp.com/KsDOcqlQ5y6LBGKvoH792S\n- WhatsApp Admin: https://api.whatsapp.com/send?phone=6282123035583&text=haloo%20min%2C%20mau%20link%20grup%20UGM%20Anjem%20dong!\n- Form Pendaftaran Driver: https://docs.google.com/forms/d/e/1FAIpQLSfOiP7z21-m6B42Xi2107Zq6mWJwvzFOD2a1uuNjEtfPcOK5g/viewform?usp=send_form",
+    "section": "Kontak",
+    "category": "kontak",
+    "subcategory": "media_sosial",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Konstanta Harga UGM Anjem:\n- Tarif per km (di luar pricelist): Rp2500\n- Tarif minimum: Rp5000\n- Fee tambahan jastip: Rp1000\n- Fee tambahan hujan: Rp2000\n- Fee tambahan dini hari (>22:00): Rp1000",
+    "section": "Konstanta Harga",
+    "category": "tarif",
+    "subcategory": "konstanta",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Testimoni dari Arumi (Mahasiswa GEOGRAFI 25): \"anjem udh kaya ibarat kebutuhan pokok buat aku yg gapunya kendaraan pribadi. anjem ke kampus bisa, jastip juga bisa. big thanks buat orang yang nyiptain per-anjem-an inii\"",
+    "section": "Testimoni",
+    "category": "umum",
+    "subcategory": "testimoni",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Testimoni dari Nisrina (Mahasiswa SV 23): \"Anjem udah kayak daily use buat aku yang gaada kendaraan di Jogja, good job buat Anjem UGM\"",
+    "section": "Testimoni",
+    "category": "umum",
+    "subcategory": "testimoni",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  },
+  {
+    "content": "Testimoni dari Rakha (Mahasiswa Fisipol 24 (Mitra Driver)): \"Makasih banyak udah kasih ruang buat nambah penghasilan lewat sini, jujur ngebantu banget buat sehari-hari.\"",
+    "section": "Testimoni",
+    "category": "umum",
+    "subcategory": "testimoni",
+    "source": "website",
+    "source_file": "Next.js source code",
+    "extracted_at": "2026-03-03T00:39:09.486318"
+  }
+]
