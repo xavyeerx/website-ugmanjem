@@ -12,7 +12,7 @@ services:
       - COLLECTION_NAME=ugm_anjem_knowledge
       - CORS_ORIGINS=["http://localhost:3000","http://10.33.109.173","http://10.33.109.173:80"]
     volumes:
-      - ../vectorstore:/data/vectorstore:ro
+      - ../vectorstore:/data/vectorstore
     ports:
       - "8000:8000"
     healthcheck:
