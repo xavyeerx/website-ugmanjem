@@ -5,6 +5,7 @@ import type {
   ServiceType,
   PriceCalculatorState,
   PriceCalculatorResult,
+  PricingConfig,
 } from "@/types";
 import {
   PRICE_PER_KM,
@@ -14,7 +15,13 @@ import {
   EARLY_MORNING_FEE,
 } from "@/lib/constants";
 
-export function usePriceCalculator() {
+export function usePriceCalculator(config?: PricingConfig) {
+  const pricePerKm = config?.price_per_km ?? PRICE_PER_KM;
+  const minimumPrice = config?.minimum_price ?? MINIMUM_PRICE;
+  const jastipFee = config?.jastip_fee ?? JASTIP_FEE;
+  const rainyFee = config?.rainy_fee ?? RAINY_FEE;
+  const earlyMorningFee = config?.early_morning_fee ?? EARLY_MORNING_FEE;
+
   const [state, setState] = useState<PriceCalculatorState>({
     serviceType: "antar-jemput",
     distance: "",
@@ -47,22 +54,18 @@ export function usePriceCalculator() {
   };
 
   const result: PriceCalculatorResult = useMemo(() => {
-    // Handle comma input (e.g., "2,4" -> "2.4")
     const normalizedDistance = state.distance.replace(",", ".");
     const distanceNum = parseFloat(normalizedDistance) || 0;
 
-    // Calculate base price (1 km = Rp 2.500)
-    let basePrice = distanceNum * PRICE_PER_KM;
+    let basePrice = distanceNum * pricePerKm;
 
-    // Apply minimum price
-    if (basePrice < MINIMUM_PRICE) {
-      basePrice = MINIMUM_PRICE;
+    if (basePrice < minimumPrice) {
+      basePrice = minimumPrice;
     }
 
-    // Calculate fees
-    const serviceFee = state.serviceType === "jastip" ? JASTIP_FEE : 0;
-    const weatherFee = state.isRainy ? RAINY_FEE : 0;
-    const timeFee = state.isEarlyMorning ? EARLY_MORNING_FEE : 0;
+    const serviceFee = state.serviceType === "jastip" ? jastipFee : 0;
+    const weatherFee = state.isRainy ? rainyFee : 0;
+    const timeFee = state.isEarlyMorning ? earlyMorningFee : 0;
 
     const estimatedPrice = basePrice + serviceFee + weatherFee + timeFee;
 
@@ -75,7 +78,7 @@ export function usePriceCalculator() {
         timeFee,
       },
     };
-  }, [state]);
+  }, [state, pricePerKm, minimumPrice, jastipFee, rainyFee, earlyMorningFee]);
 
   return {
     ...state,

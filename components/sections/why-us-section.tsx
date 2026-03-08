@@ -2,18 +2,21 @@
 
 import { motion } from "framer-motion";
 import FadeIn from "@/components/fade-in";
-import { stats, features } from "@/data/stats";
+import type { Stat, Feature } from "@/types";
 
-export default function WhyUsSection() {
+interface WhyUsSectionProps {
+  stats: Stat[];
+  features: Feature[];
+}
+
+export default function WhyUsSection({ stats, features }: WhyUsSectionProps) {
   return (
     <section
       id="why-us"
       className="py-16 md:py-24 bg-background relative -mt-1"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        {/* Section Header */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-12 md:mb-16">
-          {/* Title */}
           <FadeIn direction="left" className="md:col-span-1">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-accent leading-tight">
               Why
@@ -22,7 +25,6 @@ export default function WhyUsSection() {
             </h2>
           </FadeIn>
 
-          {/* Features Cards */}
           <div className="md:col-span-3">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {features.map((feature, index) => (
@@ -45,7 +47,6 @@ export default function WhyUsSection() {
           </div>
         </div>
 
-        {/* Stats Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {stats.map((stat, index) => (
             <FadeIn key={stat.label} direction="up" delay={0.1 * (index + 1)}>
@@ -55,7 +56,6 @@ export default function WhyUsSection() {
               >
                 <div className="mb-4 flex justify-center">
                   <div className="relative">
-                    {/* Badge shape */}
                     <svg
                       width="60"
                       height="36"

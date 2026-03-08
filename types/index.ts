@@ -15,7 +15,7 @@ export interface Service {
   category: ServiceCategory;
 }
 
-export type ServiceCategory = "anjem" | "jastip" | "survei" | "berkas";
+export type ServiceCategory = string;
 
 export interface ServiceTab {
   id: string;
@@ -90,6 +90,14 @@ export interface ChatSource {
 
 // Price Calculator Types
 export type ServiceType = "antar-jemput" | "jastip";
+
+export interface PricingConfig {
+  price_per_km: number;
+  minimum_price: number;
+  jastip_fee: number;
+  rainy_fee: number;
+  early_morning_fee: number;
+}
 
 export interface PriceCalculatorState {
   serviceType: ServiceType;

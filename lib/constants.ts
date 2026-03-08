@@ -17,6 +17,7 @@ export const SOCIAL_URLS = {
   whatsapp: WHATSAPP_ADMIN_URL,
   instagram: "https://instagram.com/ugm.anjem",
   tiktok: "https://tiktok.com/@ugm.anjem",
+  email: "https://mail.google.com/mail/?view=cm&to=ugmanjem@gmail.com",
 } as const;
 
 // UI Constants

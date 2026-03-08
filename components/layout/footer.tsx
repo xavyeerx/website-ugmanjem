@@ -3,18 +3,22 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import FadeIn from "@/components/fade-in";
-import { footerSections, socialLinks } from "@/data/footer";
+import type { FooterSection, SocialLink } from "@/types";
 
-export default function Footer() {
+interface FooterProps {
+  sections: FooterSection[];
+  socialLinks: SocialLink[];
+}
+
+export default function Footer({ sections, socialLinks }: FooterProps) {
   return (
     <footer
       id="contact-us"
       className="bg-background py-12 md:py-16 border-t border-border"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl w-full">
-        {/* Footer Links Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-12 md:mb-16">
-          {footerSections.map((section, sectionIndex) => (
+          {sections.map((section, sectionIndex) => (
             <FadeIn
               key={section.title}
               direction="up"
@@ -45,7 +49,6 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Connect with Us - Social Media */}
         <FadeIn direction="up" delay={0.35}>
           <div className="border-t border-border pt-8">
             <h4 className="text-base font-bold text-accent mb-6">
@@ -75,7 +78,6 @@ export default function Footer() {
           </div>
         </FadeIn>
 
-        {/* Copyright */}
         <div className="border-t border-border mt-8 pt-8">
           <p className="text-sm text-muted-foreground text-center">
             © 2025 UGM Anjem. All rights reserved.

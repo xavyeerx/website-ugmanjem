@@ -3,10 +3,15 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import FadeIn from "@/components/fade-in";
-import { driverRequirements } from "@/data/stats";
 import { DRIVER_REGISTRATION_URL } from "@/lib/constants";
 
-export default function JoinDriverSection() {
+interface JoinDriverSectionProps {
+  requirements: string[];
+}
+
+export default function JoinDriverSection({
+  requirements,
+}: JoinDriverSectionProps) {
   return (
     <section id="join-driver" className="py-16 md:py-24 bg-card">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,7 +29,6 @@ export default function JoinDriverSection() {
             </p>
           </FadeIn>
 
-          {/* Requirements */}
           <FadeIn direction="up" delay={0.2}>
             <motion.div
               whileHover={{ scale: 1.02 }}
@@ -34,7 +38,7 @@ export default function JoinDriverSection() {
                 Syarat:
               </h3>
               <ul className="space-y-3">
-                {driverRequirements.map((requirement, index) => (
+                {requirements.map((requirement, index) => (
                   <motion.li
                     key={requirement}
                     initial={{ opacity: 0, x: -20 }}

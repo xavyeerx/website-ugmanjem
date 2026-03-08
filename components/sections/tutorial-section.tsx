@@ -3,14 +3,17 @@
 import Image from "next/image";
 import FadeIn from "@/components/fade-in";
 import ParallaxSection from "@/components/parallax-section";
-import { tutorialSteps } from "@/data/stats";
+import type { TutorialStep } from "@/types";
 
-export default function TutorialSection() {
+interface TutorialSectionProps {
+  steps: TutorialStep[];
+}
+
+export default function TutorialSection({ steps }: TutorialSectionProps) {
   return (
     <section id="tutorial" className="py-16 md:py-24 bg-card">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
-          {/* Mockup Images */}
           <FadeIn direction="left" className="flex justify-center">
             <ParallaxSection offset={30}>
               <div className="relative w-full max-w-2xl">
@@ -30,7 +33,6 @@ export default function TutorialSection() {
             </ParallaxSection>
           </FadeIn>
 
-          {/* How To Order Content */}
           <div>
             <FadeIn direction="right">
               <h2 className="text-3xl md:text-4xl font-bold text-accent mb-6 md:mb-8">
@@ -39,7 +41,7 @@ export default function TutorialSection() {
             </FadeIn>
 
             <div className="space-y-5 md:space-y-6">
-              {tutorialSteps.map((step, index) => (
+              {steps.map((step, index) => (
                 <FadeIn
                   key={step.step}
                   direction="right"

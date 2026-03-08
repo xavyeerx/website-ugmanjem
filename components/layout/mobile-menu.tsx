@@ -1,9 +1,10 @@
 "use client";
 
-import { sections } from "@/data/navigation";
 import { WHATSAPP_ORDER_URL } from "@/lib/constants";
+import type { NavSection } from "@/types";
 
 interface MobileMenuProps {
+  sections: NavSection[];
   isOpen: boolean;
   activeSection: string;
   onNavClick: (sectionId: string) => void;
@@ -11,6 +12,7 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({
+  sections,
   isOpen,
   activeSection,
   onNavClick,
@@ -25,16 +27,13 @@ export default function MobileMenu({
 
   return (
     <>
-      {/* Backdrop */}
       <div
         onClick={onClose}
         className="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity"
       />
 
-      {/* Mobile Menu */}
       <div className="fixed top-0 right-0 h-full w-3/4 max-w-sm bg-card z-50 md:hidden shadow-2xl overflow-hidden border-l border-border">
         <div className="flex flex-col h-full">
-          {/* Mobile Menu Header */}
           <div className="flex items-center justify-between p-4 border-b border-border">
             <h3 className="text-lg font-bold text-accent">Menu</h3>
             <button
@@ -57,7 +56,6 @@ export default function MobileMenu({
             </button>
           </div>
 
-          {/* Mobile Menu Items */}
           <nav className="flex-1 overflow-y-auto py-4">
             {sections.map((section) => (
               <button
@@ -74,7 +72,6 @@ export default function MobileMenu({
             ))}
           </nav>
 
-          {/* Mobile Menu Footer */}
           <div className="p-4 border-t border-border">
             <a
               href={WHATSAPP_ORDER_URL}

@@ -56,4 +56,10 @@ export const socialLinks: SocialLink[] = [
     url: SOCIAL_URLS.tiktok,
     icon: "/images/logo-tiktok.png",
   },
+  {
+    id: "email",
+    name: "Email",
+    url: SOCIAL_URLS.email,
+    icon: "/images/logo-email.svg",
+  },
 ];

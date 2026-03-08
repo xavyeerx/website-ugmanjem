@@ -12,9 +12,17 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { services, serviceTabs } from "@/data/services";
+import type { Service, ServiceTab } from "@/types";
 
-export default function ServicesSection() {
+interface ServicesSectionProps {
+  services: Service[];
+  serviceTabs: ServiceTab[];
+}
+
+export default function ServicesSection({
+  services,
+  serviceTabs,
+}: ServicesSectionProps) {
   const [activeTab, setActiveTab] = useState("all");
 
   const filteredServices = services.filter(
@@ -24,7 +32,6 @@ export default function ServicesSection() {
   return (
     <section id="services" className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        {/* Section Header */}
         <div className="text-center mb-12">
           <FadeIn direction="up">
             <h2 className="text-4xl md:text-5xl font-bold text-accent mb-8">
@@ -32,7 +39,6 @@ export default function ServicesSection() {
             </h2>
           </FadeIn>
 
-          {/* Service Tabs */}
           <FadeIn direction="up" delay={0.1}>
             <div className="flex flex-wrap justify-center gap-2 mb-8">
               {serviceTabs.map((tab) => (
@@ -54,7 +60,6 @@ export default function ServicesSection() {
           </FadeIn>
         </div>
 
-        {/* Services Carousel */}
         <div className="relative max-w-6xl mx-auto">
           <Carousel
             opts={{
@@ -80,7 +85,6 @@ export default function ServicesSection() {
                     }}
                     className="bg-card rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow h-full flex flex-col border border-border"
                   >
-                    {/* Service Image */}
                     <div className="relative w-full h-64 bg-gray-100 overflow-hidden group flex-shrink-0">
                       <motion.div
                         whileHover={{ scale: 1.1 }}
@@ -101,13 +105,11 @@ export default function ServicesSection() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                     </div>
 
-                    {/* Service Content */}
                     <div className="p-6 flex-1 flex flex-col">
                       <h3 className="text-xl font-bold text-accent mb-3">
                         {service.title}
                       </h3>
 
-                      {/* Rating */}
                       <div className="flex items-center mb-3">
                         {[...Array(service.rating)].map((_, i) => (
                           <Star
@@ -117,7 +119,6 @@ export default function ServicesSection() {
                         ))}
                       </div>
 
-                      {/* Price */}
                       <div className="mt-auto">
                         <p className="text-lg font-semibold text-foreground">
                           Start From {service.price}
@@ -128,10 +129,8 @@ export default function ServicesSection() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            {/* Mobile/Tablet Navigation - Inside container */}
             <CarouselPrevious className="flex md:hidden absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-card/90 hover:bg-card shadow-lg border border-border h-10 w-10" />
             <CarouselNext className="flex md:hidden absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-card/90 hover:bg-card shadow-lg border border-border h-10 w-10" />
-            {/* Desktop Navigation - Outside container */}
             <CarouselPrevious className="hidden md:flex -left-12" />
             <CarouselNext className="hidden md:flex -right-12" />
           </Carousel>

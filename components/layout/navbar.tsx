@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { sections } from "@/data/navigation";
 import { LOGO_URL, WHATSAPP_ORDER_URL } from "@/lib/constants";
+import type { NavSection } from "@/types";
 
 interface NavbarProps {
+  sections: NavSection[];
   activeSection: string;
   onNavClick: (sectionId: string) => void;
   onMobileMenuToggle: () => void;
@@ -12,6 +13,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({
+  sections,
   activeSection,
   onNavClick,
   onMobileMenuToggle,
@@ -21,7 +23,6 @@ export default function Navbar({
     <nav className="sticky top-0 z-50 bg-primary shadow-md">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-5">
         <div className="flex items-center justify-between">
-          {/* Logo */}
           <button
             onClick={() => onNavClick("home")}
             className="flex items-center gap-2 flex-shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
@@ -37,7 +38,6 @@ export default function Navbar({
             />
           </button>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1 lg:gap-2">
             {sections.map((section) => (
               <button
@@ -54,7 +54,6 @@ export default function Navbar({
             ))}
           </div>
 
-          {/* Order Button */}
           <a
             href={WHATSAPP_ORDER_URL}
             target="_blank"
@@ -64,7 +63,6 @@ export default function Navbar({
             Order Now
           </a>
 
-          {/* Mobile Menu Button */}
           <button
             onClick={onMobileMenuToggle}
             className="md:hidden p-2 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors duration-200"
