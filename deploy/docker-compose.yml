@@ -11,8 +11,6 @@ services:
       - VECTORSTORE_PATH=/data/vectorstore/chroma_db
       - COLLECTION_NAME=ugm_anjem_knowledge
       - CORS_ORIGINS=["http://localhost:3000","http://10.33.109.173","http://10.33.109.173:80"]
-      - SUPABASE_URL=${SUPABASE_URL:-}
-      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}
     volumes:
       - ../vectorstore:/data/vectorstore
     ports:
@@ -35,6 +33,10 @@ services:
         USE_SUPABASE: "true"
     container_name: anjem-frontend
     restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_SUPABASE_URL=https://baqkpgjkobuqzfrqqccb.supabase.co
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhcWtwZ2prb2J1cXpmcnFxY2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5ODIxNDgsImV4cCI6MjA4ODU1ODE0OH0.-cnsg1c2ZARudPjErs5vR6SCRPXqeeOZ0tFpbq-VhOw
+      - USE_SUPABASE=true
     ports:
       - "3000:3000"
     depends_on:
