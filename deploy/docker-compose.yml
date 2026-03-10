@@ -30,6 +30,9 @@ services:
       dockerfile: deploy/Dockerfile.frontend
       args:
         NEXT_PUBLIC_API_URL: ""
+        NEXT_PUBLIC_SUPABASE_URL: "https://baqkpgjkobuqzfrqqccb.supabase.co"
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhcWtwZ2prb2J1cXpmcnFxY2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5ODIxNDgsImV4cCI6MjA4ODU1ODE0OH0.-cnsg1c2ZARudPjErs5vR6SCRPXqeeOZ0tFpbq-VhOw"
+        USE_SUPABASE: "true"
     container_name: anjem-frontend
     restart: unless-stopped
     ports:
