@@ -46,11 +46,20 @@ async def chat(body: ChatRequest, request: Request):
 
     history = [{"role": m.role, "content": m.content} for m in body.conversation_history]
 
+    live_ctx = ""
+    live_context_provider = getattr(request.app.state, "live_context", None)
+    if live_context_provider:
+        try:
+            live_ctx = live_context_provider.get_context()
+        except Exception as e:
+            logger.warning(f"Live context fetch failed: {e}")
+
     try:
         answer = generator.generate(
             query=body.message,
             context_chunks=chunks,
             history=history,
+            live_context=live_ctx,
         )
     except Exception as e:
         error_msg = str(e)

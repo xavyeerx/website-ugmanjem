@@ -21,9 +21,10 @@ class AnswerGenerator:
         query: str,
         context_chunks: list[dict],
         history: list[dict] | None = None,
+        live_context: str = "",
         max_retries: int = 2,
     ) -> str:
-        context = "\n\n".join(
+        rag_context = "\n\n".join(
             f"[{c['metadata'].get('source', '')} | {c['metadata'].get('section', '')}]\n{c['content']}"
             for c in context_chunks
         )
@@ -33,11 +34,19 @@ class AnswerGenerator:
             role = "user" if msg["role"] == "user" else "model"
             contents.append({"role": role, "parts": [msg["content"]]})
 
-        user_prompt = (
-            "Berikut konteks yang relevan dari knowledge base UGM Anjem:\n\n"
-            f"{context}\n\n"
-            f"Pertanyaan pengguna: {query}"
+        prompt_parts = []
+        if live_context:
+            prompt_parts.append(
+                "=== DATA LIVE (dari website, SELALU terbaru & utamakan) ===\n\n"
+                f"{live_context}"
+            )
+        prompt_parts.append(
+            "=== KNOWLEDGE BASE (FAQ, SOP, panduan detail) ===\n\n"
+            f"{rag_context}"
         )
+        prompt_parts.append(f"Pertanyaan pengguna: {query}")
+
+        user_prompt = "\n\n".join(prompt_parts)
         contents.append({"role": "user", "parts": [user_prompt]})
 
         for attempt in range(max_retries + 1):

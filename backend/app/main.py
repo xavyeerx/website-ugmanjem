@@ -7,6 +7,7 @@ from app.config import settings
 from app.api.chat import router as chat_router
 from app.rag.retriever import KnowledgeRetriever
 from app.rag.generator import AnswerGenerator
+from app.rag.live_context import LiveContext
 
 
 @asynccontextmanager
@@ -27,6 +28,21 @@ async def lifespan(app: FastAPI):
         print("Make sure to run embed_knowledge.py first.")
         app.state.retriever = None
         app.state.generator = None
+
+    if settings.SUPABASE_URL and settings.SUPABASE_ANON_KEY:
+        try:
+            app.state.live_context = LiveContext(
+                supabase_url=settings.SUPABASE_URL,
+                supabase_key=settings.SUPABASE_ANON_KEY,
+            )
+            print("Live context (Supabase) connected")
+        except Exception as e:
+            print(f"WARNING: Supabase connection failed: {e}")
+            app.state.live_context = None
+    else:
+        print("Live context disabled (no Supabase credentials)")
+        app.state.live_context = None
+
     yield
 
 
@@ -52,4 +68,5 @@ async def health():
     return {
         "status": "ok",
         "rag_ready": app.state.retriever is not None,
+        "live_context": app.state.live_context is not None,
     }

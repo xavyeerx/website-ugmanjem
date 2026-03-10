@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     VECTORSTORE_PATH: str = str(PROJECT_ROOT / "vectorstore" / "chroma_db")
     COLLECTION_NAME: str = "ugm_anjem_knowledge"
     GEMINI_MODEL: str = "gemini-2.5-flash"
+    SUPABASE_URL: str = ""
+    SUPABASE_ANON_KEY: str = ""
     CORS_ORIGINS: list[str] = [
         "http://localhost:3000",
         "http://10.33.109.173",

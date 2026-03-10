@@ -11,6 +11,8 @@ services:
       - VECTORSTORE_PATH=/data/vectorstore/chroma_db
       - COLLECTION_NAME=ugm_anjem_knowledge
       - CORS_ORIGINS=["http://localhost:3000","http://10.33.109.173","http://10.33.109.173:80"]
+      - SUPABASE_URL=${SUPABASE_URL:-}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}
     volumes:
       - ../vectorstore:/data/vectorstore
     ports:
