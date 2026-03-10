@@ -1,24 +1,24 @@
 {
   "version": "1.0.0",
-  "built_at": "2026-03-03T00:39:34.792930",
+  "built_at": "2026-03-10T21:06:52.357367",
   "embedding_model": "models/text-embedding-004 (Google Gemini)",
   "total_chunks": 126,
   "sources": {
-    "pdf_panduan": {
-      "chunks": 15,
-      "last_extracted": "2026-03-03"
-    },
     "website": {
       "chunks": 17,
-      "last_extracted": "2026-03-03"
+      "last_extracted": "2026-03-10"
     },
     "faq_csv": {
       "chunks": 85,
-      "last_extracted": "2026-03-03"
+      "last_extracted": "2026-03-10"
+    },
+    "pdf_panduan": {
+      "chunks": 15,
+      "last_extracted": "2026-03-10"
     },
     "sop_driver": {
       "chunks": 9,
-      "last_extracted": "2026-03-03"
+      "last_extracted": "2026-03-10"
     }
   },
   "category_distribution": {

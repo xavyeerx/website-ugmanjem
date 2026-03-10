@@ -11,7 +11,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 1,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Siapa yang dapat menggunakan layanan Anjem UGM?\nA: Layanan ini kami fokuskan untuk Mahasiswa UGM yang membutuhkan.",
@@ -25,7 +25,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 2,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apa saja layanan yang tersedia di Anjem UGM?\nA: Anjem UGM menyediakan layanan antar jemput, jasa titip, survei kost, urus berkas, dan kebutuhan lain di kawasan kampus UGM dan Yogyakarta secara general.",
@@ -39,7 +39,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 3,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM melayani 24 jam?\nA: Layanan kami tersedia setiap saat, namun untuk pemesanan diatas pukul 00.00 - 06.00 WIB mungkin akan lebih slow respon.",
@@ -53,7 +53,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 4,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Bagaimana cara memesan layanan Anjem UGM?\nA: Pemesanan dapat dilakukan dengan bergabung ke grup WhatsApp resmi Anjem UGM (link tersedia di bio Instagram @ugm.anjem dan website anjemugm.vercel.app) dan melakukan pemesanan via grup.",
@@ -67,7 +67,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 5,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM punya aplikasi pemesanan sendiri?\nA: Belum. Saat ini pemesanan hanya dilakukan melalui grup WhatsApp resmi.",
@@ -81,7 +81,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 6,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah layanan Anjem UGM hanya untuk mahasiswa UGM?\nA: Fokus kami adalah untuk Mahasiswa UGM, sesuai dengan spirit kami yaitu Dari Mahasiswa Untuk Mahasiswa.",
@@ -95,7 +95,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 7,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Berapa tarif dasar layanan Anjem UGM?\nA: Tarif dasar Anjem UGM untuk lingkungan kampus mulai dari Rp5.000 (weekday) dan Rp5.000-Rp7.000 (weekend/malam). Untuk rute di luar area pricelist, tarif dihitung Rp2.500 per km.",
@@ -109,7 +109,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 8,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Bagaimana cara menghitung tarif layanan?\nA: Tarif dihitung berdasarkan jarak dan durasi perjalanan. Untuk rute di luar pricelist, rumusnya Jarak (km) x Rp2.500 dibulatkan ke ribuan terdekat ke bawah. Estimasi tarif dapat dicek pada menu Cek Harga Rute di website anjemugm.vercel.app.",
@@ -123,7 +123,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 9,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah tarif sudah termasuk biaya parkir?\nA: Belum. Biaya parkir ditanggung oleh penumpang dan akan diinformasikan oleh driver.",
@@ -137,7 +137,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 10,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah tarif Anjem UGM tetap atau berubah-ubah?\nA: Tarif dasar tetap, namun dapat berubah tergantung jarak, durasi, dan kondisi tertentu seperti cuaca hujan atau malam hari.",
@@ -151,7 +151,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 11,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah saya bisa memesan untuk beberapa orang sekaligus?\nA: Bisa, selama terdapat driver ready pada saat pemesanan.",
@@ -165,7 +165,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 12,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Bagaimana jika saya terlambat saat dijemput?\nA: Toleransi keterlambatan maksimal 10 menit. Setelah itu driver berhak membatalkan pesanan.",
@@ -179,7 +179,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 13,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah saya bisa membatalkan pesanan?\nA: Bisa, pembatalan dapat dilakukan selama driver yang bersangkutan belum berangkat menjemput.",
@@ -193,7 +193,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 14,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Bagaimana cara menjadi driver Anjem UGM?\nA: Untuk rekan yang berminat menjadi driver dapat mengisi form antrian pendaftaran di website anjemugm.vercel.app pada bagian Join As A Driver dan menunggu konfirmasi dari pihak admin sesuai kebutuhan.",
@@ -207,7 +207,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 15,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apa saja syarat menjadi driver Anjem UGM?\nA: Syaratnya: Mahasiswa UGM dibuktikan dengan KTM, memiliki SIM aktif, kendaraan pribadi dalam kondisi baik, KTP, memiliki 2 helm, dan bersedia mengikuti aturan operasional.",
@@ -221,7 +221,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 16,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah driver harus mahasiswa UGM?\nA: Wajib, karena konsep kami dari awal memang Dari Mahasiswa Untuk Mahasiswa.",
@@ -235,7 +235,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 17,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah ada pelatihan bagi driver?\nA: Ya, Anjem UGM akan memberikan briefing awal terkait aturan operasional, etika layanan, dan cara komunikasi dengan penumpang.",
@@ -249,7 +249,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 18,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Berapa pendapatan driver Anjem UGM?\nA: Pendapatan sangat bergantung pada jumlah order yang diambil. Tidak ada sistem bagi hasil, seluruh pendapatan dari order sepenuhnya untuk driver. Hanya ada iuran kemitraan yang dibayarkan setiap dua minggu sekali.",
@@ -263,7 +263,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 19,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Bagaimana cara menghubungi admin Anjem UGM?\nA: Anda dapat menghubungi admin melalui halaman Kontak di website anjemugm.vercel.app atau melalui WhatsApp admin di nomor 082123035583.",
@@ -277,7 +277,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 20,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM melayani rute luar kota?\nA: Untuk saat ini Anjem UGM fokus di wilayah UGM dan sekitarnya. Untuk rute luar kota dapat dibicarakan dengan admin.",
@@ -291,7 +291,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 21,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah ada minimal jarak pemesanan?\nA: Tidak ada minimal jarak. Namun tarif minimum tetap berlaku yaitu Rp5.000.",
@@ -305,7 +305,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 22,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah saya bisa memilih driver tertentu?\nA: Selama driver yang bersangkutan sedang ready, tidak ada masalah.",
@@ -319,7 +319,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 23,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM menyediakan kendaraan roda empat?\nA: Saat ini fokus pada kendaraan roda dua. Kendaraan roda empat dapat tersedia untuk rute khusus dan dijadwalkan terlebih dahulu.",
@@ -333,7 +333,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 24,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Bagaimana cara cek estimasi harga sebelum pesan?\nA: Kunjungi menu Cek Harga Rute di website anjemugm.vercel.app. Pilih jenis layanan (anjem/jastip), masukkan jarak dalam km, dan pilih kondisi opsional (hujan/dini hari) untuk melihat estimasi tarif.",
@@ -347,7 +347,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 25,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah pembayaran bisa non-tunai?\nA: Pembayaran bisa dilakukan secara Tunai ataupun Non-Tunai (QRIS) dengan driver.",
@@ -361,7 +361,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 26,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM memiliki program diskon?\nA: Ya, Anjem UGM sesekali mengadakan promo atau diskon. Informasi promo dibagikan di grup WhatsApp resmi dan media sosial kami.",
@@ -375,7 +375,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 27,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM menerima penumpang dengan barang bawaan banyak?\nA: Bisa, namun pastikan menginformasikan kepada driver terlebih dahulu agar disesuaikan kapasitas kendaraan.",
@@ -389,7 +389,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 28,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah saya bisa menjadwalkan jemputan untuk besok?\nA: Bisa, Anda dapat melakukan pemesanan terjadwal melalui grup WhatsApp sejak H-1.",
@@ -403,7 +403,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 29,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Bagaimana jika saya kehilangan barang di kendaraan Anjem UGM?\nA: Segera hubungi admin atau driver yang bersangkutan. Anjem UGM akan membantu proses pencarian barang hilang.",
@@ -417,7 +417,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 30,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM menerima pembayaran QRIS?\nA: Ya, saat ini kami sudah menyediakan pembayaran via QRIS.",
@@ -431,7 +431,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 31,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM menyediakan helm untuk penumpang?\nA: Ya, setiap driver wajib menyediakan helm standar SNI untuk penumpang.",
@@ -445,7 +445,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 32,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Bagaimana jika helm yang disediakan tidak bersih?\nA: Anda berhak meminta helm yang lebih bersih kepada driver atau menggunakan helm pribadi Anda.",
@@ -459,7 +459,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 33,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah saya bisa membawa hewan peliharaan?\nA: Bisa untuk hewan kecil seperti kucing, namun harus diberitahu ke driver sebelum berangkat.",
@@ -473,7 +473,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 34,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM memiliki asuransi penumpang?\nA: Saat ini belum ada asuransi penumpang, namun keamanan dan kenyamanan selalu menjadi prioritas kami.",
@@ -487,7 +487,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 35,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Bagaimana kebijakan barang tertinggal di kendaraan?\nA: Barang yang tertinggal akan disimpan oleh driver atau admin selama maksimal 7 hari.",
@@ -501,7 +501,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 36,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah ada biaya tambahan untuk waktu malam?\nA: Ya, tambahan biaya sebesar Rp1.000 berlaku untuk perjalanan setelah pukul 22.00 WIB.",
@@ -515,7 +515,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 37,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah saya bisa menentukan rute sendiri?\nA: Bisa, asalkan masih dalam jangkauan area operasional Yogyakarta.",
@@ -529,7 +529,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 38,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM bisa menjemput di luar area UGM?\nA: Bisa dengan persetujuan admin, namun tarif akan menyesuaikan jarak.",
@@ -543,7 +543,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 39,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah driver Anjem UGM sudah terverifikasi?\nA: Ya, semua driver telah diverifikasi identitas dan dokumennya sebelum aktif melayani.",
@@ -557,7 +557,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 40,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Bagaimana sistem bagi hasil driver?\nA: Tidak ada sistem bagi hasil. Seluruh pendapatan dari order sepenuhnya milik driver. Namun terdapat iuran kemitraan yang dibayarkan setiap dua minggu sekali kepada manajemen Anjem UGM.",
@@ -571,7 +571,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 41,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah ada biaya pendaftaran untuk driver?\nA: Tidak ada biaya pendaftaran untuk menjadi driver Anjem UGM.",
@@ -585,7 +585,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 42,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah driver mendapatkan seragam?\nA: Tidak ada atribut resmi untuk driver, cukup kenakan baju bebas sopan, rapi, dan wangi.",
@@ -599,7 +599,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 43,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah ada sistem rating driver?\nA: Ya, pengguna dapat memberikan penilaian setelah perjalanan melalui formulir feedback.",
@@ -613,7 +613,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 44,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah penumpang bisa memberi tip ke driver?\nA: Bisa, tip bersifat sukarela dan langsung diberikan ke driver.",
@@ -627,7 +627,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 45,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM menerima driver perempuan?\nA: Ya, Anjem UGM terbuka untuk semua gender yang memenuhi syarat.",
@@ -641,7 +641,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 46,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah driver boleh menolak pesanan?\nA: Driver boleh menolak jika ada alasan logis seperti cuaca buruk atau kendala kendaraan.",
@@ -655,7 +655,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 47,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM melayani ke bandara Yogyakarta International Airport?\nA: Ya, tersedia layanan ke dan dari bandara dengan tarif khusus.",
@@ -669,7 +669,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 48,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah ada layanan antar paket?\nA: Ya, Anjem UGM dapat menyediakan layanan pengantaran barang kecil.",
@@ -683,7 +683,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 49,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah bisa memesan lewat website?\nA: Website anjemugm.vercel.app menampilkan informasi lengkap, pricelist, kalkulator harga, dan chatbot tanya jawab. Namun pemesanan tetap dilakukan via Grup WhatsApp.",
@@ -697,7 +697,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 50,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Bagaimana cara tahu lokasi driver saya?\nA: Driver akan mengirimkan share lokasi real-time melalui WhatsApp sebelum penjemputan.",
@@ -711,7 +711,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 51,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM memiliki layanan pelanggan?\nA: Ya, Anda dapat menghubungi layanan pelanggan melalui halaman kontak di website atau WhatsApp admin.",
@@ -725,7 +725,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 52,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah ada batas maksimal berat barang bawaan?\nA: Disarankan maksimal 5 kg untuk perjalanan motor.",
@@ -739,7 +739,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 53,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Bagaimana jika terjadi kecelakaan?\nA: Segera hubungi admin Anjem UGM untuk penanganan lebih lanjut.",
@@ -753,7 +753,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 54,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah saya bisa mengganti jadwal jemput?\nA: Bisa, konfirmasikan ke driver sebelum driver berangkat.",
@@ -767,7 +767,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 55,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM menyediakan layanan berlangganan?\nA: Tidak, semua orderan melalui grup WA untuk meningkatkan ketersediaan.",
@@ -781,7 +781,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 56,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah ada batas jarak maksimum layanan?\nA: Tidak ada batas jarak maksimum. Untuk rute jauh di luar pricelist berlaku tarif Rp2.500 per km.",
@@ -795,7 +795,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 57,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah Anjem UGM melayani area kampus selain UGM?\nA: Bisa, terutama area sekitar UGM seperti UNY atau UPN.",
@@ -809,7 +809,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 58,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah data saya aman saat mendaftar driver?\nA: Ya, semua data pendaftar disimpan dengan aman dan tidak dibagikan ke pihak lain selain admin.",
@@ -823,7 +823,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 59,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
     "content": "Q: Apakah saya bisa pesan jasa lain diluar yang tertera?\nA: Ya, kami siap membantu kebutuhan anda selama tidak menyalahi prosedur ketentuan yang berlaku dan bisa dihandle oleh driver.",
@@ -837,7 +837,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 60,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Bagaimana jika saya mendapatkan perlakuan yang kurang baik dari driver?\nA: Kami sangat menjunjung tinggi kenyamanan dan keamanan customer. Apabila terdapat tindakan tidak baik dari driver (pelecehan, kekerasan, dll), dapat melaporkan segera ke admin Anjem UGM beserta bukti.",
@@ -851,7 +851,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 61,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Berapa detail tarif anjem weekday di area pricelist?\nA: Tarif weekday (saat gerbang kampus terbuka): Rp5.000 untuk area dekat (Sendowo, Pogung, Klebengan), Rp6.000 untuk area kos lebih dari 2.5 km, dan maksimal Rp6.000 untuk jarak lebih dari 3 km. Harga wajib berkisar Rp5.000 - Rp6.000 saat weekday.",
@@ -865,7 +865,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 62,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Berapa detail tarif anjem weekend atau malam hari?\nA: Tarif weekend/malam (saat gerbang kampus tertutup): Rp5.000 untuk area dekat sesuai pricelist, Rp6.000 untuk area terdampak muter sekitar 2.5-3 km, dan Rp7.000 untuk area terdampak muter sekitar 3-4 km. Tidak boleh lebih dari Rp7.000 jika jarak belum melebihi 4 km.",
@@ -879,7 +879,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 63,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Berapa tarif untuk rute di luar area pricelist?\nA: Untuk tujuan di luar area pricelist, berlaku tarif Rp2.500 per kilometer. Rumus: Jarak (km) x Rp2.500. Hasil perhitungan dibulatkan ke ribuan terdekat ke bawah. Tarif minimum tetap Rp5.000.",
@@ -893,7 +893,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 64,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Bagaimana contoh perhitungan tarif per kilometer untuk rute di luar pricelist?\nA: Contoh: Jarak 4,56 km maka 4,56 x Rp2.500 = Rp11.400, dibulatkan ke bawah menjadi Rp11.000. Tarif minimum tetap Rp5.000 meskipun perhitungan menghasilkan angka lebih rendah.",
@@ -907,7 +907,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 65,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Berapa detail tambahan biaya saat kondisi hujan?\nA: Saat hujan terdapat fee tambahan bervariasi: +Rp1.000 jika driver pakai mantel dan customer tidak memakai mantel, +Rp2.000 jika customer memakai mantel dari driver, +Rp3.000 jika keduanya pakai mantel DAN hujan deras ditambah jarak jauh.",
@@ -921,7 +921,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 66,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Bagaimana ketentuan jika ingin transit atau mampir saat perjalanan?\nA: Transit searah atau beda arah tapi dekat dengan waktu tunggu maksimal 7 menit: GRATIS (dihitung satu perjalanan). Transit dengan waktu tunggu lebih dari 7 menit: tambahan Rp1.000-Rp2.000. Transit beda arah jauh: dihitung sebagai 2x orderan terpisah. Tips: sampaikan ke driver sejak awal agar bisa memperkirakan rute dan biaya.",
@@ -935,7 +935,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 67,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Berapa tarif jasa titip makanan dengan menunggu?\nA: Tarif jasa titip makanan (dengan menunggu driver menunggu pesanan siap) mulai dari Rp6.000, tergantung jarak dan kondisi.",
@@ -949,7 +949,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 68,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Berapa tarif jasa titip barang tanpa menunggu?\nA: Tarif jasa titip barang (tanpa menunggu, driver langsung ambil) mulai dari Rp5.000, tergantung jarak dan kondisi.",
@@ -963,7 +963,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 69,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Berapa tarif layanan survei kost?\nA: Tarif layanan survei kost mulai dari Rp15.000, tergantung lokasi dan lama waktu tunggu. Driver akan mengantar dan menemani survei lokasi kos yang diinginkan.",
@@ -977,7 +977,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 70,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Berapa tarif layanan urus berkas kampus?\nA: Tarif layanan urus berkas kampus mulai dari Rp15.000, tergantung kompleksitas dan lokasi. Layanan mencakup legalisir, pengambilan surat, dan keperluan administrasi lainnya.",
@@ -991,7 +991,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 71,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Apa link website resmi UGM Anjem?\nA: Website resmi UGM Anjem adalah anjemugm.vercel.app. Di website tersedia informasi lengkap layanan, pricelist, kalkulator estimasi harga, chatbot tanya jawab, dan form pendaftaran driver.",
@@ -1005,7 +1005,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 72,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Apa saja akun media sosial resmi UGM Anjem?\nA: UGM Anjem memiliki akun resmi di Instagram (@ugm.anjem), TikTok (@ugm.anjem), dan WhatsApp (link grup tersedia di website dan bio Instagram). Kunjungi media sosial kami untuk info terbaru dan promo.",
@@ -1019,7 +1019,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 73,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Apa link grup WhatsApp resmi UGM Anjem?\nA: Link grup WhatsApp resmi UGM Anjem dapat diakses melalui website anjemugm.vercel.app atau melalui bio Instagram @ugm.anjem. UGM Anjem memiliki 3 grup WhatsApp aktif. Pastikan bergabung ke grup resmi untuk keamanan.",
@@ -1033,7 +1033,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 74,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Apakah website UGM Anjem memiliki fitur kalkulator estimasi harga?\nA: Ya, di website anjemugm.vercel.app terdapat fitur Cek Harga Rute. Anda bisa memilih jenis layanan (anjem atau jastip), memasukkan jarak dalam km, dan menambahkan kondisi opsional (hujan atau dini hari) untuk mendapatkan estimasi biaya perjalanan.",
@@ -1047,7 +1047,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 75,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Berapa jumlah driver aktif UGM Anjem saat ini?\nA: Saat ini UGM Anjem memiliki 20 driver aktif yang semuanya merupakan mahasiswa UGM terverifikasi.",
@@ -1061,7 +1061,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 76,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Berapa statistik UGM Anjem secara keseluruhan?\nA: Statistik UGM Anjem per Maret 2026: 20 driver aktif, 3 grup WhatsApp, 3.000+ order selesai, dan 2.000+ member grup.",
@@ -1075,7 +1075,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 77,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Dimana link form pendaftaran untuk menjadi driver UGM Anjem?\nA: Form pendaftaran driver dapat diakses melalui halaman Join As A Driver di website anjemugm.vercel.app. Setelah mengisi form, tim admin akan menghubungi pendaftar untuk proses verifikasi dan briefing selanjutnya.",
@@ -1089,7 +1089,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 78,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Apakah mitra driver wajib membayar iuran kemitraan?\nA: Ya, mitra driver wajib membayar iuran kemitraan setiap dua minggu sekali. Iuran wajib disetor tepat waktu maksimal H+3 dari jadwal. Tidak ada sistem bagi hasil, seluruh pendapatan dari order sepenuhnya milik driver.",
@@ -1103,7 +1103,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 79,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Bagaimana cara memastikan yang menghubungi saya adalah driver resmi UGM Anjem?\nA: Pastikan yang menghubungi Anda via Personal Chat (PC) adalah ADMIN GRUP resmi WhatsApp UGM Anjem. Jika yang menghubungi bukan admin, segera laporkan ke admin grup. Hanya terima order dari admin grup demi keamanan.",
@@ -1117,7 +1117,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 80,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Apa yang harus dilakukan jika ada pihak meminta transfer pembayaran sebelum layanan?\nA: Segera laporkan ke admin. Pembayaran UGM Anjem dilakukan LANGSUNG ke driver setelah layanan selesai (tunai atau QRIS), bukan melalui transfer ke rekening tertentu sebelum layanan. Jangan pernah melakukan transfer terlebih dahulu.",
@@ -1131,7 +1131,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 81,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Apa contoh format pesan untuk order di grup WhatsApp?\nA: Contoh pesan order yang baik: 'Ada yang bisa anjem dari Pogung ke Kampus SV?', 'Mau jastip makanan dari Warmindo Sendowo dong', 'Butuh anjem dari FEB ke kos Jakal, ada yang ready?'. Sebutkan jenis layanan, lokasi jemput, dan tujuan secara jelas.",
@@ -1145,7 +1145,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 82,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Apa yang terjadi jika dalam 10 menit tidak ada driver yang merespon pesanan saya?\nA: Jika dalam 10 menit tidak ada respon dari driver, berarti semua driver sedang tidak aktif (off). Silakan coba lagi nanti atau di waktu yang berbeda. Layanan tersedia setiap saat namun ketersediaan driver tergantung jadwal masing-masing.",
@@ -1159,7 +1159,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 83,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Apa keunggulan UGM Anjem dibanding ojek online biasa?\nA: Keunggulan: (1) Driver 100% mahasiswa UGM yang paham jalur dalam kampus termasuk jalur yang tidak terjangkau ojol biasa, (2) Tarif lebih terjangkau mulai Rp5.000, (3) Fleksibel cukup chat di grup WhatsApp tanpa install aplikasi, (4) Bonus mendapat relasi sesama mahasiswa, (5) Bisa request jasa di luar layanan standar.",
@@ -1173,7 +1173,7 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 84,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
     "content": "Q: Apa tagline atau semboyan UGM Anjem?\nA: Tagline UGM Anjem adalah #ChatKamiAja. Semboyan kami: Dari Mahasiswa Untuk Mahasiswa. UGM Anjem hadir sebagai solusi mobilitas dan jastipan terpercaya barisan mahasiswa UGM.",
@@ -1187,6 +1187,6 @@
     "source": "faq_csv",
     "source_file": "data/anjem_faq_60.csv",
     "faq_index": 85,
-    "extracted_at": "2026-03-03T00:39:29.784391"
+    "extracted_at": "2026-03-10T21:06:47.935718"
   }
 ]

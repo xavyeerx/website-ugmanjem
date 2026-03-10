@@ -129,12 +129,19 @@ def parse_constants():
     driver_reg = re.search(r'DRIVER_REGISTRATION_URL\s*=\s*"(.+?)"', content)
     ig = re.search(r'instagram:\s*"(.+?)"', content)
     tiktok = re.search(r'tiktok:\s*"(.+?)"', content)
+    email = re.search(r'email:\s*"(.+?)"', content)
 
     lines = ["Kontak & Media Sosial UGM Anjem:", "- Website: anjemugm.vercel.app"]
     if ig:
         lines.append(f"- Instagram: {ig.group(1)}")
     if tiktok:
         lines.append(f"- TikTok: {tiktok.group(1)}")
+    if email:
+        email_addr = re.search(r'to=(.+?)$', email.group(1))
+        if email_addr:
+            lines.append(f"- Email: {email_addr.group(1)}")
+        else:
+            lines.append(f"- Email: {email.group(1)}")
     if wa_order:
         lines.append(f"- Link Grup WhatsApp: {wa_order.group(1)}")
     if wa_admin:

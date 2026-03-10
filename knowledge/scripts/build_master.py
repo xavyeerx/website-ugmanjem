@@ -14,9 +14,9 @@ PROCESSED_DIR = Path(__file__).resolve().parent.parent / "processed"
 METADATA_DIR = Path(__file__).resolve().parent.parent / "metadata"
 
 SOURCE_PRIORITY = {
-    "pdf_panduan": 1,
-    "website": 2,
-    "faq_csv": 3,
+    "website": 1,
+    "faq_csv": 2,
+    "pdf_panduan": 3,
     "sop_driver": 4,
 }
 
