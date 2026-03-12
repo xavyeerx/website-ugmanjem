@@ -219,24 +219,29 @@
       }
     },
     {
-      "title": "--- RESOURCE UTILIZATION ---",
+      "title": "Resource Utilization — CPU, Memory, Network, Disk (per Container & Host VPS)",
       "type": "text",
-      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 32 },
+      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 32 },
       "options": {
-        "mode": "markdown",
-        "content": "## Resource Utilization\nCPU, Memory, Network, dan Disk usage per container dan host VPS"
+        "mode": "html",
+        "content": "<div style=\"padding:8px 0\"><h2 style=\"margin:0;color:#73BF69\">Resource Utilization</h2><p style=\"margin:4px 0 0;color:#8e8e8e\">CPU, Memory, Network, dan Disk usage per container dan host VPS</p></div>"
       }
     },
     {
       "title": "Container CPU Usage (%)",
       "description": "CPU usage percentage per Docker container",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 34 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 35 },
       "targets": [
         {
-          "expr": "rate(container_cpu_usage_seconds_total{name=~\"anjem-.*\"}[1m]) * 100",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{name=~\"anjem-.*\",cpu=\"total\"}[1m])) by (name) * 100",
           "legendFormat": "{{ name }}",
           "refId": "A"
+        },
+        {
+          "expr": "sum(rate(container_cpu_usage_seconds_total{name=~\"anjem-.*\"}[1m])) by (name) * 100",
+          "legendFormat": "{{ name }}",
+          "refId": "B"
         }
       ],
       "fieldConfig": {
@@ -247,7 +252,7 @@
       "title": "Container Memory Usage",
       "description": "Memory usage per Docker container",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 34 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 35 },
       "targets": [
         {
           "expr": "container_memory_usage_bytes{name=~\"anjem-.*\"} / 1024 / 1024",
@@ -263,7 +268,7 @@
       "title": "Host CPU Usage (%)",
       "description": "Overall VPS CPU utilization",
       "type": "gauge",
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 42 },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 43 },
       "targets": [
         {
           "expr": "(1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m]))) * 100",
@@ -290,7 +295,7 @@
       "title": "Host Memory Usage (%)",
       "description": "Overall VPS RAM utilization",
       "type": "gauge",
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 42 },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 43 },
       "targets": [
         {
           "expr": "(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100",
@@ -317,7 +322,7 @@
       "title": "Host Disk Usage (%)",
       "description": "VPS disk utilization",
       "type": "gauge",
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 42 },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 43 },
       "targets": [
         {
           "expr": "(1 - node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100",
@@ -344,7 +349,7 @@
       "title": "Container Network I/O",
       "description": "Network receive/transmit per container",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 50 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 51 },
       "targets": [
         {
           "expr": "rate(container_network_receive_bytes_total{name=~\"anjem-.*\"}[1m])",
@@ -365,7 +370,7 @@
       "title": "Container Memory Breakdown",
       "description": "Memory per container as a stacked bar",
       "type": "barchart",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 50 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 51 },
       "targets": [
         {
           "expr": "container_memory_usage_bytes{name=~\"anjem-.*\"} / 1024 / 1024",
@@ -379,19 +384,19 @@
       }
     },
     {
-      "title": "--- RELIABILITY & AVAILABILITY ---",
+      "title": "Reliability & Availability — Success Rate, Uptime, Error Tracking",
       "type": "text",
-      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 58 },
+      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 59 },
       "options": {
-        "mode": "markdown",
-        "content": "## Reliability & Availability\nSuccess rate, uptime, error tracking, dan service availability"
+        "mode": "html",
+        "content": "<div style=\"padding:8px 0\"><h2 style=\"margin:0;color:#FF9830\">Reliability & Availability</h2><p style=\"margin:4px 0 0;color:#8e8e8e\">Success rate, uptime, error tracking, dan service availability</p></div>"
       }
     },
     {
       "title": "Chat Success Rate (Availability %)",
       "description": "Percentage of successful chat responses — key SLA metric",
       "type": "gauge",
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 60 },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 62 },
       "targets": [
         {
           "expr": "sum(rate(chatbot_chat_requests_total{status=\"success\"}[5m])) / sum(rate(chatbot_chat_requests_total[5m])) * 100",
@@ -418,7 +423,7 @@
       "title": "Success Rate Over Time",
       "description": "Chat success rate trend — tracks reliability over time",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 60 },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 62 },
       "targets": [
         {
           "expr": "sum(rate(chatbot_chat_requests_total{status=\"success\"}[5m])) / sum(rate(chatbot_chat_requests_total[5m])) * 100",
@@ -444,7 +449,7 @@
       "title": "Error Breakdown by Type",
       "description": "Errors categorized: rate_limited vs other failures",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 60 },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 62 },
       "targets": [
         {
           "expr": "rate(chatbot_chat_requests_total{status=\"error\"}[5m]) * 60",
@@ -472,7 +477,7 @@
       "title": "Total Requests (Cumulative)",
       "description": "Total requests processed since startup — shows overall load",
       "type": "stat",
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 68 },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 70 },
       "targets": [
         {
           "expr": "sum(chatbot_chat_requests_total)",
@@ -488,7 +493,7 @@
       "title": "Uptime (Backend Container)",
       "description": "How long the backend has been running",
       "type": "stat",
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 68 },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 70 },
       "targets": [
         {
           "expr": "time() - process_start_time_seconds{job=\"chatbot-backend\"}",
@@ -504,7 +509,7 @@
       "title": "HTTP Error Codes Over Time",
       "description": "All non-200 HTTP responses tracked over time",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 68 },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 70 },
       "targets": [
         {
           "expr": "rate(chatbot_http_requests_total{status!=\"200\"}[1m]) * 60",
