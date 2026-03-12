@@ -1,0 +1,229 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "title": "Chat Requests / min",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(chatbot_chat_requests_total[1m]) * 60",
+          "legendFormat": "{{ status }}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "reqpm" }
+      }
+    },
+    {
+      "title": "End-to-End Latency (p50 / p95 / p99)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, rate(chatbot_chat_e2e_duration_seconds_bucket[5m]))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, rate(chatbot_chat_e2e_duration_seconds_bucket[5m]))",
+          "legendFormat": "p95",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, rate(chatbot_chat_e2e_duration_seconds_bucket[5m]))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "s" }
+      }
+    },
+    {
+      "title": "Error Rate (%)",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(chatbot_chat_requests_total{status!=\"success\"}[5m])) / sum(rate(chatbot_chat_requests_total[5m])) * 100",
+          "legendFormat": "error %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 5 },
+              { "color": "red", "value": 20 }
+            ]
+          },
+          "min": 0,
+          "max": 100
+        }
+      }
+    },
+    {
+      "title": "Pipeline Latency Breakdown",
+      "description": "Avg latency per RAG pipeline stage",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "rate(chatbot_retrieval_duration_seconds_sum[5m]) / rate(chatbot_retrieval_duration_seconds_count[5m])",
+          "legendFormat": "Retrieval (ChromaDB)",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(chatbot_live_context_duration_seconds_sum[5m]) / rate(chatbot_live_context_duration_seconds_count[5m])",
+          "legendFormat": "Live Context (Supabase)",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(chatbot_generation_duration_seconds_sum[5m]) / rate(chatbot_generation_duration_seconds_count[5m])",
+          "legendFormat": "Generation (Gemini)",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "s" }
+      }
+    },
+    {
+      "title": "Generation Latency Distribution",
+      "type": "histogram",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "expr": "rate(chatbot_generation_duration_seconds_bucket[5m])",
+          "legendFormat": "{{ le }}",
+          "refId": "A",
+          "format": "heatmap"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "s" }
+      }
+    },
+    {
+      "title": "Retrieval Quality (Avg Distance)",
+      "description": "Lower distance = more relevant retrieval. Track retrieval quality over time.",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "chatbot_retrieval_distance_sum / chatbot_retrieval_distance_count",
+          "legendFormat": "avg distance",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "none" }
+      }
+    },
+    {
+      "title": "Live Context Cache Hit Rate (%)",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 16 },
+      "targets": [
+        {
+          "expr": "rate(chatbot_live_context_cache_hits_total[5m]) / (rate(chatbot_live_context_cache_hits_total[5m]) + rate(chatbot_live_context_cache_misses_total[5m])) * 100",
+          "legendFormat": "hit rate %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 50 },
+              { "color": "green", "value": 80 }
+            ]
+          },
+          "min": 0,
+          "max": 100
+        }
+      }
+    },
+    {
+      "title": "Gemini API Retries & Errors",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 16 },
+      "targets": [
+        {
+          "expr": "rate(chatbot_generation_retries_total[5m]) * 60",
+          "legendFormat": "retries/min",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(chatbot_generation_errors_total[5m]) * 60",
+          "legendFormat": "errors/min ({{ error_type }})",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "title": "In-Flight Requests",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 24 },
+      "targets": [
+        {
+          "expr": "chatbot_http_requests_in_progress",
+          "legendFormat": "{{ endpoint }}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Input / Output Characters (Avg)",
+      "description": "Average prompt size and response size per request",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 24 },
+      "targets": [
+        {
+          "expr": "chatbot_generation_input_chars_sum / chatbot_generation_input_chars_count",
+          "legendFormat": "avg input chars",
+          "refId": "A"
+        },
+        {
+          "expr": "chatbot_generation_output_chars_sum / chatbot_generation_output_chars_count",
+          "legendFormat": "avg output chars",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "title": "HTTP Request Rate by Status",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 24 },
+      "targets": [
+        {
+          "expr": "rate(chatbot_http_requests_total[1m]) * 60",
+          "legendFormat": "{{ method }} {{ endpoint }} {{ status }}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "reqpm" }
+      }
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["chatbot", "rag", "qos", "ugm-anjem"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "title": "UGM Anjem Chatbot - QoS Dashboard",
+  "uid": "ugm-anjem-qos",
+  "version": 1
+}

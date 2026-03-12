@@ -11,6 +11,13 @@ from dataclasses import dataclass, field
 
 from supabase import create_client, Client
 
+from app.metrics import (
+    LIVE_CTX_LATENCY,
+    LIVE_CTX_CACHE_HIT,
+    LIVE_CTX_CACHE_MISS,
+    LIVE_CTX_ERRORS,
+)
+
 logger = logging.getLogger(__name__)
 
 CACHE_TTL_SECONDS = 300  # 5 minutes
@@ -31,14 +38,21 @@ class LiveContext:
         return (time.time() - self._cache.fetched_at) < CACHE_TTL_SECONDS
 
     def get_context(self) -> str:
+        start = time.perf_counter()
         if self._is_cache_fresh():
+            LIVE_CTX_CACHE_HIT.inc()
+            LIVE_CTX_LATENCY.observe(time.perf_counter() - start)
             return self._cache.text
 
+        LIVE_CTX_CACHE_MISS.inc()
         try:
             text = self._fetch_and_format()
             self._cache = _Cache(text=text, fetched_at=time.time())
+            LIVE_CTX_LATENCY.observe(time.perf_counter() - start)
             return text
         except Exception as e:
+            LIVE_CTX_ERRORS.inc()
+            LIVE_CTX_LATENCY.observe(time.perf_counter() - start)
             logger.warning(f"Supabase fetch failed, using stale cache: {e}")
             return self._cache.text
 

@@ -3,6 +3,13 @@ import logging
 
 import google.generativeai as genai
 from app.rag.prompts import SYSTEM_PROMPT
+from app.metrics import (
+    GENERATION_LATENCY,
+    GENERATION_RETRIES,
+    GENERATION_ERRORS,
+    GENERATION_INPUT_CHARS,
+    GENERATION_OUTPUT_CHARS,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -49,14 +56,26 @@ class AnswerGenerator:
         user_prompt = "\n\n".join(prompt_parts)
         contents.append({"role": "user", "parts": [user_prompt]})
 
+        total_input_chars = sum(
+            len(part) for msg in contents for part in msg.get("parts", []) if isinstance(part, str)
+        )
+        GENERATION_INPUT_CHARS.observe(total_input_chars)
+
+        start = time.perf_counter()
         for attempt in range(max_retries + 1):
             try:
                 response = self.model.generate_content(contents)
+                GENERATION_LATENCY.observe(time.perf_counter() - start)
+                GENERATION_OUTPUT_CHARS.observe(len(response.text))
                 return response.text
             except Exception as e:
                 if ("RESOURCE_EXHAUSTED" in str(e) or "429" in str(e)) and attempt < max_retries:
+                    GENERATION_RETRIES.inc()
                     wait = 5 * (attempt + 1)
                     logger.warning(f"Rate limited (attempt {attempt + 1}), retrying in {wait}s...")
                     time.sleep(wait)
                     continue
+                error_type = "rate_limited" if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e) else "other"
+                GENERATION_ERRORS.labels(error_type=error_type).inc()
+                GENERATION_LATENCY.observe(time.perf_counter() - start)
                 raise

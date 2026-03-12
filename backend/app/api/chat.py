@@ -1,7 +1,10 @@
+import time
 import logging
 
 from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
+
+from app.metrics import CHAT_E2E_LATENCY, CHAT_REQUESTS_TOTAL
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -29,10 +32,13 @@ class ChatResponse(BaseModel):
 
 @router.post("/api/chat", response_model=ChatResponse)
 async def chat(body: ChatRequest, request: Request):
+    start = time.perf_counter()
+
     retriever = request.app.state.retriever
     generator = request.app.state.generator
 
     if not retriever or not generator:
+        CHAT_REQUESTS_TOTAL.labels(status="error").inc()
         raise HTTPException(
             status_code=503,
             detail="RAG engine belum siap. Jalankan embed_knowledge.py terlebih dahulu.",
@@ -41,6 +47,7 @@ async def chat(body: ChatRequest, request: Request):
     try:
         chunks = retriever.search(body.message, n_results=5)
     except Exception as e:
+        CHAT_REQUESTS_TOTAL.labels(status="error").inc()
         logger.error(f"Retriever error: {e}")
         raise HTTPException(status_code=502, detail="Gagal mengambil konteks dari knowledge base.")
 
@@ -65,10 +72,14 @@ async def chat(body: ChatRequest, request: Request):
         error_msg = str(e)
         logger.error(f"Generator error: {error_msg}")
         if "RESOURCE_EXHAUSTED" in error_msg or "429" in error_msg:
+            CHAT_REQUESTS_TOTAL.labels(status="rate_limited").inc()
+            CHAT_E2E_LATENCY.observe(time.perf_counter() - start)
             raise HTTPException(
                 status_code=429,
                 detail="Kuota API Gemini sedang habis. Silakan coba lagi dalam beberapa menit.",
             )
+        CHAT_REQUESTS_TOTAL.labels(status="error").inc()
+        CHAT_E2E_LATENCY.observe(time.perf_counter() - start)
         raise HTTPException(status_code=502, detail="Gagal menghasilkan jawaban dari AI.")
 
     seen = set()
@@ -82,5 +93,8 @@ async def chat(body: ChatRequest, request: Request):
                 source=meta.get("source", "unknown"),
                 section=meta.get("section", ""),
             ))
+
+    CHAT_REQUESTS_TOTAL.labels(status="success").inc()
+    CHAT_E2E_LATENCY.observe(time.perf_counter() - start)
 
     return ChatResponse(answer=answer, sources=sources)

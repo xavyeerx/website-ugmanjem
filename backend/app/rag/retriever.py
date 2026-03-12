@@ -1,5 +1,14 @@
+import time
+
 import google.generativeai as genai
 import chromadb
+
+from app.metrics import (
+    RETRIEVAL_LATENCY,
+    RETRIEVAL_CHUNKS,
+    RETRIEVAL_DISTANCE,
+    RETRIEVAL_ERRORS,
+)
 
 EMBEDDING_MODEL = "models/gemini-embedding-001"
 
@@ -14,24 +23,35 @@ class KnowledgeRetriever:
         return self.collection.count()
 
     def search(self, query: str, n_results: int = 5) -> list[dict]:
-        query_embedding = genai.embed_content(
-            model=EMBEDDING_MODEL,
-            content=query,
-            task_type="retrieval_query",
-        )["embedding"]
+        start = time.perf_counter()
+        try:
+            query_embedding = genai.embed_content(
+                model=EMBEDDING_MODEL,
+                content=query,
+                task_type="retrieval_query",
+            )["embedding"]
 
-        results = self.collection.query(
-            query_embeddings=[query_embedding],
-            n_results=n_results,
-            include=["documents", "metadatas", "distances"],
-        )
+            results = self.collection.query(
+                query_embeddings=[query_embedding],
+                n_results=n_results,
+                include=["documents", "metadatas", "distances"],
+            )
 
-        chunks = []
-        if results and results["ids"] and results["ids"][0]:
-            for i in range(len(results["ids"][0])):
-                chunks.append({
-                    "content": results["documents"][0][i],
-                    "metadata": results["metadatas"][0][i] or {},
-                    "distance": results["distances"][0][i] if results["distances"] else 0,
-                })
-        return chunks
+            chunks = []
+            if results and results["ids"] and results["ids"][0]:
+                for i in range(len(results["ids"][0])):
+                    dist = results["distances"][0][i] if results["distances"] else 0
+                    RETRIEVAL_DISTANCE.observe(dist)
+                    chunks.append({
+                        "content": results["documents"][0][i],
+                        "metadata": results["metadatas"][0][i] or {},
+                        "distance": dist,
+                    })
+
+            RETRIEVAL_CHUNKS.observe(len(chunks))
+            return chunks
+        except Exception:
+            RETRIEVAL_ERRORS.inc()
+            raise
+        finally:
+            RETRIEVAL_LATENCY.observe(time.perf_counter() - start)
