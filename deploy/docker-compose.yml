@@ -94,29 +94,15 @@ services:
     depends_on:
       - prometheus
 
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.51.0
-    container_name: anjem-cadvisor
+  docker-exporter:
+    build:
+      context: ./docker-exporter
+    container_name: anjem-docker-exporter
     restart: unless-stopped
-    privileged: true
-    environment:
-      - DOCKER_API_VERSION=1.45
-    devices:
-      - /dev/kmsg:/dev/kmsg
     volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    command:
-      - "--housekeeping_interval=15s"
-      - "--store_container_labels=true"
-      - "--whitelisted_container_labels=com.docker.compose.service,com.docker.compose.project"
     ports:
-      - "8080:8080"
+      - "9200:9200"
 
   node-exporter:
     image: prom/node-exporter:latest

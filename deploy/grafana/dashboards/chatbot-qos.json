@@ -234,19 +234,9 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 35 },
       "targets": [
         {
-          "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service!=\"\"}[1m])) by (container_label_com_docker_compose_service) * 100",
-          "legendFormat": "{{ container_label_com_docker_compose_service }}",
+          "expr": "docker_container_cpu_percent",
+          "legendFormat": "{{ compose_service }}",
           "refId": "A"
-        },
-        {
-          "expr": "sum(rate(container_cpu_usage_seconds_total{name=~\"anjem-.*\"}[1m])) by (name) * 100",
-          "legendFormat": "{{ name }}",
-          "refId": "B"
-        },
-        {
-          "expr": "sum(rate(container_cpu_usage_seconds_total{id=~\"/system.slice/docker-.*\"}[1m])) by (id) * 100",
-          "legendFormat": "{{ id }}",
-          "refId": "C"
         }
       ],
       "fieldConfig": {
@@ -260,14 +250,9 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 35 },
       "targets": [
         {
-          "expr": "container_memory_usage_bytes{container_label_com_docker_compose_service!=\"\"} / 1024 / 1024",
-          "legendFormat": "{{ container_label_com_docker_compose_service }}",
+          "expr": "docker_container_memory_bytes / 1024 / 1024",
+          "legendFormat": "{{ compose_service }}",
           "refId": "A"
-        },
-        {
-          "expr": "container_memory_usage_bytes{name=~\"anjem-.*\"} / 1024 / 1024",
-          "legendFormat": "{{ name }}",
-          "refId": "B"
         }
       ],
       "fieldConfig": {
@@ -362,13 +347,13 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 51 },
       "targets": [
         {
-          "expr": "rate(container_network_receive_bytes_total{container_label_com_docker_compose_service!=\"\"}[1m])",
-          "legendFormat": "{{ container_label_com_docker_compose_service }} RX",
+          "expr": "docker_container_network_rx_bytes",
+          "legendFormat": "{{ compose_service }} RX",
           "refId": "A"
         },
         {
-          "expr": "rate(container_network_transmit_bytes_total{container_label_com_docker_compose_service!=\"\"}[1m])",
-          "legendFormat": "{{ container_label_com_docker_compose_service }} TX",
+          "expr": "docker_container_network_tx_bytes",
+          "legendFormat": "{{ compose_service }} TX",
           "refId": "B"
         }
       ],
@@ -383,8 +368,8 @@
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 51 },
       "targets": [
         {
-          "expr": "container_memory_usage_bytes{container_label_com_docker_compose_service!=\"\"} / 1024 / 1024",
-          "legendFormat": "{{ container_label_com_docker_compose_service }}",
+          "expr": "docker_container_memory_bytes / 1024 / 1024",
+          "legendFormat": "{{ compose_service }}",
           "refId": "A",
           "instant": true
         }
