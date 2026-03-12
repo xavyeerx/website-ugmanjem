@@ -217,6 +217,304 @@
       "fieldConfig": {
         "defaults": { "unit": "reqpm" }
       }
+    },
+    {
+      "title": "--- RESOURCE UTILIZATION ---",
+      "type": "text",
+      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 32 },
+      "options": {
+        "mode": "markdown",
+        "content": "## Resource Utilization\nCPU, Memory, Network, dan Disk usage per container dan host VPS"
+      }
+    },
+    {
+      "title": "Container CPU Usage (%)",
+      "description": "CPU usage percentage per Docker container",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 34 },
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{name=~\"anjem-.*\"}[1m]) * 100",
+          "legendFormat": "{{ name }}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "percent", "min": 0 }
+      }
+    },
+    {
+      "title": "Container Memory Usage",
+      "description": "Memory usage per Docker container",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 34 },
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{name=~\"anjem-.*\"} / 1024 / 1024",
+          "legendFormat": "{{ name }}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "decmbytes" }
+      }
+    },
+    {
+      "title": "Host CPU Usage (%)",
+      "description": "Overall VPS CPU utilization",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 42 },
+      "targets": [
+        {
+          "expr": "(1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m]))) * 100",
+          "legendFormat": "CPU %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 60 },
+              { "color": "red", "value": 85 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Host Memory Usage (%)",
+      "description": "Overall VPS RAM utilization",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 42 },
+      "targets": [
+        {
+          "expr": "(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100",
+          "legendFormat": "Memory %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Host Disk Usage (%)",
+      "description": "VPS disk utilization",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 42 },
+      "targets": [
+        {
+          "expr": "(1 - node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100",
+          "legendFormat": "Disk %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Container Network I/O",
+      "description": "Network receive/transmit per container",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 50 },
+      "targets": [
+        {
+          "expr": "rate(container_network_receive_bytes_total{name=~\"anjem-.*\"}[1m])",
+          "legendFormat": "{{ name }} RX",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(container_network_transmit_bytes_total{name=~\"anjem-.*\"}[1m])",
+          "legendFormat": "{{ name }} TX",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "Bps" }
+      }
+    },
+    {
+      "title": "Container Memory Breakdown",
+      "description": "Memory per container as a stacked bar",
+      "type": "barchart",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 50 },
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{name=~\"anjem-.*\"} / 1024 / 1024",
+          "legendFormat": "{{ name }}",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "decmbytes" }
+      }
+    },
+    {
+      "title": "--- RELIABILITY & AVAILABILITY ---",
+      "type": "text",
+      "gridPos": { "h": 2, "w": 24, "x": 0, "y": 58 },
+      "options": {
+        "mode": "markdown",
+        "content": "## Reliability & Availability\nSuccess rate, uptime, error tracking, dan service availability"
+      }
+    },
+    {
+      "title": "Chat Success Rate (Availability %)",
+      "description": "Percentage of successful chat responses — key SLA metric",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 60 },
+      "targets": [
+        {
+          "expr": "sum(rate(chatbot_chat_requests_total{status=\"success\"}[5m])) / sum(rate(chatbot_chat_requests_total[5m])) * 100",
+          "legendFormat": "availability %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 95 },
+              { "color": "green", "value": 99 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Success Rate Over Time",
+      "description": "Chat success rate trend — tracks reliability over time",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 60 },
+      "targets": [
+        {
+          "expr": "sum(rate(chatbot_chat_requests_total{status=\"success\"}[5m])) / sum(rate(chatbot_chat_requests_total[5m])) * 100",
+          "legendFormat": "success rate %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 99 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Error Breakdown by Type",
+      "description": "Errors categorized: rate_limited vs other failures",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 60 },
+      "targets": [
+        {
+          "expr": "rate(chatbot_chat_requests_total{status=\"error\"}[5m]) * 60",
+          "legendFormat": "general errors/min",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(chatbot_chat_requests_total{status=\"rate_limited\"}[5m]) * 60",
+          "legendFormat": "rate limited/min",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(chatbot_retrieval_errors_total[5m]) * 60",
+          "legendFormat": "retrieval errors/min",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(chatbot_live_context_errors_total[5m]) * 60",
+          "legendFormat": "live context errors/min",
+          "refId": "D"
+        }
+      ]
+    },
+    {
+      "title": "Total Requests (Cumulative)",
+      "description": "Total requests processed since startup — shows overall load",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 68 },
+      "targets": [
+        {
+          "expr": "sum(chatbot_chat_requests_total)",
+          "legendFormat": "total chats",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "short" }
+      }
+    },
+    {
+      "title": "Uptime (Backend Container)",
+      "description": "How long the backend has been running",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 68 },
+      "targets": [
+        {
+          "expr": "time() - process_start_time_seconds{job=\"chatbot-backend\"}",
+          "legendFormat": "uptime",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "s" }
+      }
+    },
+    {
+      "title": "HTTP Error Codes Over Time",
+      "description": "All non-200 HTTP responses tracked over time",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 68 },
+      "targets": [
+        {
+          "expr": "rate(chatbot_http_requests_total{status!=\"200\"}[1m]) * 60",
+          "legendFormat": "{{ status }} {{ endpoint }}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "reqpm" }
+      }
     }
   ],
   "schemaVersion": 39,
