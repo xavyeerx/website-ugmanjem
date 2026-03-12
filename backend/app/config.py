@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     GOOGLE_API_KEY: str = ""
     VECTORSTORE_PATH: str = str(PROJECT_ROOT / "vectorstore" / "chroma_db")
     COLLECTION_NAME: str = "ugm_anjem_knowledge"
-    GEMINI_MODEL: str = "gemini-2.5-flash"
+    GEMINI_MODEL: str = "gemini-2.0-flash"
     SUPABASE_URL: str = ""
     SUPABASE_ANON_KEY: str = ""
     CORS_ORIGINS: list[str] = [
