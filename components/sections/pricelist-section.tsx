@@ -2,9 +2,13 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Bike, Car, ChevronLeft, ChevronRight } from "lucide-react";
+import { Bike, Car, Cloud, ChevronLeft, ChevronRight } from "lucide-react";
 import FadeIn from "@/components/fade-in";
-import { usePriceCalculator } from "@/hooks/use-price-calculator";
+import {
+  usePriceCalculator,
+  type MotorBreakdown,
+  type CarBreakdown,
+} from "@/hooks/use-price-calculator";
 import type { PricingConfig } from "@/types";
 import {
   WEATHER_LABELS,
@@ -26,12 +30,16 @@ interface PricelistSectionProps {
   onImageClick: (images: ImageItem[], startIndex: number) => void;
 }
 
-const VEHICLE_OPTIONS: { value: VehicleType; label: string; icon: typeof Bike }[] = [
+const VEHICLE_OPTIONS: {
+  value: VehicleType;
+  label: string;
+  icon: typeof Bike;
+}[] = [
   { value: "motor", label: VEHICLE_LABELS.motor, icon: Bike },
   { value: "car", label: VEHICLE_LABELS.car, icon: Car },
 ];
 
-const WEATHER_OPTIONS: { value: WeatherCondition; label: string }[] = [
+const CAR_WEATHER_OPTIONS: { value: WeatherCondition; label: string }[] = [
   { value: "normal", label: WEATHER_LABELS.normal },
   { value: "cloudy", label: WEATHER_LABELS.cloudy },
   { value: "rain", label: WEATHER_LABELS.rain },
@@ -49,10 +57,12 @@ export default function PricelistSection({
     vehicleType,
     serviceType,
     distance,
+    isRainy,
     weatherCondition,
     setVehicleType,
     setServiceType,
     setDistance,
+    toggleRainy,
     setWeatherCondition,
     estimatedPrice,
     priceBreakdown,
@@ -262,28 +272,48 @@ export default function PricelistSection({
               </p>
             </div>
 
-            {/* Weather condition selector */}
-            <div className="mb-6">
-              <h4 className="text-sm font-medium text-foreground mb-3">
-                Kondisi Cuaca
-              </h4>
-              <div className="grid grid-cols-2 gap-2">
-                {WEATHER_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => setWeatherCondition(opt.value)}
-                    className={`p-3 border rounded-lg text-sm font-medium transition-colors ${
-                      weatherCondition === opt.value
-                        ? "bg-accent text-white border-accent"
-                        : "bg-background text-foreground border-border hover:bg-muted"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+            {/* Weather / condition — different per vehicle */}
+            {vehicleType === "motor" ? (
+              <div className="mb-6">
+                <h4 className="text-sm font-medium text-foreground mb-3">
+                  Kondisi Opsional
+                </h4>
+                <button
+                  type="button"
+                  onClick={toggleRainy}
+                  className={`flex items-center justify-center gap-2 p-4 border rounded-lg transition-colors w-full ${
+                    isRainy
+                      ? "bg-accent text-white border-accent"
+                      : "bg-background text-foreground border-border hover:bg-muted"
+                  }`}
+                >
+                  <Cloud className="w-5 h-5" />
+                  <span className="text-sm font-medium">Hujan (+Rp2.000)</span>
+                </button>
               </div>
-            </div>
+            ) : (
+              <div className="mb-6">
+                <h4 className="text-sm font-medium text-foreground mb-3">
+                  Kondisi Cuaca
+                </h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {CAR_WEATHER_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setWeatherCondition(opt.value)}
+                      className={`p-3 border rounded-lg text-sm font-medium transition-colors ${
+                        weatherCondition === opt.value
+                          ? "bg-accent text-white border-accent"
+                          : "bg-background text-foreground border-border hover:bg-muted"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Price output */}
             <div className="bg-accent rounded-lg p-4 space-y-3 max-w-md">
@@ -296,29 +326,20 @@ export default function PricelistSection({
                 </p>
               </div>
 
-              {/* Breakdown */}
-              <div className="text-xs text-white/80 space-y-1 border-t border-white/20 pt-2">
-                <div className="flex justify-between">
-                  <span>Tarif dasar</span>
-                  <span>Rp. {fmt(priceBreakdown.baseFare)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Jarak ({distance || "0"} km)</span>
-                  <span>Rp. {fmt(priceBreakdown.distanceFare)}</span>
-                </div>
-                {priceBreakdown.multiplier !== 1 && (
-                  <div className="flex justify-between">
-                    <span>Cuaca (×{priceBreakdown.multiplier})</span>
-                    <span>Rp. {fmt(priceBreakdown.fareAfterMultiplier)}</span>
-                  </div>
-                )}
-                {priceBreakdown.jastipFee > 0 && (
-                  <div className="flex justify-between">
-                    <span>Biaya jastip</span>
-                    <span>+ Rp. {fmt(priceBreakdown.jastipFee)}</span>
-                  </div>
-                )}
-              </div>
+              {/* Breakdown — different per vehicle */}
+              {priceBreakdown.type === "motor" ? (
+                <MotorBreakdownView
+                  breakdown={priceBreakdown}
+                  distance={distance}
+                  fmt={fmt}
+                />
+              ) : (
+                <CarBreakdownView
+                  breakdown={priceBreakdown}
+                  distance={distance}
+                  fmt={fmt}
+                />
+              )}
 
               <p className="text-[11px] text-white/90 leading-relaxed">
                 Harga ini berupa estimasi. Faktor cuaca, waktu, dan kondisi lain
@@ -330,5 +351,65 @@ export default function PricelistSection({
         </div>
       </div>
     </section>
+  );
+}
+
+function MotorBreakdownView({
+  breakdown,
+  distance,
+  fmt,
+}: {
+  breakdown: MotorBreakdown;
+  distance: string;
+  fmt: (n: number) => string;
+}) {
+  return (
+    <div className="text-xs text-white/80 space-y-1 border-t border-white/20 pt-2">
+      <div className="flex justify-between">
+        <span>Tarif jarak ({distance || "0"} km)</span>
+        <span>Rp. {fmt(breakdown.basePrice)}</span>
+      </div>
+      {breakdown.weatherFee > 0 && (
+        <div className="flex justify-between">
+          <span>Biaya hujan</span>
+          <span>+ Rp. {fmt(breakdown.weatherFee)}</span>
+        </div>
+      )}
+      {breakdown.jastipFee > 0 && (
+        <div className="flex justify-between">
+          <span>Biaya jastip</span>
+          <span>+ Rp. {fmt(breakdown.jastipFee)}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CarBreakdownView({
+  breakdown,
+  distance,
+  fmt,
+}: {
+  breakdown: CarBreakdown;
+  distance: string;
+  fmt: (n: number) => string;
+}) {
+  return (
+    <div className="text-xs text-white/80 space-y-1 border-t border-white/20 pt-2">
+      <div className="flex justify-between">
+        <span>Tarif dasar</span>
+        <span>Rp. {fmt(breakdown.baseFare)}</span>
+      </div>
+      <div className="flex justify-between">
+        <span>Jarak ({distance || "0"} km)</span>
+        <span>Rp. {fmt(breakdown.distanceFare)}</span>
+      </div>
+      {breakdown.multiplier !== 1 && (
+        <div className="flex justify-between">
+          <span>Cuaca (×{breakdown.multiplier})</span>
+          <span>Rp. {fmt(breakdown.fareAfterMultiplier)}</span>
+        </div>
+      )}
+    </div>
   );
 }

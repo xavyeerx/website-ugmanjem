@@ -93,19 +93,16 @@ class LiveContext:
                     lines.append(f"- {label}: Rp{price_map[key]}")
 
             lines.append("")
-            lines.append("Tarif per jenis kendaraan:")
-            lines.append("- Motor: tarif dasar Rp5.000 + Rp2.500/km")
-            lines.append("- Mobil (Kapasitas 4): tarif dasar Rp7.000 + Rp4.000/km")
+            lines.append("Tarif MOTOR:")
+            lines.append("- Rp2.500/km, minimum Rp5.000")
+            lines.append("- Cuaca: Normal (gratis) atau Hujan (+Rp2.000 flat)")
+            lines.append("- Jastip: +Rp1.000")
+            lines.append("- Rumus: max(jarak_km × Rp2.500, Rp5.000) + biaya_hujan + biaya_jastip")
             lines.append("")
-            lines.append("Multiplier cuaca (berlaku untuk semua kendaraan):")
-            lines.append("- Normal: 1.0x")
-            lines.append("- Mendung / Gerimis: 1.2x")
-            lines.append("- Hujan: 1.6x")
-            lines.append("- Hujan Deras / Badai: 2.0x")
-            lines.append("")
-            lines.append(
-                "Rumus: (tarif_dasar + jarak_km × tarif_per_km) × multiplier_cuaca"
-            )
+            lines.append("Tarif MOBIL (Kapasitas 4):")
+            lines.append("- Tarif dasar Rp7.000 + Rp4.000/km")
+            lines.append("- Multiplier cuaca: Normal 1.0x, Mendung/Gerimis 1.2x, Hujan 1.6x, Hujan Deras/Badai 2.0x")
+            lines.append("- Rumus: (Rp7.000 + jarak_km × Rp4.000) × multiplier_cuaca")
             sections.append("\n".join(lines))
 
         social = self._query("social_links", order="sort_order")

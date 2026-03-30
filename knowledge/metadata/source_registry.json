@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "built_at": "2026-03-30T15:48:57.405101",
+  "built_at": "2026-03-30T15:58:23.679430",
   "embedding_model": "models/text-embedding-004 (Google Gemini)",
   "total_chunks": 126,
   "sources": {

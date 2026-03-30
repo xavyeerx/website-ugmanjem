@@ -8,9 +8,12 @@ export interface VehiclePricingConfig {
 }
 
 export const PRICING_CONFIG: Record<VehicleType, VehiclePricingConfig> = {
-  motor: { base_fare: 5000, price_per_km: 2500 },
+  motor: { base_fare: 0, price_per_km: 2500 },
   car: { base_fare: 7000, price_per_km: 4000 },
 };
+
+export const MOTOR_MINIMUM_PRICE = 5000;
+export const MOTOR_RAINY_FEE = 2000;
 
 export const WEATHER_MULTIPLIERS: Record<WeatherCondition, number> = {
   normal: 1.0,
@@ -31,14 +34,50 @@ export const VEHICLE_LABELS: Record<VehicleType, string> = {
   car: "Mobil (Kapasitas 4)",
 };
 
-export interface FareInput {
-  vehicleType: VehicleType;
+// --- Motor fare: original additive formula ---
+
+export interface MotorFareInput {
   distance: number;
-  condition: WeatherCondition;
+  isRainy: boolean;
   jastipFee?: number;
 }
 
-export interface FareResult {
+export interface MotorFareResult {
+  totalFare: number;
+  breakdown: {
+    basePrice: number;
+    weatherFee: number;
+    jastipFee: number;
+  };
+}
+
+export function calculateMotorFare({
+  distance,
+  isRainy,
+  jastipFee = 0,
+}: MotorFareInput): MotorFareResult {
+  let basePrice = distance * PRICING_CONFIG.motor.price_per_km;
+  if (basePrice < MOTOR_MINIMUM_PRICE) {
+    basePrice = MOTOR_MINIMUM_PRICE;
+  }
+
+  const weatherFee = isRainy ? MOTOR_RAINY_FEE : 0;
+  const totalFare = basePrice + weatherFee + jastipFee;
+
+  return {
+    totalFare,
+    breakdown: { basePrice, weatherFee, jastipFee },
+  };
+}
+
+// --- Car fare: multiplier-based formula ---
+
+export interface CarFareInput {
+  distance: number;
+  condition: WeatherCondition;
+}
+
+export interface CarFareResult {
   totalFare: number;
   breakdown: {
     baseFare: number;
@@ -46,34 +85,23 @@ export interface FareResult {
     subtotal: number;
     multiplier: number;
     fareAfterMultiplier: number;
-    jastipFee: number;
   };
 }
 
-export function calculateFare({
-  vehicleType,
+export function calculateCarFare({
   distance,
   condition,
-  jastipFee = 0,
-}: FareInput): FareResult {
-  const config = PRICING_CONFIG[vehicleType];
+}: CarFareInput): CarFareResult {
+  const config = PRICING_CONFIG.car;
   const multiplier = WEATHER_MULTIPLIERS[condition];
 
   const baseFare = config.base_fare;
   const distanceFare = distance * config.price_per_km;
   const subtotal = baseFare + distanceFare;
   const fareAfterMultiplier = subtotal * multiplier;
-  const totalFare = fareAfterMultiplier + jastipFee;
 
   return {
-    totalFare,
-    breakdown: {
-      baseFare,
-      distanceFare,
-      subtotal,
-      multiplier,
-      fareAfterMultiplier,
-      jastipFee,
-    },
+    totalFare: fareAfterMultiplier,
+    breakdown: { baseFare, distanceFare, subtotal, multiplier, fareAfterMultiplier },
   };
 }

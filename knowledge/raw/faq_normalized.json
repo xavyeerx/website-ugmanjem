@@ -98,9 +98,9 @@
     "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
-    "content": "Q: Berapa tarif dasar layanan Anjem UGM?\nA: Tarif dasar untuk Motor: Rp5.000 + Rp2.500/km. Tarif dasar untuk Mobil (Kapasitas 4): Rp7.000 + Rp4.000/km. Tarif dipengaruhi kondisi cuaca dengan sistem multiplier: Normal (1.0x), Mendung/Gerimis (1.2x), Hujan (1.6x), Hujan Deras/Badai (2.0x). Rumus: (tarif_dasar + jarak × tarif_per_km) × multiplier_cuaca.",
+    "content": "Q: Berapa tarif dasar layanan Anjem UGM?\nA: Motor: Rp2.500/km (minimum Rp5.000), saat hujan +Rp2.000, jastip +Rp1.000. Mobil (Kapasitas 4): tarif dasar Rp7.000 + Rp4.000/km, dengan multiplier cuaca (Normal 1.0x, Mendung/Gerimis 1.2x, Hujan 1.6x, Badai 2.0x).",
     "question": "Berapa tarif dasar layanan Anjem UGM?",
-    "answer": "Tarif dasar untuk Motor: Rp5.000 + Rp2.500/km. Tarif dasar untuk Mobil (Kapasitas 4): Rp7.000 + Rp4.000/km. Tarif dipengaruhi kondisi cuaca dengan sistem multiplier: Normal (1.0x), Mendung/Gerimis (1.2x), Hujan (1.6x), Hujan Deras/Badai (2.0x). Rumus: (tarif_dasar + jarak × tarif_per_km) × multiplier_cuaca.",
+    "answer": "Motor: Rp2.500/km (minimum Rp5.000), saat hujan +Rp2.000, jastip +Rp1.000. Mobil (Kapasitas 4): tarif dasar Rp7.000 + Rp4.000/km, dengan multiplier cuaca (Normal 1.0x, Mendung/Gerimis 1.2x, Hujan 1.6x, Badai 2.0x).",
     "category": "tarif",
     "subcategory": "harga",
     "intent": "cek_harga",
@@ -112,9 +112,9 @@
     "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
-    "content": "Q: Bagaimana cara menghitung tarif layanan?\nA: Tarif dihitung dengan rumus: (tarif_dasar + jarak_km × tarif_per_km) × multiplier_cuaca. Motor: tarif dasar Rp5.000, per km Rp2.500. Mobil (Kapasitas 4): tarif dasar Rp7.000, per km Rp4.000. Multiplier cuaca: Normal 1.0x, Mendung/Gerimis 1.2x, Hujan 1.6x, Hujan Deras/Badai 2.0x. Estimasi tarif dapat dicek pada menu Cek Harga Rute di website anjemugm.vercel.app.",
+    "content": "Q: Bagaimana cara menghitung tarif layanan?\nA: Motor: max(jarak_km × Rp2.500, Rp5.000) + biaya hujan (Rp2.000 jika hujan) + biaya jastip (Rp1.000 jika jastip). Mobil: (Rp7.000 + jarak_km × Rp4.000) × multiplier cuaca (Normal 1.0x, Mendung 1.2x, Hujan 1.6x, Badai 2.0x). Estimasi tarif dapat dicek pada menu Cek Harga Rute di website anjemugm.vercel.app.",
     "question": "Bagaimana cara menghitung tarif layanan?",
-    "answer": "Tarif dihitung dengan rumus: (tarif_dasar + jarak_km × tarif_per_km) × multiplier_cuaca. Motor: tarif dasar Rp5.000, per km Rp2.500. Mobil (Kapasitas 4): tarif dasar Rp7.000, per km Rp4.000. Multiplier cuaca: Normal 1.0x, Mendung/Gerimis 1.2x, Hujan 1.6x, Hujan Deras/Badai 2.0x. Estimasi tarif dapat dicek pada menu Cek Harga Rute di website anjemugm.vercel.app.",
+    "answer": "Motor: max(jarak_km × Rp2.500, Rp5.000) + biaya hujan (Rp2.000 jika hujan) + biaya jastip (Rp1.000 jika jastip). Mobil: (Rp7.000 + jarak_km × Rp4.000) × multiplier cuaca (Normal 1.0x, Mendung 1.2x, Hujan 1.6x, Badai 2.0x). Estimasi tarif dapat dicek pada menu Cek Harga Rute di website anjemugm.vercel.app.",
     "category": "tarif",
     "subcategory": "harga",
     "intent": "cek_harga",
@@ -140,9 +140,9 @@
     "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
-    "content": "Q: Apakah tarif Anjem UGM tetap atau berubah-ubah?\nA: Tarif dasar dan per km tetap untuk masing-masing kendaraan (Motor/Mobil), namun total tarif dipengaruhi oleh kondisi cuaca melalui sistem multiplier: Normal (1.0x), Mendung/Gerimis (1.2x), Hujan (1.6x), Hujan Deras/Badai (2.0x).",
+    "content": "Q: Apakah tarif Anjem UGM tetap atau berubah-ubah?\nA: Tarif dasar tetap untuk masing-masing kendaraan. Motor: tarif per km tetap, saat hujan tambah Rp2.000 flat. Mobil: tarif per km tetap, cuaca menggunakan multiplier (Normal 1.0x, Mendung 1.2x, Hujan 1.6x, Badai 2.0x).",
     "question": "Apakah tarif Anjem UGM tetap atau berubah-ubah?",
-    "answer": "Tarif dasar dan per km tetap untuk masing-masing kendaraan (Motor/Mobil), namun total tarif dipengaruhi oleh kondisi cuaca melalui sistem multiplier: Normal (1.0x), Mendung/Gerimis (1.2x), Hujan (1.6x), Hujan Deras/Badai (2.0x).",
+    "answer": "Tarif dasar tetap untuk masing-masing kendaraan. Motor: tarif per km tetap, saat hujan tambah Rp2.000 flat. Mobil: tarif per km tetap, cuaca menggunakan multiplier (Normal 1.0x, Mendung 1.2x, Hujan 1.6x, Badai 2.0x).",
     "category": "tarif",
     "subcategory": "harga",
     "intent": "cek_harga",
@@ -882,9 +882,9 @@
     "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
-    "content": "Q: Berapa tarif untuk rute di luar area pricelist?\nA: Untuk rute di luar area pricelist, tarif dihitung dengan rumus: (tarif_dasar + jarak_km × tarif_per_km) × multiplier_cuaca. Motor: Rp5.000 + Rp2.500/km. Mobil (Kapasitas 4): Rp7.000 + Rp4.000/km. Multiplier cuaca berlaku sesuai kondisi.",
+    "content": "Q: Berapa tarif untuk rute di luar area pricelist?\nA: Motor: Rp2.500/km (minimum Rp5.000), hujan +Rp2.000. Mobil (Kapasitas 4): tarif dasar Rp7.000 + Rp4.000/km dengan multiplier cuaca.",
     "question": "Berapa tarif untuk rute di luar area pricelist?",
-    "answer": "Untuk rute di luar area pricelist, tarif dihitung dengan rumus: (tarif_dasar + jarak_km × tarif_per_km) × multiplier_cuaca. Motor: Rp5.000 + Rp2.500/km. Mobil (Kapasitas 4): Rp7.000 + Rp4.000/km. Multiplier cuaca berlaku sesuai kondisi.",
+    "answer": "Motor: Rp2.500/km (minimum Rp5.000), hujan +Rp2.000. Mobil (Kapasitas 4): tarif dasar Rp7.000 + Rp4.000/km dengan multiplier cuaca.",
     "category": "tarif",
     "subcategory": "harga",
     "intent": "cek_harga",
@@ -896,9 +896,9 @@
     "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
-    "content": "Q: Bagaimana contoh perhitungan tarif per kilometer untuk rute di luar pricelist?\nA: Contoh Motor jarak 5 km cuaca Normal: (Rp5.000 + 5 × Rp2.500) × 1.0 = Rp17.500. Contoh Motor jarak 5 km cuaca Hujan: (Rp5.000 + 5 × Rp2.500) × 1.6 = Rp28.000. Contoh Mobil jarak 5 km cuaca Normal: (Rp7.000 + 5 × Rp4.000) × 1.0 = Rp27.000.",
+    "content": "Q: Bagaimana contoh perhitungan tarif per kilometer untuk rute di luar pricelist?\nA: Motor 5 km Normal: 5 × Rp2.500 = Rp12.500. Motor 5 km Hujan: Rp12.500 + Rp2.000 = Rp14.500. Motor 1 km Normal: minimum Rp5.000. Mobil 5 km Normal: (Rp7.000 + 5 × Rp4.000) × 1.0 = Rp27.000. Mobil 5 km Hujan: Rp27.000 × 1.6 = Rp43.200.",
     "question": "Bagaimana contoh perhitungan tarif per kilometer untuk rute di luar pricelist?",
-    "answer": "Contoh Motor jarak 5 km cuaca Normal: (Rp5.000 + 5 × Rp2.500) × 1.0 = Rp17.500. Contoh Motor jarak 5 km cuaca Hujan: (Rp5.000 + 5 × Rp2.500) × 1.6 = Rp28.000. Contoh Mobil jarak 5 km cuaca Normal: (Rp7.000 + 5 × Rp4.000) × 1.0 = Rp27.000.",
+    "answer": "Motor 5 km Normal: 5 × Rp2.500 = Rp12.500. Motor 5 km Hujan: Rp12.500 + Rp2.000 = Rp14.500. Motor 1 km Normal: minimum Rp5.000. Mobil 5 km Normal: (Rp7.000 + 5 × Rp4.000) × 1.0 = Rp27.000. Mobil 5 km Hujan: Rp27.000 × 1.6 = Rp43.200.",
     "category": "tarif",
     "subcategory": "harga",
     "intent": "cek_harga",
@@ -910,9 +910,9 @@
     "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
-    "content": "Q: Berapa detail tambahan biaya saat kondisi hujan?\nA: Tarif saat cuaca buruk dihitung menggunakan sistem multiplier pada total tarif: Mendung/Gerimis tarif ×1.2, Hujan tarif ×1.6, Hujan Deras/Badai tarif ×2.0. Contoh: tarif normal Motor 5 km = Rp17.500, saat Hujan menjadi Rp17.500 × 1.6 = Rp28.000.",
+    "content": "Q: Berapa detail tambahan biaya saat kondisi hujan?\nA: Motor: saat hujan dikenakan biaya tambahan flat Rp2.000 (hanya 2 kondisi: Normal atau Hujan). Mobil: menggunakan sistem multiplier cuaca pada total tarif: Normal 1.0x, Mendung/Gerimis 1.2x, Hujan 1.6x, Hujan Deras/Badai 2.0x.",
     "question": "Berapa detail tambahan biaya saat kondisi hujan?",
-    "answer": "Tarif saat cuaca buruk dihitung menggunakan sistem multiplier pada total tarif: Mendung/Gerimis tarif ×1.2, Hujan tarif ×1.6, Hujan Deras/Badai tarif ×2.0. Contoh: tarif normal Motor 5 km = Rp17.500, saat Hujan menjadi Rp17.500 × 1.6 = Rp28.000.",
+    "answer": "Motor: saat hujan dikenakan biaya tambahan flat Rp2.000 (hanya 2 kondisi: Normal atau Hujan). Mobil: menggunakan sistem multiplier cuaca pada total tarif: Normal 1.0x, Mendung/Gerimis 1.2x, Hujan 1.6x, Hujan Deras/Badai 2.0x.",
     "category": "tarif",
     "subcategory": "biaya",
     "intent": "cek_harga",

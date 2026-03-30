@@ -117,7 +117,7 @@
     "extracted_at": "2026-03-10T21:06:43.009628"
   },
   {
-    "content": "Konstanta Harga UGM Anjem:\n\nTarif per jenis kendaraan:\n- Motor: tarif dasar Rp5.000 + Rp2.500/km\n- Mobil (Kapasitas 4): tarif dasar Rp7.000 + Rp4.000/km\n\nFee tambahan (motor only):\n- Fee tambahan jastip: Rp1.000\n\nMultiplier cuaca (berlaku semua kendaraan):\n- Normal: 1.0x\n- Mendung / Gerimis: 1.2x\n- Hujan: 1.6x\n- Hujan Deras / Badai: 2.0x\n\nRumus: (tarif_dasar + jarak_km × tarif_per_km) × multiplier_cuaca + fee_tambahan",
+    "content": "Konstanta Harga UGM Anjem:\n\nTarif MOTOR:\n- Rp2.500/km, minimum Rp5.000\n- Cuaca: Normal (gratis) atau Hujan (+Rp2.000 flat)\n- Jastip: +Rp1.000\n- Rumus: max(jarak × Rp2.500, Rp5.000) + biaya_hujan + biaya_jastip\n\nTarif MOBIL (Kapasitas 4):\n- Tarif dasar Rp7.000 + Rp4.000/km\n- Multiplier cuaca: Normal 1.0x, Mendung/Gerimis 1.2x, Hujan 1.6x, Hujan Deras/Badai 2.0x\n- Rumus: (Rp7.000 + jarak × Rp4.000) × multiplier_cuaca",
     "section": "Konstanta Harga",
     "category": "tarif",
     "subcategory": "konstanta",

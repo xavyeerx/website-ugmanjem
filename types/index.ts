@@ -105,18 +105,7 @@ export interface PriceCalculatorState {
   vehicleType: import("@/utils/pricing").VehicleType;
   serviceType: ServiceType;
   distance: string;
+  isRainy: boolean;
   weatherCondition: import("@/utils/pricing").WeatherCondition;
-}
-
-export interface PriceCalculatorResult {
-  estimatedPrice: number;
-  breakdown: {
-    baseFare: number;
-    distanceFare: number;
-    subtotal: number;
-    multiplier: number;
-    fareAfterMultiplier: number;
-    jastipFee: number;
-  };
 }
 

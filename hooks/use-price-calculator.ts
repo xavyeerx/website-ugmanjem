@@ -1,26 +1,50 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import type {
-  ServiceType,
-  PriceCalculatorState,
-  PriceCalculatorResult,
-  PricingConfig,
-} from "@/types";
+import type { ServiceType, PricingConfig } from "@/types";
 import {
-  calculateFare,
+  calculateMotorFare,
+  calculateCarFare,
   type VehicleType,
   type WeatherCondition,
 } from "@/utils/pricing";
-import { JASTIP_FEE } from "@/lib/constants";
+import { JASTIP_FEE, RAINY_FEE } from "@/lib/constants";
+
+export interface PriceCalculatorState {
+  vehicleType: VehicleType;
+  serviceType: ServiceType;
+  distance: string;
+  isRainy: boolean;
+  weatherCondition: WeatherCondition;
+}
+
+export type MotorBreakdown = {
+  type: "motor";
+  basePrice: number;
+  weatherFee: number;
+  jastipFee: number;
+};
+
+export type CarBreakdown = {
+  type: "car";
+  baseFare: number;
+  distanceFare: number;
+  subtotal: number;
+  multiplier: number;
+  fareAfterMultiplier: number;
+};
+
+export type PriceBreakdown = MotorBreakdown | CarBreakdown;
 
 export function usePriceCalculator(config?: PricingConfig) {
   const jastipFee = config?.jastip_fee ?? JASTIP_FEE;
+  const rainyFee = config?.rainy_fee ?? RAINY_FEE;
 
   const [state, setState] = useState<PriceCalculatorState>({
     vehicleType: "motor",
     serviceType: "antar-jemput",
     distance: "",
+    isRainy: false,
     weatherCondition: "normal",
   });
 
@@ -36,39 +60,62 @@ export function usePriceCalculator(config?: PricingConfig) {
     setState((prev) => ({ ...prev, distance }));
   };
 
+  const setIsRainy = (isRainy: boolean) => {
+    setState((prev) => ({ ...prev, isRainy }));
+  };
+
+  const toggleRainy = () => {
+    setState((prev) => ({ ...prev, isRainy: !prev.isRainy }));
+  };
+
   const setWeatherCondition = (weatherCondition: WeatherCondition) => {
     setState((prev) => ({ ...prev, weatherCondition }));
   };
 
-  const result: PriceCalculatorResult = useMemo(() => {
+  const { estimatedPrice, priceBreakdown } = useMemo(() => {
     const normalizedDistance = state.distance.replace(",", ".");
     const distanceNum = parseFloat(normalizedDistance) || 0;
 
-    const applicableJastipFee =
-      state.vehicleType === "motor" && state.serviceType === "jastip"
-        ? jastipFee
-        : 0;
+    if (state.vehicleType === "motor") {
+      const applicableJastipFee =
+        state.serviceType === "jastip" ? jastipFee : 0;
 
-    const fareResult = calculateFare({
-      vehicleType: state.vehicleType,
+      const result = calculateMotorFare({
+        distance: distanceNum,
+        isRainy: state.isRainy,
+        jastipFee: applicableJastipFee,
+      });
+
+      const breakdown: MotorBreakdown = {
+        type: "motor",
+        ...result.breakdown,
+      };
+
+      return { estimatedPrice: result.totalFare, priceBreakdown: breakdown };
+    }
+
+    const result = calculateCarFare({
       distance: distanceNum,
       condition: state.weatherCondition,
-      jastipFee: applicableJastipFee,
     });
 
-    return {
-      estimatedPrice: fareResult.totalFare,
-      breakdown: fareResult.breakdown,
+    const breakdown: CarBreakdown = {
+      type: "car",
+      ...result.breakdown,
     };
-  }, [state, jastipFee]);
+
+    return { estimatedPrice: result.totalFare, priceBreakdown: breakdown };
+  }, [state, jastipFee, rainyFee]);
 
   return {
     ...state,
     setVehicleType,
     setServiceType,
     setDistance,
+    setIsRainy,
+    toggleRainy,
     setWeatherCondition,
-    estimatedPrice: result.estimatedPrice,
-    priceBreakdown: result.breakdown,
+    estimatedPrice,
+    priceBreakdown,
   };
 }
