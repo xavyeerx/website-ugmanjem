@@ -91,6 +91,8 @@ export interface ChatSource {
 // Price Calculator Types
 export type ServiceType = "antar-jemput" | "jastip";
 
+export type { VehicleType, WeatherCondition } from "@/utils/pricing";
+
 export interface PricingConfig {
   price_per_km: number;
   minimum_price: number;
@@ -100,19 +102,21 @@ export interface PricingConfig {
 }
 
 export interface PriceCalculatorState {
+  vehicleType: import("@/utils/pricing").VehicleType;
   serviceType: ServiceType;
   distance: string;
-  isRainy: boolean;
-  isEarlyMorning: boolean;
+  weatherCondition: import("@/utils/pricing").WeatherCondition;
 }
 
 export interface PriceCalculatorResult {
   estimatedPrice: number;
   breakdown: {
-    basePrice: number;
-    serviceFee: number;
-    weatherFee: number;
-    timeFee: number;
+    baseFare: number;
+    distanceFare: number;
+    subtotal: number;
+    multiplier: number;
+    fareAfterMultiplier: number;
+    jastipFee: number;
   };
 }
 

@@ -2,10 +2,16 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Cloud, Moon, ChevronLeft, ChevronRight } from "lucide-react";
+import { Bike, Car, ChevronLeft, ChevronRight } from "lucide-react";
 import FadeIn from "@/components/fade-in";
 import { usePriceCalculator } from "@/hooks/use-price-calculator";
 import type { PricingConfig } from "@/types";
+import {
+  WEATHER_LABELS,
+  VEHICLE_LABELS,
+  type VehicleType,
+  type WeatherCondition,
+} from "@/utils/pricing";
 
 interface ImageItem {
   id: number;
@@ -20,6 +26,18 @@ interface PricelistSectionProps {
   onImageClick: (images: ImageItem[], startIndex: number) => void;
 }
 
+const VEHICLE_OPTIONS: { value: VehicleType; label: string; icon: typeof Bike }[] = [
+  { value: "motor", label: VEHICLE_LABELS.motor, icon: Bike },
+  { value: "car", label: VEHICLE_LABELS.car, icon: Car },
+];
+
+const WEATHER_OPTIONS: { value: WeatherCondition; label: string }[] = [
+  { value: "normal", label: WEATHER_LABELS.normal },
+  { value: "cloudy", label: WEATHER_LABELS.cloudy },
+  { value: "rain", label: WEATHER_LABELS.rain },
+  { value: "storm", label: WEATHER_LABELS.storm },
+];
+
 export default function PricelistSection({
   images,
   serviceDescriptions,
@@ -28,15 +46,16 @@ export default function PricelistSection({
 }: PricelistSectionProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const {
+    vehicleType,
     serviceType,
     distance,
-    isRainy,
-    isEarlyMorning,
+    weatherCondition,
+    setVehicleType,
     setServiceType,
     setDistance,
-    toggleRainy,
-    toggleEarlyMorning,
+    setWeatherCondition,
     estimatedPrice,
+    priceBreakdown,
   } = usePriceCalculator(pricingConfig);
 
   const goToPrevious = () => {
@@ -50,6 +69,8 @@ export default function PricelistSection({
       prev === images.length - 1 ? 0 : prev + 1
     );
   };
+
+  const fmt = (n: number) => Math.round(n).toLocaleString("id-ID");
 
   return (
     <section
@@ -140,47 +161,82 @@ export default function PricelistSection({
               </h4>
             </div>
 
+            {/* Vehicle type selector */}
             <div className="mb-6">
               <h4 className="text-sm font-medium text-foreground mb-3">
-                Pilih Layanan
+                Pilih Kendaraan
               </h4>
-              <div className="space-y-2">
-                <label className="flex items-center gap-3 p-4 border border-border rounded-lg cursor-pointer hover:bg-muted transition-colors">
-                  <input
-                    type="radio"
-                    name="service"
-                    value="antar-jemput"
-                    checked={serviceType === "antar-jemput"}
-                    onChange={(e) =>
-                      setServiceType(
-                        e.target.value as "antar-jemput" | "jastip"
-                      )
-                    }
-                    className="w-5 h-5 text-accent focus:ring-accent"
-                  />
-                  <span className="text-foreground">Anjem (Antar Jemput)</span>
-                </label>
-                <label className="flex items-center gap-3 p-4 border border-border rounded-lg cursor-pointer hover:bg-muted transition-colors">
-                  <input
-                    type="radio"
-                    name="service"
-                    value="jastip"
-                    checked={serviceType === "jastip"}
-                    onChange={(e) =>
-                      setServiceType(
-                        e.target.value as "antar-jemput" | "jastip"
-                      )
-                    }
-                    className="w-5 h-5 text-accent focus:ring-accent"
-                  />
-                  <span className="text-foreground">Jastip (Jasa Titip)</span>
-                </label>
+              <div className="grid grid-cols-2 gap-3">
+                {VEHICLE_OPTIONS.map((opt) => {
+                  const Icon = opt.icon;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setVehicleType(opt.value)}
+                      className={`flex items-center justify-center gap-2 p-4 border rounded-lg transition-colors ${
+                        vehicleType === opt.value
+                          ? "bg-accent text-white border-accent"
+                          : "bg-background text-foreground border-border hover:bg-muted"
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="text-sm font-medium">{opt.label}</span>
+                    </button>
+                  );
+                })}
               </div>
-              <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
-                {serviceDescriptions[serviceType]}
-              </p>
             </div>
 
+            {/* Service type (motor only) */}
+            {vehicleType === "motor" && (
+              <div className="mb-6">
+                <h4 className="text-sm font-medium text-foreground mb-3">
+                  Pilih Layanan
+                </h4>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-3 p-4 border border-border rounded-lg cursor-pointer hover:bg-muted transition-colors">
+                    <input
+                      type="radio"
+                      name="service"
+                      value="antar-jemput"
+                      checked={serviceType === "antar-jemput"}
+                      onChange={(e) =>
+                        setServiceType(
+                          e.target.value as "antar-jemput" | "jastip"
+                        )
+                      }
+                      className="w-5 h-5 text-accent focus:ring-accent"
+                    />
+                    <span className="text-foreground">
+                      Anjem (Antar Jemput)
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-3 p-4 border border-border rounded-lg cursor-pointer hover:bg-muted transition-colors">
+                    <input
+                      type="radio"
+                      name="service"
+                      value="jastip"
+                      checked={serviceType === "jastip"}
+                      onChange={(e) =>
+                        setServiceType(
+                          e.target.value as "antar-jemput" | "jastip"
+                        )
+                      }
+                      className="w-5 h-5 text-accent focus:ring-accent"
+                    />
+                    <span className="text-foreground">
+                      Jastip (Jasa Titip)
+                    </span>
+                  </label>
+                </div>
+                <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+                  {serviceDescriptions[serviceType]}
+                </p>
+              </div>
+            )}
+
+            {/* Distance input */}
             <div className="mb-6">
               <h4 className="text-sm font-medium text-foreground mb-3">
                 Jarak (KM)
@@ -206,49 +262,64 @@ export default function PricelistSection({
               </p>
             </div>
 
+            {/* Weather condition selector */}
             <div className="mb-6">
               <h4 className="text-sm font-medium text-foreground mb-3">
-                Kondisi Opsional
+                Kondisi Cuaca
               </h4>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={toggleRainy}
-                  className={`flex items-center justify-center gap-2 p-4 border rounded-lg transition-colors ${
-                    isRainy
-                      ? "bg-accent text-white border-accent"
-                      : "bg-background text-foreground border-border hover:bg-muted"
-                  }`}
-                >
-                  <Cloud className="w-5 h-5" />
-                  <span className="text-sm font-medium">Hujan</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={toggleEarlyMorning}
-                  className={`flex items-center justify-center gap-2 p-4 border rounded-lg transition-colors ${
-                    isEarlyMorning
-                      ? "bg-accent text-white border-accent"
-                      : "bg-background text-foreground border-border hover:bg-muted"
-                  }`}
-                >
-                  <Moon className="w-5 h-5" />
-                  <span className="text-sm font-medium">
-                    Dini Hari (Jam &gt;22:00)
-                  </span>
-                </button>
+              <div className="grid grid-cols-2 gap-2">
+                {WEATHER_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setWeatherCondition(opt.value)}
+                    className={`p-3 border rounded-lg text-sm font-medium transition-colors ${
+                      weatherCondition === opt.value
+                        ? "bg-accent text-white border-accent"
+                        : "bg-background text-foreground border-border hover:bg-muted"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="bg-accent rounded-lg p-4 space-y-2 max-w-md">
+            {/* Price output */}
+            <div className="bg-accent rounded-lg p-4 space-y-3 max-w-md">
               <div>
                 <span className="text-sm text-white/90 font-semibold">
                   Estimasi Biaya
                 </span>
                 <p className="text-2xl md:text-3xl font-bold text-white">
-                  Rp. {estimatedPrice.toLocaleString("id-ID")}
+                  Rp. {fmt(estimatedPrice)}
                 </p>
               </div>
+
+              {/* Breakdown */}
+              <div className="text-xs text-white/80 space-y-1 border-t border-white/20 pt-2">
+                <div className="flex justify-between">
+                  <span>Tarif dasar</span>
+                  <span>Rp. {fmt(priceBreakdown.baseFare)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Jarak ({distance || "0"} km)</span>
+                  <span>Rp. {fmt(priceBreakdown.distanceFare)}</span>
+                </div>
+                {priceBreakdown.multiplier !== 1 && (
+                  <div className="flex justify-between">
+                    <span>Cuaca (×{priceBreakdown.multiplier})</span>
+                    <span>Rp. {fmt(priceBreakdown.fareAfterMultiplier)}</span>
+                  </div>
+                )}
+                {priceBreakdown.jastipFee > 0 && (
+                  <div className="flex justify-between">
+                    <span>Biaya jastip</span>
+                    <span>+ Rp. {fmt(priceBreakdown.jastipFee)}</span>
+                  </div>
+                )}
+              </div>
+
               <p className="text-[11px] text-white/90 leading-relaxed">
                 Harga ini berupa estimasi. Faktor cuaca, waktu, dan kondisi lain
                 dapat mempengaruhi perubahan harga. Silakan tanyakan ke driver

@@ -98,9 +98,9 @@
     "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
-    "content": "Q: Berapa tarif dasar layanan Anjem UGM?\nA: Tarif dasar Anjem UGM untuk lingkungan kampus mulai dari Rp5.000 (weekday) dan Rp5.000-Rp7.000 (weekend/malam). Untuk rute di luar area pricelist, tarif dihitung Rp2.500 per km.",
+    "content": "Q: Berapa tarif dasar layanan Anjem UGM?\nA: Tarif dasar untuk Motor: Rp5.000 + Rp2.500/km. Tarif dasar untuk Mobil (Kapasitas 4): Rp7.000 + Rp4.000/km. Tarif dipengaruhi kondisi cuaca dengan sistem multiplier: Normal (1.0x), Mendung/Gerimis (1.2x), Hujan (1.6x), Hujan Deras/Badai (2.0x). Rumus: (tarif_dasar + jarak × tarif_per_km) × multiplier_cuaca.",
     "question": "Berapa tarif dasar layanan Anjem UGM?",
-    "answer": "Tarif dasar Anjem UGM untuk lingkungan kampus mulai dari Rp5.000 (weekday) dan Rp5.000-Rp7.000 (weekend/malam). Untuk rute di luar area pricelist, tarif dihitung Rp2.500 per km.",
+    "answer": "Tarif dasar untuk Motor: Rp5.000 + Rp2.500/km. Tarif dasar untuk Mobil (Kapasitas 4): Rp7.000 + Rp4.000/km. Tarif dipengaruhi kondisi cuaca dengan sistem multiplier: Normal (1.0x), Mendung/Gerimis (1.2x), Hujan (1.6x), Hujan Deras/Badai (2.0x). Rumus: (tarif_dasar + jarak × tarif_per_km) × multiplier_cuaca.",
     "category": "tarif",
     "subcategory": "harga",
     "intent": "cek_harga",
@@ -112,9 +112,9 @@
     "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
-    "content": "Q: Bagaimana cara menghitung tarif layanan?\nA: Tarif dihitung berdasarkan jarak dan durasi perjalanan. Untuk rute di luar pricelist, rumusnya Jarak (km) x Rp2.500 dibulatkan ke ribuan terdekat ke bawah. Estimasi tarif dapat dicek pada menu Cek Harga Rute di website anjemugm.vercel.app.",
+    "content": "Q: Bagaimana cara menghitung tarif layanan?\nA: Tarif dihitung dengan rumus: (tarif_dasar + jarak_km × tarif_per_km) × multiplier_cuaca. Motor: tarif dasar Rp5.000, per km Rp2.500. Mobil (Kapasitas 4): tarif dasar Rp7.000, per km Rp4.000. Multiplier cuaca: Normal 1.0x, Mendung/Gerimis 1.2x, Hujan 1.6x, Hujan Deras/Badai 2.0x. Estimasi tarif dapat dicek pada menu Cek Harga Rute di website anjemugm.vercel.app.",
     "question": "Bagaimana cara menghitung tarif layanan?",
-    "answer": "Tarif dihitung berdasarkan jarak dan durasi perjalanan. Untuk rute di luar pricelist, rumusnya Jarak (km) x Rp2.500 dibulatkan ke ribuan terdekat ke bawah. Estimasi tarif dapat dicek pada menu Cek Harga Rute di website anjemugm.vercel.app.",
+    "answer": "Tarif dihitung dengan rumus: (tarif_dasar + jarak_km × tarif_per_km) × multiplier_cuaca. Motor: tarif dasar Rp5.000, per km Rp2.500. Mobil (Kapasitas 4): tarif dasar Rp7.000, per km Rp4.000. Multiplier cuaca: Normal 1.0x, Mendung/Gerimis 1.2x, Hujan 1.6x, Hujan Deras/Badai 2.0x. Estimasi tarif dapat dicek pada menu Cek Harga Rute di website anjemugm.vercel.app.",
     "category": "tarif",
     "subcategory": "harga",
     "intent": "cek_harga",
@@ -140,9 +140,9 @@
     "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
-    "content": "Q: Apakah tarif Anjem UGM tetap atau berubah-ubah?\nA: Tarif dasar tetap, namun dapat berubah tergantung jarak, durasi, dan kondisi tertentu seperti cuaca hujan atau malam hari.",
+    "content": "Q: Apakah tarif Anjem UGM tetap atau berubah-ubah?\nA: Tarif dasar dan per km tetap untuk masing-masing kendaraan (Motor/Mobil), namun total tarif dipengaruhi oleh kondisi cuaca melalui sistem multiplier: Normal (1.0x), Mendung/Gerimis (1.2x), Hujan (1.6x), Hujan Deras/Badai (2.0x).",
     "question": "Apakah tarif Anjem UGM tetap atau berubah-ubah?",
-    "answer": "Tarif dasar tetap, namun dapat berubah tergantung jarak, durasi, dan kondisi tertentu seperti cuaca hujan atau malam hari.",
+    "answer": "Tarif dasar dan per km tetap untuk masing-masing kendaraan (Motor/Mobil), namun total tarif dipengaruhi oleh kondisi cuaca melalui sistem multiplier: Normal (1.0x), Mendung/Gerimis (1.2x), Hujan (1.6x), Hujan Deras/Badai (2.0x).",
     "category": "tarif",
     "subcategory": "harga",
     "intent": "cek_harga",
@@ -322,9 +322,9 @@
     "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
-    "content": "Q: Apakah Anjem UGM menyediakan kendaraan roda empat?\nA: Saat ini fokus pada kendaraan roda dua. Kendaraan roda empat dapat tersedia untuk rute khusus dan dijadwalkan terlebih dahulu.",
+    "content": "Q: Apakah Anjem UGM menyediakan kendaraan roda empat?\nA: Ya, Anjem UGM sekarang menyediakan layanan Mobil (Kapasitas 4) selain Motor. Tarif Mobil: tarif dasar Rp7.000 + Rp4.000/km. Pilihan kendaraan dapat dipilih di fitur Cek Harga Rute di website anjemugm.vercel.app.",
     "question": "Apakah Anjem UGM menyediakan kendaraan roda empat?",
-    "answer": "Saat ini fokus pada kendaraan roda dua. Kendaraan roda empat dapat tersedia untuk rute khusus dan dijadwalkan terlebih dahulu.",
+    "answer": "Ya, Anjem UGM sekarang menyediakan layanan Mobil (Kapasitas 4) selain Motor. Tarif Mobil: tarif dasar Rp7.000 + Rp4.000/km. Pilihan kendaraan dapat dipilih di fitur Cek Harga Rute di website anjemugm.vercel.app.",
     "category": "umum",
     "subcategory": "lainnya",
     "intent": "informasi_layanan",
@@ -336,9 +336,9 @@
     "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
-    "content": "Q: Bagaimana cara cek estimasi harga sebelum pesan?\nA: Kunjungi menu Cek Harga Rute di website anjemugm.vercel.app. Pilih jenis layanan (anjem/jastip), masukkan jarak dalam km, dan pilih kondisi opsional (hujan/dini hari) untuk melihat estimasi tarif.",
+    "content": "Q: Bagaimana cara cek estimasi harga sebelum pesan?\nA: Kunjungi menu Cek Harga Rute di website anjemugm.vercel.app. Pilih jenis kendaraan (Motor/Mobil), pilih layanan (anjem/jastip untuk motor), masukkan jarak dalam km, dan pilih kondisi cuaca (Normal/Mendung/Hujan/Badai) untuk melihat estimasi tarif lengkap dengan breakdown biaya.",
     "question": "Bagaimana cara cek estimasi harga sebelum pesan?",
-    "answer": "Kunjungi menu Cek Harga Rute di website anjemugm.vercel.app. Pilih jenis layanan (anjem/jastip), masukkan jarak dalam km, dan pilih kondisi opsional (hujan/dini hari) untuk melihat estimasi tarif.",
+    "answer": "Kunjungi menu Cek Harga Rute di website anjemugm.vercel.app. Pilih jenis kendaraan (Motor/Mobil), pilih layanan (anjem/jastip untuk motor), masukkan jarak dalam km, dan pilih kondisi cuaca (Normal/Mendung/Hujan/Badai) untuk melihat estimasi tarif lengkap dengan breakdown biaya.",
     "category": "tarif",
     "subcategory": "harga",
     "intent": "cek_harga",
@@ -784,9 +784,9 @@
     "extracted_at": "2026-03-10T21:06:47.934700"
   },
   {
-    "content": "Q: Apakah ada batas jarak maksimum layanan?\nA: Tidak ada batas jarak maksimum. Untuk rute jauh di luar pricelist berlaku tarif Rp2.500 per km.",
+    "content": "Q: Apakah ada batas jarak maksimum layanan?\nA: Tidak ada batas jarak maksimum. Untuk rute di luar pricelist berlaku tarif Motor Rp2.500/km dan Mobil Rp4.000/km, ditambah tarif dasar masing-masing kendaraan.",
     "question": "Apakah ada batas jarak maksimum layanan?",
-    "answer": "Tidak ada batas jarak maksimum. Untuk rute jauh di luar pricelist berlaku tarif Rp2.500 per km.",
+    "answer": "Tidak ada batas jarak maksimum. Untuk rute di luar pricelist berlaku tarif Motor Rp2.500/km dan Mobil Rp4.000/km, ditambah tarif dasar masing-masing kendaraan.",
     "category": "tarif",
     "subcategory": "jarak",
     "intent": "cek_harga",
@@ -882,9 +882,9 @@
     "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
-    "content": "Q: Berapa tarif untuk rute di luar area pricelist?\nA: Untuk tujuan di luar area pricelist, berlaku tarif Rp2.500 per kilometer. Rumus: Jarak (km) x Rp2.500. Hasil perhitungan dibulatkan ke ribuan terdekat ke bawah. Tarif minimum tetap Rp5.000.",
+    "content": "Q: Berapa tarif untuk rute di luar area pricelist?\nA: Untuk rute di luar area pricelist, tarif dihitung dengan rumus: (tarif_dasar + jarak_km × tarif_per_km) × multiplier_cuaca. Motor: Rp5.000 + Rp2.500/km. Mobil (Kapasitas 4): Rp7.000 + Rp4.000/km. Multiplier cuaca berlaku sesuai kondisi.",
     "question": "Berapa tarif untuk rute di luar area pricelist?",
-    "answer": "Untuk tujuan di luar area pricelist, berlaku tarif Rp2.500 per kilometer. Rumus: Jarak (km) x Rp2.500. Hasil perhitungan dibulatkan ke ribuan terdekat ke bawah. Tarif minimum tetap Rp5.000.",
+    "answer": "Untuk rute di luar area pricelist, tarif dihitung dengan rumus: (tarif_dasar + jarak_km × tarif_per_km) × multiplier_cuaca. Motor: Rp5.000 + Rp2.500/km. Mobil (Kapasitas 4): Rp7.000 + Rp4.000/km. Multiplier cuaca berlaku sesuai kondisi.",
     "category": "tarif",
     "subcategory": "harga",
     "intent": "cek_harga",
@@ -896,9 +896,9 @@
     "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
-    "content": "Q: Bagaimana contoh perhitungan tarif per kilometer untuk rute di luar pricelist?\nA: Contoh: Jarak 4,56 km maka 4,56 x Rp2.500 = Rp11.400, dibulatkan ke bawah menjadi Rp11.000. Tarif minimum tetap Rp5.000 meskipun perhitungan menghasilkan angka lebih rendah.",
+    "content": "Q: Bagaimana contoh perhitungan tarif per kilometer untuk rute di luar pricelist?\nA: Contoh Motor jarak 5 km cuaca Normal: (Rp5.000 + 5 × Rp2.500) × 1.0 = Rp17.500. Contoh Motor jarak 5 km cuaca Hujan: (Rp5.000 + 5 × Rp2.500) × 1.6 = Rp28.000. Contoh Mobil jarak 5 km cuaca Normal: (Rp7.000 + 5 × Rp4.000) × 1.0 = Rp27.000.",
     "question": "Bagaimana contoh perhitungan tarif per kilometer untuk rute di luar pricelist?",
-    "answer": "Contoh: Jarak 4,56 km maka 4,56 x Rp2.500 = Rp11.400, dibulatkan ke bawah menjadi Rp11.000. Tarif minimum tetap Rp5.000 meskipun perhitungan menghasilkan angka lebih rendah.",
+    "answer": "Contoh Motor jarak 5 km cuaca Normal: (Rp5.000 + 5 × Rp2.500) × 1.0 = Rp17.500. Contoh Motor jarak 5 km cuaca Hujan: (Rp5.000 + 5 × Rp2.500) × 1.6 = Rp28.000. Contoh Mobil jarak 5 km cuaca Normal: (Rp7.000 + 5 × Rp4.000) × 1.0 = Rp27.000.",
     "category": "tarif",
     "subcategory": "harga",
     "intent": "cek_harga",
@@ -910,9 +910,9 @@
     "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
-    "content": "Q: Berapa detail tambahan biaya saat kondisi hujan?\nA: Saat hujan terdapat fee tambahan bervariasi: +Rp1.000 jika driver pakai mantel dan customer tidak memakai mantel, +Rp2.000 jika customer memakai mantel dari driver, +Rp3.000 jika keduanya pakai mantel DAN hujan deras ditambah jarak jauh.",
+    "content": "Q: Berapa detail tambahan biaya saat kondisi hujan?\nA: Tarif saat cuaca buruk dihitung menggunakan sistem multiplier pada total tarif: Mendung/Gerimis tarif ×1.2, Hujan tarif ×1.6, Hujan Deras/Badai tarif ×2.0. Contoh: tarif normal Motor 5 km = Rp17.500, saat Hujan menjadi Rp17.500 × 1.6 = Rp28.000.",
     "question": "Berapa detail tambahan biaya saat kondisi hujan?",
-    "answer": "Saat hujan terdapat fee tambahan bervariasi: +Rp1.000 jika driver pakai mantel dan customer tidak memakai mantel, +Rp2.000 jika customer memakai mantel dari driver, +Rp3.000 jika keduanya pakai mantel DAN hujan deras ditambah jarak jauh.",
+    "answer": "Tarif saat cuaca buruk dihitung menggunakan sistem multiplier pada total tarif: Mendung/Gerimis tarif ×1.2, Hujan tarif ×1.6, Hujan Deras/Badai tarif ×2.0. Contoh: tarif normal Motor 5 km = Rp17.500, saat Hujan menjadi Rp17.500 × 1.6 = Rp28.000.",
     "category": "tarif",
     "subcategory": "biaya",
     "intent": "cek_harga",
@@ -1036,9 +1036,9 @@
     "extracted_at": "2026-03-10T21:06:47.935718"
   },
   {
-    "content": "Q: Apakah website UGM Anjem memiliki fitur kalkulator estimasi harga?\nA: Ya, di website anjemugm.vercel.app terdapat fitur Cek Harga Rute. Anda bisa memilih jenis layanan (anjem atau jastip), memasukkan jarak dalam km, dan menambahkan kondisi opsional (hujan atau dini hari) untuk mendapatkan estimasi biaya perjalanan.",
+    "content": "Q: Apakah website UGM Anjem memiliki fitur kalkulator estimasi harga?\nA: Ya, di website anjemugm.vercel.app terdapat fitur Cek Harga Rute. Anda bisa memilih jenis kendaraan (Motor atau Mobil), memilih layanan (anjem/jastip untuk motor), memasukkan jarak dalam km, dan memilih kondisi cuaca (Normal/Mendung/Hujan/Badai) untuk mendapatkan estimasi biaya lengkap dengan breakdown tarif.",
     "question": "Apakah website UGM Anjem memiliki fitur kalkulator estimasi harga?",
-    "answer": "Ya, di website anjemugm.vercel.app terdapat fitur Cek Harga Rute. Anda bisa memilih jenis layanan (anjem atau jastip), memasukkan jarak dalam km, dan menambahkan kondisi opsional (hujan atau dini hari) untuk mendapatkan estimasi biaya perjalanan.",
+    "answer": "Ya, di website anjemugm.vercel.app terdapat fitur Cek Harga Rute. Anda bisa memilih jenis kendaraan (Motor atau Mobil), memilih layanan (anjem/jastip untuk motor), memasukkan jarak dalam km, dan memilih kondisi cuaca (Normal/Mendung/Hujan/Badai) untuk mendapatkan estimasi biaya lengkap dengan breakdown tarif.",
     "category": "tarif",
     "subcategory": "harga",
     "intent": "cek_harga",

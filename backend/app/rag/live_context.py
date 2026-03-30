@@ -82,15 +82,30 @@ class LiveContext:
             price_map = {r["key"]: r["value"] for r in pricing}
             lines = ["Konfigurasi harga UGM Anjem (data terkini):"]
             label_map = {
-                "price_per_km": "Tarif per km (di luar pricelist)",
-                "minimum_price": "Tarif minimum",
-                "jastip_fee": "Fee tambahan jastip",
-                "rainy_fee": "Fee tambahan hujan",
-                "early_morning_fee": "Fee tambahan dini hari (>22:00)",
+                "price_per_km": "Tarif per km motor (di luar pricelist)",
+                "minimum_price": "Tarif minimum motor",
+                "jastip_fee": "Fee tambahan jastip (motor only)",
+                "rainy_fee": "Fee tambahan hujan (legacy)",
+                "early_morning_fee": "Fee tambahan dini hari (legacy)",
             }
             for key, label in label_map.items():
                 if key in price_map:
                     lines.append(f"- {label}: Rp{price_map[key]}")
+
+            lines.append("")
+            lines.append("Tarif per jenis kendaraan:")
+            lines.append("- Motor: tarif dasar Rp5.000 + Rp2.500/km")
+            lines.append("- Mobil (Kapasitas 4): tarif dasar Rp7.000 + Rp4.000/km")
+            lines.append("")
+            lines.append("Multiplier cuaca (berlaku untuk semua kendaraan):")
+            lines.append("- Normal: 1.0x")
+            lines.append("- Mendung / Gerimis: 1.2x")
+            lines.append("- Hujan: 1.6x")
+            lines.append("- Hujan Deras / Badai: 2.0x")
+            lines.append("")
+            lines.append(
+                "Rumus: (tarif_dasar + jarak_km × tarif_per_km) × multiplier_cuaca"
+            )
             sections.append("\n".join(lines))
 
         social = self._query("social_links", order="sort_order")
