@@ -20,5 +20,5 @@ __pycache__/
 .venv/
 venv/
 
-# Vector store (large binary, rebuild via embed_knowledge.py)
-vectorstore/chroma_db/
+# Vector store — NOT ignored; Railway needs it for Docker build
+# To rebuild: python3 knowledge/scripts/embed_knowledge.py
