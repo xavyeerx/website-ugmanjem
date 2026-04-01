@@ -49,7 +49,10 @@ async def chat(body: ChatRequest, request: Request):
     except Exception as e:
         CHAT_REQUESTS_TOTAL.labels(status="error").inc()
         logger.error(f"Retriever error: {e}")
-        raise HTTPException(status_code=502, detail="Gagal mengambil konteks dari knowledge base.")
+        raise HTTPException(
+            status_code=502,
+            detail=f"Gagal mengambil konteks dari knowledge base: {e}",
+        )
 
     history = [{"role": m.role, "content": m.content} for m in body.conversation_history]
 
