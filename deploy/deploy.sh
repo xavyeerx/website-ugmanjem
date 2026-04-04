@@ -1,18 +1,17 @@
 #!/bin/bash
 # ============================================================
-# Deployment Script — UGM Anjem Chatbot (Ollama + Qwen3)
+# Deployment Script — UGM Anjem Chatbot (OpenAI API)
 # Builds and starts all services on the VPS
 #
 # Usage (from project root):
 #   cd deploy && ./deploy.sh
 #
 # Commands:
-#   ./deploy.sh          → Full build + start + pull models
+#   ./deploy.sh          → Full build + start
 #   ./deploy.sh stop     → Stop all services
 #   ./deploy.sh restart  → Restart without rebuild
 #   ./deploy.sh logs     → View live logs
 #   ./deploy.sh status   → Check service status
-#   ./deploy.sh pull     → Pull/update Ollama models only
 # ============================================================
 
 set -e
@@ -35,32 +34,27 @@ info() { echo -e "${CYAN}[INFO]${NC} $1"; }
 
 check_env() {
     if [ ! -f "$PROJECT_ROOT/backend/.env" ]; then
-        warn "backend/.env not found, creating default..."
-        cat > "$PROJECT_ROOT/backend/.env" << 'EOF'
-OLLAMA_BASE_URL=http://ollama:11434
-OLLAMA_MODEL=qwen3:8b
-OLLAMA_EMBEDDING_MODEL=nomic-embed-text
-EOF
-        log "Created backend/.env with Ollama defaults"
+        err "backend/.env not found!"
+        echo "Buat file backend/.env dengan isi:"
+        echo "  OPENAI_API_KEY=sk-proj-..."
+        echo "  OPENAI_MODEL=gpt-5-mini"
+        echo "  OPENAI_EMBEDDING_MODEL=text-embedding-3-small"
+        exit 1
+    fi
+
+    # Cek API key tidak kosong
+    if grep -q "OPENAI_API_KEY=GANTI" "$PROJECT_ROOT/backend/.env" || \
+       grep -q "OPENAI_API_KEY=your-" "$PROJECT_ROOT/backend/.env" || \
+       ! grep -q "OPENAI_API_KEY=sk-" "$PROJECT_ROOT/backend/.env"; then
+        warn "OPENAI_API_KEY sepertinya belum diisi di backend/.env!"
+        warn "Edit file tersebut dan isi dengan API key OpenAI kamu."
     fi
 
     if [ ! -d "$PROJECT_ROOT/vectorstore/chroma_db" ]; then
-        warn "vectorstore/chroma_db not found."
-        warn "Run embed_knowledge.py after deployment to populate the knowledge base."
+        warn "vectorstore/chroma_db tidak ditemukan."
+        warn "Jalankan: python3 knowledge/scripts/embed_knowledge.py"
+        warn "Chatbot tidak akan bisa menjawab tanpa knowledge base!"
     fi
-}
-
-pull_models() {
-    log "Pulling Ollama models (this may take a while on first run)..."
-
-    info "Pulling qwen3:8b (~5 GB)..."
-    docker exec anjem-ollama ollama pull qwen3:8b
-
-    info "Pulling nomic-embed-text (~275 MB)..."
-    docker exec anjem-ollama ollama pull nomic-embed-text
-
-    log "All models pulled successfully!"
-    docker exec anjem-ollama ollama list
 }
 
 case "${1:-start}" in
@@ -74,21 +68,12 @@ case "${1:-start}" in
         log "Starting services..."
         docker compose up -d
 
-        log "Waiting for Ollama to start..."
-        sleep 10
-
-        # Pull models into Ollama
-        pull_models
-
-        log "Waiting for backend to initialize with models..."
-        sleep 5
-
-        # Restart backend so it connects to now-ready Ollama
-        docker compose restart backend
-        sleep 10
+        log "Waiting for backend to be healthy..."
+        sleep 15
 
         log "Checking health..."
-        if curl -sf http://localhost/health > /dev/null 2>&1; then
+        if curl -sf http://localhost:8000/health > /dev/null 2>&1; then
+            HEALTH=$(curl -s http://localhost:8000/health)
             echo ""
             echo -e "${GREEN}============================================${NC}"
             echo -e "${GREEN} ✅ Deployment successful!${NC}"
@@ -96,18 +81,16 @@ case "${1:-start}" in
             echo -e "${GREEN} Frontend:   http://10.33.109.173${NC}"
             echo -e "${GREEN} API:        http://10.33.109.173/api/chat${NC}"
             echo -e "${GREEN} Health:     http://10.33.109.173/health${NC}"
-            echo -e "${GREEN} Ollama:     http://10.33.109.173:11434${NC}"
             echo -e "${GREEN} Prometheus: http://10.33.109.173:9090${NC}"
             echo -e "${GREEN} Grafana:    http://10.33.109.173:3001${NC}"
             echo -e "${GREEN}   (admin / anjemugm123)${NC}"
             echo -e "${GREEN}============================================${NC}"
-            echo -e "${CYAN} LLM Model:      qwen3:8b (self-hosted)${NC}"
-            echo -e "${CYAN} Embedding:      nomic-embed-text${NC}"
-            echo -e "${CYAN} No external API keys required!${NC}"
+            echo -e "${CYAN} Provider: OpenAI API${NC}"
+            echo -e "${CYAN} $HEALTH${NC}"
             echo -e "${GREEN}============================================${NC}"
         else
             warn "Health check failed. Checking logs..."
-            docker compose logs --tail=30
+            docker compose logs backend --tail=30
         fi
         ;;
 
@@ -132,9 +115,6 @@ case "${1:-start}" in
         echo ""
         log "Backend health:"
         curl -sf http://localhost:8000/health 2>/dev/null | python3 -m json.tool || echo "Backend not responding"
-        echo ""
-        log "Ollama models:"
-        docker exec anjem-ollama ollama list 2>/dev/null || echo "Ollama not responding"
         ;;
 
     rebuild)
@@ -143,22 +123,15 @@ case "${1:-start}" in
         docker compose down
         docker compose build --no-cache
         docker compose up -d
-        sleep 10
-        pull_models
-        docker compose restart backend
-        log "Done."
-        ;;
-
-    pull)
-        log "Pulling/updating Ollama models..."
-        pull_models
-        log "Restarting backend to use updated models..."
-        docker compose restart backend
-        log "Done."
+        sleep 15
+        log "Checking health..."
+        curl -sf http://localhost:8000/health 2>/dev/null | python3 -m json.tool || \
+            (warn "Backend belum ready, cek logs:" && docker compose logs backend --tail=20)
+        log "Done. Jalankan './deploy.sh status' untuk cek status."
         ;;
 
     *)
-        echo "Usage: $0 {start|stop|restart|logs|status|rebuild|pull}"
+        echo "Usage: $0 {start|stop|restart|logs|status|rebuild}"
         exit 1
         ;;
 esac
