@@ -1,5 +1,7 @@
 {
-  "annotations": { "list": [] },
+  "annotations": {
+    "list": []
+  },
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -7,9 +9,167 @@
   "links": [],
   "panels": [
     {
+      "title": "Total CPU Cores",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "count(count(node_cpu_seconds_total) by (cpu))",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "id": 1000
+    },
+    {
+      "title": "Total RAM (GB)",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 4,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "node_memory_MemTotal_bytes",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        }
+      },
+      "id": 1001
+    },
+    {
+      "title": "Available RAM",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 9,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "node_memory_MemAvailable_bytes",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "id": 1002
+    },
+    {
+      "title": "Total Storage (Root)",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 14,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "node_filesystem_size_bytes{mountpoint=\"/\"}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        }
+      },
+      "id": 1003
+    },
+    {
+      "title": "Available Storage",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 19,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "node_filesystem_avail_bytes{mountpoint=\"/\"}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value",
+        "graphMode": "area"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        }
+      },
+      "id": 1004
+    },
+    {
       "title": "Chat Requests / min",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 4
+      },
       "targets": [
         {
           "expr": "rate(chatbot_chat_requests_total[1m]) * 60",
@@ -18,13 +178,20 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "reqpm" }
+        "defaults": {
+          "unit": "reqpm"
+        }
       }
     },
     {
       "title": "End-to-End Latency (p50 / p95 / p99)",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 4
+      },
       "targets": [
         {
           "expr": "histogram_quantile(0.50, rate(chatbot_chat_e2e_duration_seconds_bucket[5m]))",
@@ -43,13 +210,20 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "s" }
+        "defaults": {
+          "unit": "s"
+        }
       }
     },
     {
       "title": "Error Rate (%)",
       "type": "gauge",
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 4
+      },
       "targets": [
         {
           "expr": "sum(rate(chatbot_chat_requests_total{status!=\"success\"}[5m])) / sum(rate(chatbot_chat_requests_total[5m])) * 100",
@@ -62,9 +236,18 @@
           "unit": "percent",
           "thresholds": {
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 5 },
-              { "color": "red", "value": 20 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 20
+              }
             ]
           },
           "min": 0,
@@ -76,7 +259,12 @@
       "title": "Pipeline Latency Breakdown",
       "description": "Avg latency per RAG pipeline stage",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
       "targets": [
         {
           "expr": "rate(chatbot_retrieval_duration_seconds_sum[5m]) / rate(chatbot_retrieval_duration_seconds_count[5m])",
@@ -95,13 +283,20 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "s" }
+        "defaults": {
+          "unit": "s"
+        }
       }
     },
     {
       "title": "Generation Latency Distribution",
       "type": "histogram",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
       "targets": [
         {
           "expr": "rate(chatbot_generation_duration_seconds_bucket[5m])",
@@ -111,14 +306,21 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "s" }
+        "defaults": {
+          "unit": "s"
+        }
       }
     },
     {
       "title": "Retrieval Quality (Avg Distance)",
       "description": "Lower distance = more relevant retrieval. Track retrieval quality over time.",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 16 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 20
+      },
       "targets": [
         {
           "expr": "chatbot_retrieval_distance_sum / chatbot_retrieval_distance_count",
@@ -127,13 +329,20 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "none" }
+        "defaults": {
+          "unit": "none"
+        }
       }
     },
     {
       "title": "Live Context Cache Hit Rate (%)",
       "type": "gauge",
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 16 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 20
+      },
       "targets": [
         {
           "expr": "rate(chatbot_live_context_cache_hits_total[5m]) / (rate(chatbot_live_context_cache_hits_total[5m]) + rate(chatbot_live_context_cache_misses_total[5m])) * 100",
@@ -146,9 +355,18 @@
           "unit": "percent",
           "thresholds": {
             "steps": [
-              { "color": "red", "value": null },
-              { "color": "yellow", "value": 50 },
-              { "color": "green", "value": 80 }
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
             ]
           },
           "min": 0,
@@ -159,7 +377,12 @@
     {
       "title": "Gemini API Retries & Errors",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 16 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 20
+      },
       "targets": [
         {
           "expr": "rate(chatbot_generation_retries_total[5m]) * 60",
@@ -176,7 +399,12 @@
     {
       "title": "In-Flight Requests",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 24 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 28
+      },
       "targets": [
         {
           "expr": "chatbot_http_requests_in_progress",
@@ -189,7 +417,12 @@
       "title": "Input / Output Characters (Avg)",
       "description": "Average prompt size and response size per request",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 24 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 28
+      },
       "targets": [
         {
           "expr": "chatbot_generation_input_chars_sum / chatbot_generation_input_chars_count",
@@ -206,7 +439,12 @@
     {
       "title": "HTTP Request Rate by Status",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 24 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 28
+      },
       "targets": [
         {
           "expr": "rate(chatbot_http_requests_total[1m]) * 60",
@@ -215,13 +453,20 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "reqpm" }
+        "defaults": {
+          "unit": "reqpm"
+        }
       }
     },
     {
-      "title": "Resource Utilization — CPU, Memory, Network, Disk (per Container & Host VPS)",
+      "title": "Resource Utilization \u2014 CPU, Memory, Network, Disk (per Container & Host VPS)",
       "type": "text",
-      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 32 },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      },
       "options": {
         "mode": "html",
         "content": "<div style=\"padding:8px 0\"><h2 style=\"margin:0;color:#73BF69\">Resource Utilization</h2><p style=\"margin:4px 0 0;color:#8e8e8e\">CPU, Memory, Network, dan Disk usage per container dan host VPS</p></div>"
@@ -231,7 +476,12 @@
       "title": "Container CPU Usage (%)",
       "description": "CPU usage percentage per Docker container",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 35 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 39
+      },
       "targets": [
         {
           "expr": "docker_container_cpu_percent",
@@ -240,14 +490,22 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "percent", "min": 0 }
+        "defaults": {
+          "unit": "percent",
+          "min": 0
+        }
       }
     },
     {
       "title": "Container Memory Usage",
       "description": "Memory usage per Docker container",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 35 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 39
+      },
       "targets": [
         {
           "expr": "docker_container_memory_bytes / 1024 / 1024",
@@ -256,14 +514,21 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "decmbytes" }
+        "defaults": {
+          "unit": "decmbytes"
+        }
       }
     },
     {
       "title": "Host CPU Usage (%)",
       "description": "Overall VPS CPU utilization",
       "type": "gauge",
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 43 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 47
+      },
       "targets": [
         {
           "expr": "(1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m]))) * 100",
@@ -278,9 +543,18 @@
           "max": 100,
           "thresholds": {
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 60 },
-              { "color": "red", "value": 85 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
             ]
           }
         }
@@ -290,7 +564,12 @@
       "title": "Host Memory Usage (%)",
       "description": "Overall VPS RAM utilization",
       "type": "gauge",
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 43 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 47
+      },
       "targets": [
         {
           "expr": "(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100",
@@ -305,9 +584,18 @@
           "max": 100,
           "thresholds": {
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 70 },
-              { "color": "red", "value": 90 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
             ]
           }
         }
@@ -317,7 +605,12 @@
       "title": "Host Disk Usage (%)",
       "description": "VPS disk utilization",
       "type": "gauge",
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 43 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 47
+      },
       "targets": [
         {
           "expr": "(1 - node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100",
@@ -332,9 +625,18 @@
           "max": 100,
           "thresholds": {
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 70 },
-              { "color": "red", "value": 90 }
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
             ]
           }
         }
@@ -344,7 +646,12 @@
       "title": "Container Network I/O",
       "description": "Network receive/transmit per container",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 51 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 55
+      },
       "targets": [
         {
           "expr": "docker_container_network_rx_bytes",
@@ -358,14 +665,21 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "Bps" }
+        "defaults": {
+          "unit": "Bps"
+        }
       }
     },
     {
       "title": "Container Memory Breakdown",
       "description": "Memory per container as a stacked bar",
       "type": "barchart",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 51 },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 55
+      },
       "targets": [
         {
           "expr": "docker_container_memory_bytes / 1024 / 1024",
@@ -375,13 +689,20 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "decmbytes" }
+        "defaults": {
+          "unit": "decmbytes"
+        }
       }
     },
     {
-      "title": "Reliability & Availability — Success Rate, Uptime, Error Tracking",
+      "title": "Reliability & Availability \u2014 Success Rate, Uptime, Error Tracking",
       "type": "text",
-      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 59 },
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 63
+      },
       "options": {
         "mode": "html",
         "content": "<div style=\"padding:8px 0\"><h2 style=\"margin:0;color:#FF9830\">Reliability & Availability</h2><p style=\"margin:4px 0 0;color:#8e8e8e\">Success rate, uptime, error tracking, dan service availability</p></div>"
@@ -389,9 +710,14 @@
     },
     {
       "title": "Chat Success Rate (Availability %)",
-      "description": "Percentage of successful chat responses — key SLA metric",
+      "description": "Percentage of successful chat responses \u2014 key SLA metric",
       "type": "gauge",
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 62 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 66
+      },
       "targets": [
         {
           "expr": "sum(rate(chatbot_chat_requests_total{status=\"success\"}[5m])) / sum(rate(chatbot_chat_requests_total[5m])) * 100",
@@ -406,9 +732,18 @@
           "max": 100,
           "thresholds": {
             "steps": [
-              { "color": "red", "value": null },
-              { "color": "yellow", "value": 95 },
-              { "color": "green", "value": 99 }
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 95
+              },
+              {
+                "color": "green",
+                "value": 99
+              }
             ]
           }
         }
@@ -416,9 +751,14 @@
     },
     {
       "title": "Success Rate Over Time",
-      "description": "Chat success rate trend — tracks reliability over time",
+      "description": "Chat success rate trend \u2014 tracks reliability over time",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 62 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 66
+      },
       "targets": [
         {
           "expr": "sum(rate(chatbot_chat_requests_total{status=\"success\"}[5m])) / sum(rate(chatbot_chat_requests_total[5m])) * 100",
@@ -433,8 +773,14 @@
           "max": 100,
           "thresholds": {
             "steps": [
-              { "color": "red", "value": null },
-              { "color": "green", "value": 99 }
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 99
+              }
             ]
           }
         }
@@ -444,7 +790,12 @@
       "title": "Error Breakdown by Type",
       "description": "Errors categorized: rate_limited vs other failures",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 62 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 66
+      },
       "targets": [
         {
           "expr": "rate(chatbot_chat_requests_total{status=\"error\"}[5m]) * 60",
@@ -470,9 +821,14 @@
     },
     {
       "title": "Total Requests (Cumulative)",
-      "description": "Total requests processed since startup — shows overall load",
+      "description": "Total requests processed since startup \u2014 shows overall load",
       "type": "stat",
-      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 70 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 74
+      },
       "targets": [
         {
           "expr": "sum(chatbot_chat_requests_total)",
@@ -481,14 +837,21 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "short" }
+        "defaults": {
+          "unit": "short"
+        }
       }
     },
     {
       "title": "Uptime (Backend Container)",
       "description": "How long the backend has been running",
       "type": "stat",
-      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 70 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 74
+      },
       "targets": [
         {
           "expr": "time() - process_start_time_seconds{job=\"chatbot-backend\"}",
@@ -497,14 +860,21 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "s" }
+        "defaults": {
+          "unit": "s"
+        }
       }
     },
     {
       "title": "HTTP Error Codes Over Time",
       "description": "All non-200 HTTP responses tracked over time",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 70 },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 74
+      },
       "targets": [
         {
           "expr": "rate(chatbot_http_requests_total{status!=\"200\"}[1m]) * 60",
@@ -513,14 +883,26 @@
         }
       ],
       "fieldConfig": {
-        "defaults": { "unit": "reqpm" }
+        "defaults": {
+          "unit": "reqpm"
+        }
       }
     }
   ],
   "schemaVersion": 39,
-  "tags": ["chatbot", "rag", "qos", "ugm-anjem"],
-  "templating": { "list": [] },
-  "time": { "from": "now-1h", "to": "now" },
+  "tags": [
+    "chatbot",
+    "rag",
+    "qos",
+    "ugm-anjem"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
   "title": "UGM Anjem Chatbot - QoS Dashboard",
   "uid": "ugm-anjem-qos",
   "version": 1
