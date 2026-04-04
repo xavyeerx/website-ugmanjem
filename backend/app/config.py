@@ -7,7 +7,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 class Settings(BaseSettings):
     # OpenAI API settings
     OPENAI_API_KEY: str = ""
-    OPENAI_MODEL: str = "gpt-5-mini"
+    OPENAI_MODEL: str = "gpt-4o-mini"
     OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
 
     VECTORSTORE_PATH: str = str(PROJECT_ROOT / "vectorstore" / "chroma_db")
