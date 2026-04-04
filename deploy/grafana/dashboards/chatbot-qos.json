@@ -462,7 +462,7 @@
       "title": "Resource Utilization \u2014 CPU, Memory, Network, Disk (per Container & Host VPS)",
       "type": "text",
       "gridPos": {
-        "h": 3,
+        "h": 5,
         "w": 24,
         "x": 0,
         "y": 36
@@ -698,7 +698,7 @@
       "title": "Reliability & Availability \u2014 Success Rate, Uptime, Error Tracking",
       "type": "text",
       "gridPos": {
-        "h": 3,
+        "h": 5,
         "w": 24,
         "x": 0,
         "y": 63
