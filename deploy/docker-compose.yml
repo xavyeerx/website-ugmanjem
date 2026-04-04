@@ -1,23 +1,4 @@
 services:
-  # ── Ollama (Self-hosted LLM) ────────────────────────────────
-  ollama:
-    image: ollama/ollama:latest
-    container_name: anjem-ollama
-    restart: unless-stopped
-    volumes:
-      - ollama_data:/root/.ollama
-    ports:
-      - "11434:11434"
-    environment:
-      - OLLAMA_KEEP_ALIVE=-1
-      - OLLAMA_HOST=0.0.0.0
-    healthcheck:
-      test: ["CMD", "ollama", "list"]
-      interval: 15s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
-
   # ── Backend (FastAPI + RAG) ─────────────────────────────────
   backend:
     build:
@@ -30,17 +11,13 @@ services:
     environment:
       - VECTORSTORE_PATH=/data/vectorstore/chroma_db
       - COLLECTION_NAME=ugm_anjem_knowledge
-      - OLLAMA_BASE_URL=http://ollama:11434
-      - OLLAMA_MODEL=qwen3:8b
-      - OLLAMA_EMBEDDING_MODEL=nomic-embed-text
+      - OPENAI_MODEL=gpt-4o-mini
+      - OPENAI_EMBEDDING_MODEL=text-embedding-3-small
       - CORS_ORIGINS=["http://localhost:3000","http://10.33.109.173","http://10.33.109.173:80"]
     volumes:
       - ../vectorstore:/data/vectorstore
     ports:
       - "8000:8000"
-    depends_on:
-      ollama:
-        condition: service_healthy
     healthcheck:
       test:
         [
@@ -68,7 +45,7 @@ services:
     restart: unless-stopped
     environment:
       - NEXT_PUBLIC_SUPABASE_URL=https://baqkpgjkobuqzfrqqccb.supabase.co
-      - NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhcWtwZ2prb2J1cXpmcnFxY2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5ODIxNDgsImV4cCI6MjA4ODU1ODE0OH0.-cnsg1c2ZARudPjErs5vR6SCRPXqeeOZ0tFpbq-VhOw"
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhcWtwZ2prb2J1cXpmcnFxY2NiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5ODIxNDgsImV4cCI6MjA4ODU1ODE0OH0.-cnsg1c2ZARudPjErs5vR6SCRPXqeeOZ0tFpbq-VhOw
       - USE_SUPABASE=true
     ports:
       - "3000:3000"
@@ -106,7 +83,7 @@ services:
       backend:
         condition: service_healthy
 
-  # ── Grafana (Dashboard) ────────────────────────────────────
+  # ── Grafana (Dashboard) ─────────────────────────────────────
   grafana:
     image: grafana/grafana:latest
     container_name: anjem-grafana
@@ -153,6 +130,5 @@ services:
       - "9100:9100"
 
 volumes:
-  ollama_data:
   prometheus_data:
   grafana_data:

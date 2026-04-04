@@ -5,17 +5,17 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 class Settings(BaseSettings):
-    # Ollama settings (replaces Google Gemini API)
-    OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OLLAMA_MODEL: str = "qwen3:8b"
-    OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
+    # OpenAI API settings
+    OPENAI_API_KEY: str = ""
+    OPENAI_MODEL: str = "gpt-4o-mini"
+    OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
 
     VECTORSTORE_PATH: str = str(PROJECT_ROOT / "vectorstore" / "chroma_db")
     COLLECTION_NAME: str = "ugm_anjem_knowledge"
     SUPABASE_URL: str = ""
     SUPABASE_ANON_KEY: str = ""
 
-    # Extra CORS origins (comma-separated), e.g. from deploy env var
+    # Extra CORS origins (comma-separated)
     EXTRA_CORS_ORIGINS: str = ""
 
     @property

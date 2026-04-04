@@ -1,18 +1,12 @@
 """
-Embed knowledge chunks using Ollama embedding model and store in ChromaDB.
+Embed knowledge chunks using OpenAI embedding API and store in ChromaDB.
 
-This script replaces the previous Gemini-based embedding with Ollama's
-nomic-embed-text model for fully self-hosted operation.
+Model: text-embedding-3-small (dimension: 1536)
+Biaya estimasi: $0.02 per 1 juta token (~gratis untuk knowledge base kecil)
 
 Usage:
-    # Make sure Ollama is running with the embedding model pulled:
-    #   ollama pull nomic-embed-text
-    #
-    # Then run:
+    export OPENAI_API_KEY='your-api-key'
     python embed_knowledge.py
-
-    # Or specify a custom Ollama URL:
-    OLLAMA_BASE_URL=http://10.33.109.173:11434 python embed_knowledge.py
 """
 
 import json
@@ -31,10 +25,10 @@ except ImportError:
 PROCESSED_DIR = Path(__file__).resolve().parent.parent / "processed"
 VECTORSTORE_DIR = Path(__file__).resolve().parent.parent.parent / "vectorstore" / "chroma_db"
 
-OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
-EMBEDDING_MODEL = os.environ.get("OLLAMA_EMBEDDING_MODEL", "nomic-embed-text")
+OPENAI_EMBED_URL = "https://api.openai.com/v1/embeddings"
+EMBEDDING_MODEL = os.environ.get("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
 COLLECTION_NAME = "ugm_anjem_knowledge"
-BATCH_SIZE = 20
+BATCH_SIZE = 100   # OpenAI mendukung batch besar (hemat biaya)
 
 
 def load_chunks():
@@ -48,10 +42,14 @@ def load_chunks():
     return chunks
 
 
-def get_embeddings(texts: list[str], client: httpx.Client) -> list[list[float]]:
-    """Get embeddings from Ollama /api/embed endpoint."""
+def get_embeddings(texts: list[str], client: httpx.Client, api_key: str) -> list[list[float]]:
+    """Get embeddings from OpenAI /v1/embeddings endpoint."""
     response = client.post(
-        f"{OLLAMA_BASE_URL}/api/embed",
+        OPENAI_EMBED_URL,
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
         json={
             "model": EMBEDDING_MODEL,
             "input": texts,
@@ -59,7 +57,10 @@ def get_embeddings(texts: list[str], client: httpx.Client) -> list[list[float]]:
     )
     response.raise_for_status()
     data = response.json()
-    return data.get("embeddings", [])
+
+    # Sort by index to preserve order
+    sorted_data = sorted(data["data"], key=lambda x: x["index"])
+    return [item["embedding"] for item in sorted_data]
 
 
 def flatten_metadata(chunk):
@@ -76,25 +77,29 @@ def flatten_metadata(chunk):
 
 
 def main():
-    print(f"Ollama URL: {OLLAMA_BASE_URL}")
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        print("ERROR: Set OPENAI_API_KEY environment variable first.")
+        print("  Linux:   export OPENAI_API_KEY='sk-...'")
+        print("  Windows: set OPENAI_API_KEY=sk-...")
+        return
+
     print(f"Embedding model: {EMBEDDING_MODEL}")
+    print("Estimasi biaya: SANGAT MURAH (~$0.001 untuk knowledge base kecil)")
 
-    # Verify Ollama is reachable
-    client = httpx.Client(timeout=httpx.Timeout(connect=10.0, read=120.0, write=10.0, pool=10.0))
+    client = httpx.Client(timeout=httpx.Timeout(connect=10.0, read=60.0, write=10.0, pool=10.0))
 
+    # Verify API key
     try:
-        resp = client.get(f"{OLLAMA_BASE_URL}/api/tags")
+        resp = client.get(
+            "https://api.openai.com/v1/models",
+            headers={"Authorization": f"Bearer {api_key}"},
+        )
         resp.raise_for_status()
-        models = [m["name"] for m in resp.json().get("models", [])]
-        print(f"Available models: {models}")
-        if not any(EMBEDDING_MODEL in m for m in models):
-            print(f"\nERROR: Model '{EMBEDDING_MODEL}' not found in Ollama.")
-            print(f"  Run: ollama pull {EMBEDDING_MODEL}")
-            return
+        print("OpenAI API key valid ✓")
     except Exception as e:
-        print(f"\nERROR: Cannot connect to Ollama at {OLLAMA_BASE_URL}")
-        print(f"  Make sure Ollama is running: ollama serve")
-        print(f"  Error: {e}")
+        print(f"ERROR: Cannot connect to OpenAI API: {e}")
+        print("Pastikan OPENAI_API_KEY benar dan VPS bisa akses internet.")
         return
 
     print("\nLoading knowledge chunks...")
@@ -111,11 +116,11 @@ def main():
 
     collection = db_client.create_collection(
         name=COLLECTION_NAME,
-        metadata={"description": "UGM Anjem RAG Knowledge Base (Ollama embedded)"},
+        metadata={"description": "UGM Anjem RAG Knowledge Base (OpenAI embedded)"},
     )
 
     total_batches = (len(chunks) - 1) // BATCH_SIZE + 1
-    print(f"\nEmbedding {len(chunks)} chunks with {EMBEDDING_MODEL} ({total_batches} batches)...")
+    print(f"\nEmbedding {len(chunks)} chunks dengan {EMBEDDING_MODEL} ({total_batches} batch)...")
 
     for i in range(0, len(chunks), BATCH_SIZE):
         batch = chunks[i : i + BATCH_SIZE]
@@ -123,7 +128,7 @@ def main():
         ids = [c["chunk_id"] for c in batch]
         metadatas = [flatten_metadata(c) for c in batch]
 
-        embeddings = get_embeddings(texts, client)
+        embeddings = get_embeddings(texts, client, api_key)
 
         collection.add(
             ids=ids,
@@ -136,15 +141,15 @@ def main():
         items_done = i + len(batch)
         print(f"  Batch {batch_num}/{total_batches} ({len(batch)} chunks, total {items_done}/{len(chunks)})")
 
-        # Small delay between batches to avoid overwhelming Ollama
+        # Kecil saja, OpenAI tidak ada rate limit yang ketat untuk embedding
         if i + BATCH_SIZE < len(chunks):
-            time.sleep(0.5)
+            time.sleep(0.2)
 
     client.close()
 
-    print(f"\n✅ Done! {collection.count()} chunks stored in ChromaDB")
+    print(f"\n✅ Done! {collection.count()} chunks tersimpan di ChromaDB")
     print(f"   Vector store: {VECTORSTORE_DIR}")
-    print(f"   Embedding model: {EMBEDDING_MODEL}")
+    print(f"   Embedding model: {EMBEDDING_MODEL} (dimension: 1536)")
 
 
 if __name__ == "__main__":

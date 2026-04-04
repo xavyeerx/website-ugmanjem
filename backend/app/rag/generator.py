@@ -13,30 +13,29 @@ from app.metrics import (
 
 logger = logging.getLogger(__name__)
 
-# Timeout: 120s for generation (CPU inference can be slow)
-OLLAMA_TIMEOUT = httpx.Timeout(connect=10.0, read=120.0, write=10.0, pool=10.0)
+OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions"
+OPENAI_TIMEOUT = httpx.Timeout(connect=10.0, read=60.0, write=10.0, pool=10.0)
 
 
 class AnswerGenerator:
-    def __init__(self, base_url: str = "http://localhost:11434", model_name: str = "qwen3:8b"):
-        self.base_url = base_url.rstrip("/")
+    def __init__(self, api_key: str, model_name: str = "gpt-4o-mini"):
+        self.api_key = api_key
         self.model_name = model_name
-        self._client = httpx.Client(timeout=OLLAMA_TIMEOUT)
+        self._client = httpx.Client(
+            timeout=OPENAI_TIMEOUT,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+        )
 
-        # Verify Ollama is reachable
+        # Verify API key is reachable
         try:
-            resp = self._client.get(f"{self.base_url}/api/tags")
+            resp = self._client.get("https://api.openai.com/v1/models")
             resp.raise_for_status()
-            models = [m["name"] for m in resp.json().get("models", [])]
-            if not any(model_name in m for m in models):
-                logger.warning(
-                    f"Model '{model_name}' not found in Ollama. "
-                    f"Available: {models}. Run: ollama pull {model_name}"
-                )
-            else:
-                logger.info(f"Ollama connected — model '{model_name}' ready")
+            logger.info(f"OpenAI API connected — model '{model_name}' ready")
         except Exception as e:
-            logger.warning(f"Could not connect to Ollama at {self.base_url}: {e}")
+            logger.warning(f"Could not verify OpenAI API key: {e}")
 
     def generate(
         self,
@@ -51,7 +50,6 @@ class AnswerGenerator:
             for c in context_chunks
         )
 
-        # Build messages in OpenAI-compatible chat format
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
 
         for msg in (history or [])[-6:]:
@@ -80,27 +78,26 @@ class AnswerGenerator:
         for attempt in range(max_retries + 1):
             try:
                 response = self._client.post(
-                    f"{self.base_url}/api/chat",
+                    OPENAI_CHAT_URL,
                     json={
                         "model": self.model_name,
                         "messages": messages,
-                        "stream": False,
-                        "options": {
-                            "temperature": 0.7,
-                            "top_p": 0.9,
-                            "num_predict": 1024,
-                        },
+                        "temperature": 0.7,
+                        "max_tokens": 1024,
                     },
                 )
+
+                if response.status_code == 429:
+                    # Rate limited
+                    wait = 5 * (attempt + 1)
+                    logger.warning(f"OpenAI rate limited, retrying in {wait}s...")
+                    GENERATION_RETRIES.inc()
+                    time.sleep(wait)
+                    continue
+
                 response.raise_for_status()
-
                 data = response.json()
-                answer = data.get("message", {}).get("content", "")
-
-                # Qwen3 may wrap answers in <think>...</think> tags; strip them
-                if "<think>" in answer:
-                    import re
-                    answer = re.sub(r"<think>.*?</think>", "", answer, flags=re.DOTALL).strip()
+                answer = data["choices"][0]["message"]["content"]
 
                 GENERATION_LATENCY.observe(time.perf_counter() - start)
                 GENERATION_OUTPUT_CHARS.observe(len(answer))
@@ -110,7 +107,7 @@ class AnswerGenerator:
                 if attempt < max_retries:
                     GENERATION_RETRIES.inc()
                     wait = 3 * (attempt + 1)
-                    logger.warning(f"Ollama timeout (attempt {attempt + 1}), retrying in {wait}s...")
+                    logger.warning(f"OpenAI timeout (attempt {attempt + 1}), retrying in {wait}s...")
                     time.sleep(wait)
                     continue
                 GENERATION_ERRORS.labels(error_type="timeout").inc()

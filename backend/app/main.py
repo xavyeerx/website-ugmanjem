@@ -21,9 +21,9 @@ from app.metrics import (
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     SYSTEM_INFO.info({
-        "llm_model": settings.OLLAMA_MODEL,
-        "embedding_model": settings.OLLAMA_EMBEDDING_MODEL,
-        "ollama_url": settings.OLLAMA_BASE_URL,
+        "llm_model": settings.OPENAI_MODEL,
+        "embedding_model": settings.OPENAI_EMBEDDING_MODEL,
+        "provider": "openai",
         "vectorstore_path": settings.VECTORSTORE_PATH,
         "collection_name": settings.COLLECTION_NAME,
         "supabase_enabled": str(bool(settings.SUPABASE_URL)),
@@ -33,19 +33,18 @@ async def lifespan(app: FastAPI):
         app.state.retriever = KnowledgeRetriever(
             db_path=settings.VECTORSTORE_PATH,
             collection_name=settings.COLLECTION_NAME,
-            ollama_base_url=settings.OLLAMA_BASE_URL,
-            embedding_model=settings.OLLAMA_EMBEDDING_MODEL,
+            api_key=settings.OPENAI_API_KEY,
+            embedding_model=settings.OPENAI_EMBEDDING_MODEL,
         )
         app.state.generator = AnswerGenerator(
-            base_url=settings.OLLAMA_BASE_URL,
-            model_name=settings.OLLAMA_MODEL,
+            api_key=settings.OPENAI_API_KEY,
+            model_name=settings.OPENAI_MODEL,
         )
         print(f"RAG engine ready — {app.state.retriever.count()} chunks loaded")
-        print(f"  LLM: {settings.OLLAMA_MODEL} via Ollama ({settings.OLLAMA_BASE_URL})")
-        print(f"  Embedding: {settings.OLLAMA_EMBEDDING_MODEL}")
+        print(f"  LLM: {settings.OPENAI_MODEL} (OpenAI API)")
+        print(f"  Embedding: {settings.OPENAI_EMBEDDING_MODEL}")
     except Exception as e:
         print(f"WARNING: RAG engine failed to initialize: {e}")
-        print("Make sure Ollama is running and models are pulled.")
         app.state.retriever = None
         app.state.generator = None
 
@@ -60,7 +59,6 @@ async def lifespan(app: FastAPI):
             print(f"WARNING: Supabase connection failed: {e}")
             app.state.live_context = None
     else:
-        print("Live context disabled (no Supabase credentials)")
         app.state.live_context = None
 
     yield
@@ -68,7 +66,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="UGM Anjem Chatbot API",
-    version="2.0.0",
+    version="3.0.0",
     lifespan=lifespan,
 )
 
@@ -97,7 +95,7 @@ async def prometheus_middleware(request: Request, call_next):
             method=method, endpoint=endpoint, status=response.status_code,
         ).inc()
         return response
-    except Exception as e:
+    except Exception:
         REQUEST_COUNT.labels(method=method, endpoint=endpoint, status=500).inc()
         raise
     finally:
@@ -124,6 +122,7 @@ async def health():
         "status": "ok",
         "rag_ready": app.state.retriever is not None,
         "live_context": app.state.live_context is not None,
-        "llm_model": settings.OLLAMA_MODEL,
-        "embedding_model": settings.OLLAMA_EMBEDDING_MODEL,
+        "llm_model": settings.OPENAI_MODEL,
+        "embedding_model": settings.OPENAI_EMBEDDING_MODEL,
+        "provider": "openai",
     }

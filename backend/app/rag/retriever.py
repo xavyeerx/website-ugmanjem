@@ -13,7 +13,7 @@ from app.metrics import (
 
 logger = logging.getLogger(__name__)
 
-# Timeout for embedding request (should be fast)
+OPENAI_EMBED_URL = "https://api.openai.com/v1/embeddings"
 EMBED_TIMEOUT = httpx.Timeout(connect=10.0, read=30.0, write=10.0, pool=10.0)
 
 
@@ -22,38 +22,33 @@ class KnowledgeRetriever:
         self,
         db_path: str,
         collection_name: str,
-        ollama_base_url: str = "http://localhost:11434",
-        embedding_model: str = "nomic-embed-text",
+        api_key: str,
+        embedding_model: str = "text-embedding-3-small",
     ):
-        self.ollama_base_url = ollama_base_url.rstrip("/")
+        self.api_key = api_key
         self.embedding_model = embedding_model
-        self._client = httpx.Client(timeout=EMBED_TIMEOUT)
+        self._client = httpx.Client(
+            timeout=EMBED_TIMEOUT,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+        )
 
         self.db_client = chromadb.PersistentClient(path=db_path)
         self.collection = self.db_client.get_collection(collection_name)
-
-        # Verify embedding model is available
-        try:
-            resp = self._client.get(f"{self.ollama_base_url}/api/tags")
-            resp.raise_for_status()
-            models = [m["name"] for m in resp.json().get("models", [])]
-            if not any(embedding_model in m for m in models):
-                logger.warning(
-                    f"Embedding model '{embedding_model}' not found in Ollama. "
-                    f"Available: {models}. Run: ollama pull {embedding_model}"
-                )
-            else:
-                logger.info(f"Embedding model '{embedding_model}' ready")
-        except Exception as e:
-            logger.warning(f"Could not verify embedding model: {e}")
+        logger.info(
+            f"KnowledgeRetriever ready — {self.collection.count()} chunks, "
+            f"embedding model: {embedding_model}"
+        )
 
     def count(self) -> int:
         return self.collection.count()
 
     def _get_embedding(self, text: str) -> list[float]:
-        """Get embedding vector from Ollama."""
+        """Get embedding vector from OpenAI."""
         response = self._client.post(
-            f"{self.ollama_base_url}/api/embed",
+            OPENAI_EMBED_URL,
             json={
                 "model": self.embedding_model,
                 "input": text,
@@ -61,13 +56,7 @@ class KnowledgeRetriever:
         )
         response.raise_for_status()
         data = response.json()
-
-        # Ollama /api/embed returns {"embeddings": [[...]]}
-        embeddings = data.get("embeddings", [])
-        if embeddings and len(embeddings) > 0:
-            return embeddings[0]
-
-        raise ValueError(f"No embedding returned from Ollama: {data}")
+        return data["data"][0]["embedding"]
 
     def search(self, query: str, n_results: int = 5) -> list[dict]:
         start = time.perf_counter()
