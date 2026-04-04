@@ -5,14 +5,17 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 class Settings(BaseSettings):
-    GOOGLE_API_KEY: str = ""
+    # Ollama settings (replaces Google Gemini API)
+    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    OLLAMA_MODEL: str = "qwen3:8b"
+    OLLAMA_EMBEDDING_MODEL: str = "nomic-embed-text"
+
     VECTORSTORE_PATH: str = str(PROJECT_ROOT / "vectorstore" / "chroma_db")
     COLLECTION_NAME: str = "ugm_anjem_knowledge"
-    GEMINI_MODEL: str = "gemini-2.0-flash"
     SUPABASE_URL: str = ""
     SUPABASE_ANON_KEY: str = ""
 
-    # Extra CORS origins (comma-separated), e.g. from Railway env var
+    # Extra CORS origins (comma-separated), e.g. from deploy env var
     EXTRA_CORS_ORIGINS: str = ""
 
     @property
@@ -34,4 +37,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-

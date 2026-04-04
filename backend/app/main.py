@@ -21,7 +21,9 @@ from app.metrics import (
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     SYSTEM_INFO.info({
-        "gemini_model": settings.GEMINI_MODEL,
+        "llm_model": settings.OLLAMA_MODEL,
+        "embedding_model": settings.OLLAMA_EMBEDDING_MODEL,
+        "ollama_url": settings.OLLAMA_BASE_URL,
         "vectorstore_path": settings.VECTORSTORE_PATH,
         "collection_name": settings.COLLECTION_NAME,
         "supabase_enabled": str(bool(settings.SUPABASE_URL)),
@@ -31,16 +33,19 @@ async def lifespan(app: FastAPI):
         app.state.retriever = KnowledgeRetriever(
             db_path=settings.VECTORSTORE_PATH,
             collection_name=settings.COLLECTION_NAME,
-            api_key=settings.GOOGLE_API_KEY,
+            ollama_base_url=settings.OLLAMA_BASE_URL,
+            embedding_model=settings.OLLAMA_EMBEDDING_MODEL,
         )
         app.state.generator = AnswerGenerator(
-            api_key=settings.GOOGLE_API_KEY,
-            model_name=settings.GEMINI_MODEL,
+            base_url=settings.OLLAMA_BASE_URL,
+            model_name=settings.OLLAMA_MODEL,
         )
         print(f"RAG engine ready — {app.state.retriever.count()} chunks loaded")
+        print(f"  LLM: {settings.OLLAMA_MODEL} via Ollama ({settings.OLLAMA_BASE_URL})")
+        print(f"  Embedding: {settings.OLLAMA_EMBEDDING_MODEL}")
     except Exception as e:
         print(f"WARNING: RAG engine failed to initialize: {e}")
-        print("Make sure to run embed_knowledge.py first.")
+        print("Make sure Ollama is running and models are pulled.")
         app.state.retriever = None
         app.state.generator = None
 
@@ -63,7 +68,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="UGM Anjem Chatbot API",
-    version="1.0.0",
+    version="2.0.0",
     lifespan=lifespan,
 )
 
@@ -119,4 +124,6 @@ async def health():
         "status": "ok",
         "rag_ready": app.state.retriever is not None,
         "live_context": app.state.live_context is not None,
+        "llm_model": settings.OLLAMA_MODEL,
+        "embedding_model": settings.OLLAMA_EMBEDDING_MODEL,
     }

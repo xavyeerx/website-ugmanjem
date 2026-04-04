@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# VPS Initial Setup Script — UGM Anjem Chatbot
+# VPS Initial Setup Script — UGM Anjem Chatbot (Ollama + Qwen3)
 # Run this ONCE on the VPS to install Docker + Docker Compose
 #
 # Usage:
@@ -44,9 +44,14 @@ chown ubuntu-anugrahdwiki:ubuntu-anugrahdwiki "$PROJECT_DIR"
 
 echo ""
 echo "============================================"
-echo " VPS setup complete!"
+echo " ✅ VPS setup complete!"
+echo ""
 echo " Next steps:"
 echo "   1. Log out and log in again (for docker group)"
 echo "   2. Clone repo:  cd $PROJECT_DIR && git clone <repo-url> ."
 echo "   3. Deploy:      cd deploy && ./deploy.sh"
+echo ""
+echo " Note: Ollama + Qwen3 model will be automatically"
+echo "       downloaded during deployment (~5 GB)."
+echo "       No API keys required!"
 echo "============================================"

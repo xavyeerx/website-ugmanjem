@@ -1,4 +1,24 @@
 services:
+  # ── Ollama (Self-hosted LLM) ────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: anjem-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_KEEP_ALIVE=-1
+      - OLLAMA_HOST=0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  # ── Backend (FastAPI + RAG) ─────────────────────────────────
   backend:
     build:
       context: ..
@@ -10,11 +30,17 @@ services:
     environment:
       - VECTORSTORE_PATH=/data/vectorstore/chroma_db
       - COLLECTION_NAME=ugm_anjem_knowledge
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=qwen3:8b
+      - OLLAMA_EMBEDDING_MODEL=nomic-embed-text
       - CORS_ORIGINS=["http://localhost:3000","http://10.33.109.173","http://10.33.109.173:80"]
     volumes:
       - ../vectorstore:/data/vectorstore
     ports:
       - "8000:8000"
+    depends_on:
+      ollama:
+        condition: service_healthy
     healthcheck:
       test:
         [
@@ -28,6 +54,7 @@ services:
       retries: 5
       start_period: 30s
 
+  # ── Frontend (Next.js) ──────────────────────────────────────
   frontend:
     build:
       context: ..
@@ -49,6 +76,7 @@ services:
       backend:
         condition: service_healthy
 
+  # ── Nginx (Reverse Proxy) ───────────────────────────────────
   nginx:
     image: nginx:alpine
     container_name: anjem-nginx
@@ -61,6 +89,7 @@ services:
       - frontend
       - backend
 
+  # ── Prometheus (Metrics Collector) ──────────────────────────
   prometheus:
     image: prom/prometheus:latest
     container_name: anjem-prometheus
@@ -77,6 +106,7 @@ services:
       backend:
         condition: service_healthy
 
+  # ── Grafana (Dashboard) ────────────────────────────────────
   grafana:
     image: grafana/grafana:latest
     container_name: anjem-grafana
@@ -94,6 +124,7 @@ services:
     depends_on:
       - prometheus
 
+  # ── Docker Exporter ─────────────────────────────────────────
   docker-exporter:
     build:
       context: ./docker-exporter
@@ -104,6 +135,7 @@ services:
     ports:
       - "9200:9200"
 
+  # ── Node Exporter (Host Metrics) ────────────────────────────
   node-exporter:
     image: prom/node-exporter:latest
     container_name: anjem-node-exporter
@@ -121,5 +153,6 @@ services:
       - "9100:9100"
 
 volumes:
+  ollama_data:
   prometheus_data:
   grafana_data:

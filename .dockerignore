@@ -3,7 +3,7 @@ node_modules
 .git
 .gitignore
 
-# Env files (set via Railway dashboard, not baked into image)
+# Env files
 .env
 .env.*
 !.env.example
@@ -16,8 +16,7 @@ __pycache__
 venv
 backend/.venv
 
-# Not needed in backend image
-deploy/
+# Not needed in any image
 knowledge/
 tests/
 data/
@@ -25,7 +24,6 @@ website-ugmanjem/
 supabase/
 
 # Docs & assets
-*.md
 *.pdf
 *.xlsx
 
@@ -33,26 +31,3 @@ supabase/
 .cursor/
 .vscode/
 .vercel
-
-# Frontend files (not needed for backend)
-app/
-components/
-hooks/
-lib/
-styles/
-public/
-types/
-utils/
-
-# Config files not needed
-tsconfig*
-postcss*
-eslint*
-next-env*
-next.config*
-vercel.json
-components.json
-*.mjs
-pnpm-lock.yaml
-.npmrc
-.pnpmfile.cjs

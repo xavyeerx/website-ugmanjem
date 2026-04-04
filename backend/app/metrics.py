@@ -3,9 +3,9 @@ Prometheus metrics for UGM Anjem Chatbot QoS monitoring.
 
 Metrics are organized by RAG pipeline stage:
   1. HTTP request level (middleware)
-  2. Retrieval (ChromaDB search)
+  2. Retrieval (ChromaDB search + Ollama embedding)
   3. Live context (Supabase fetch)
-  4. Generation (Gemini API)
+  4. Generation (Ollama LLM inference)
 """
 
 from prometheus_client import (
@@ -19,9 +19,9 @@ from prometheus_client import (
 # ---------------------------------------------------------------------------
 # Histogram bucket definitions (in seconds)
 # ---------------------------------------------------------------------------
-LATENCY_BUCKETS = (0.1, 0.25, 0.5, 1.0, 2.0, 3.0, 5.0, 7.5, 10.0, 15.0, 20.0, 30.0)
+LATENCY_BUCKETS = (0.1, 0.25, 0.5, 1.0, 2.0, 3.0, 5.0, 7.5, 10.0, 15.0, 20.0, 30.0, 45.0, 60.0)
 RETRIEVAL_BUCKETS = (0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0)
-GENERATION_BUCKETS = (0.5, 1.0, 2.0, 3.0, 5.0, 7.5, 10.0, 15.0, 20.0, 30.0, 45.0, 60.0)
+GENERATION_BUCKETS = (1.0, 2.0, 3.0, 5.0, 7.5, 10.0, 15.0, 20.0, 30.0, 45.0, 60.0, 90.0, 120.0)
 LIVE_CTX_BUCKETS = (0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0)
 
 # ---------------------------------------------------------------------------
@@ -58,15 +58,15 @@ CHAT_E2E_LATENCY = Histogram(
 CHAT_REQUESTS_TOTAL = Counter(
     "chatbot_chat_requests_total",
     "Total chat requests",
-    ["status"],  # success, error, rate_limited
+    ["status"],  # success, error, timeout
 )
 
 # ---------------------------------------------------------------------------
-# 3. Retrieval metrics (ChromaDB)
+# 3. Retrieval metrics (ChromaDB + Ollama embedding)
 # ---------------------------------------------------------------------------
 RETRIEVAL_LATENCY = Histogram(
     "chatbot_retrieval_duration_seconds",
-    "Time to embed query + search ChromaDB",
+    "Time to embed query via Ollama + search ChromaDB",
     buckets=RETRIEVAL_BUCKETS,
 )
 
@@ -111,33 +111,33 @@ LIVE_CTX_ERRORS = Counter(
 )
 
 # ---------------------------------------------------------------------------
-# 5. Generation metrics (Gemini API)
+# 5. Generation metrics (Ollama LLM)
 # ---------------------------------------------------------------------------
 GENERATION_LATENCY = Histogram(
     "chatbot_generation_duration_seconds",
-    "Time for Gemini API to generate response",
+    "Time for Ollama LLM to generate response",
     buckets=GENERATION_BUCKETS,
 )
 
 GENERATION_RETRIES = Counter(
     "chatbot_generation_retries_total",
-    "Total Gemini API retry attempts",
+    "Total Ollama LLM retry attempts",
 )
 
 GENERATION_ERRORS = Counter(
     "chatbot_generation_errors_total",
     "Total generation errors",
-    ["error_type"],  # rate_limited, other
+    ["error_type"],  # timeout, other
 )
 
 GENERATION_INPUT_CHARS = Summary(
     "chatbot_generation_input_chars",
-    "Number of input characters sent to Gemini",
+    "Number of input characters sent to LLM",
 )
 
 GENERATION_OUTPUT_CHARS = Summary(
     "chatbot_generation_output_chars",
-    "Number of output characters received from Gemini",
+    "Number of output characters received from LLM",
 )
 
 # ---------------------------------------------------------------------------

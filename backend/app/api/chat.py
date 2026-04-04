@@ -41,7 +41,7 @@ async def chat(body: ChatRequest, request: Request):
         CHAT_REQUESTS_TOTAL.labels(status="error").inc()
         raise HTTPException(
             status_code=503,
-            detail="RAG engine belum siap. Jalankan embed_knowledge.py terlebih dahulu.",
+            detail="RAG engine belum siap. Pastikan Ollama running dan model sudah di-pull.",
         )
 
     try:
@@ -74,12 +74,12 @@ async def chat(body: ChatRequest, request: Request):
     except Exception as e:
         error_msg = str(e)
         logger.error(f"Generator error: {error_msg}")
-        if "RESOURCE_EXHAUSTED" in error_msg or "429" in error_msg:
-            CHAT_REQUESTS_TOTAL.labels(status="rate_limited").inc()
+        if "timeout" in error_msg.lower():
+            CHAT_REQUESTS_TOTAL.labels(status="timeout").inc()
             CHAT_E2E_LATENCY.observe(time.perf_counter() - start)
             raise HTTPException(
-                status_code=429,
-                detail="Kuota API Gemini sedang habis. Silakan coba lagi dalam beberapa menit.",
+                status_code=504,
+                detail="LLM inference timeout. Model mungkin sedang loading atau server sibuk.",
             )
         CHAT_REQUESTS_TOTAL.labels(status="error").inc()
         CHAT_E2E_LATENCY.observe(time.perf_counter() - start)
