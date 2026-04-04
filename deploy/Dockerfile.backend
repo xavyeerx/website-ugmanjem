@@ -2,8 +2,18 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Tambahkan dependensi sistem untuk build (opsional tapi disarankan)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+
+# Gunakan retries, timeout, dan mirror alternatif jika perlu untuk kestabilan
+RUN pip install --no-cache-dir \
+    --retries 10 \
+    --timeout 60 \
+    -r requirements.txt
 
 COPY backend/app/ app/
 COPY vectorstore/ /data/vectorstore/
@@ -13,5 +23,4 @@ ENV COLLECTION_NAME=ugm_anjem_knowledge
 
 EXPOSE 8000
 
-# Gunakan PORT dari platform (Railway); fallback 8000 untuk lokal.
 CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}

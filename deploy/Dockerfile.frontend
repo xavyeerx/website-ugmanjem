@@ -1,8 +1,18 @@
 FROM node:20-slim AS builder
 WORKDIR /app
 
+# Tambahkan curl untuk healthcheck atau debugging (dan kestabilan)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY package.json ./
-RUN npm install
+
+# Sesekali npm install juga gagal di jaringan kampus, tambahkan retries dan network timeout
+RUN npm config set fetch-retries 10 \
+    && npm config set fetch-retry-mintimeout 20000 \
+    && npm config set fetch-retry-maxtimeout 120000 \
+    && npm install --network-timeout=120000
 
 COPY . .
 
@@ -17,6 +27,7 @@ ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV USE_SUPABASE=$USE_SUPABASE
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Non-interactive build
 RUN npm run build
 
 FROM node:20-slim AS runner
