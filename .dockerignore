@@ -19,7 +19,7 @@ backend/.venv
 # Not needed in any image
 knowledge/
 tests/
-data/
+# data/  <-- DIHAPUS karena dibutuhkan Next.js (impor @/data)
 website-ugmanjem/
 supabase/
 
