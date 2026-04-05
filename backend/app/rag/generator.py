@@ -74,6 +74,31 @@ class AnswerGenerator:
         total_input_chars = sum(len(m["content"]) for m in messages)
         GENERATION_INPUT_CHARS.observe(total_input_chars)
 
+        # Define Tools
+        tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "calculate_route_distance",
+                    "description": "Menghitung jarak lintasan berkendara yang sebenarnya di aspal antara dua buah lokasi spesifik (Origin ke Destination). WAJIB panggil fungsi ini jika pengguna bertanya soal jarak, kilometer, atau seberapa jauh antara dua tempat.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "pickup_location": {
+                                "type": "string",
+                                "description": "Nama lokasi penjemputan/awal (contoh: 'Fakultas Teknik', 'Tugu Jogja', 'Asrama Sendowo')"
+                            },
+                            "dropoff_location": {
+                                "type": "string",
+                                "description": "Nama lokasi pengantaran/tujuan (contoh: 'RSCM Jakarta', 'RS Sardjito')"
+                            }
+                        },
+                        "required": ["pickup_location", "dropoff_location"]
+                    }
+                }
+            }
+        ]
+
         start = time.perf_counter()
         for attempt in range(max_retries + 1):
             try:
@@ -84,6 +109,8 @@ class AnswerGenerator:
                         "messages": messages,
                         "temperature": 0.7,
                         "max_tokens": 1024,
+                        "tools": tools,
+                        "tool_choice": "auto"
                     },
                 )
 
@@ -97,7 +124,48 @@ class AnswerGenerator:
 
                 response.raise_for_status()
                 data = response.json()
-                answer = data["choices"][0]["message"]["content"]
+                message_resp = data["choices"][0]["message"]
+                
+                # Cek jika LLM menggunakan Tool Calling
+                if message_resp.get("tool_calls"):
+                    tool_calls = message_resp["tool_calls"]
+                    # Append respon assistant agar valid untuk role berantai
+                    messages.append(message_resp)
+                    
+                    for tool_call in tool_calls:
+                        if tool_call["function"]["name"] == "calculate_route_distance":
+                            import json
+                            args = json.loads(tool_call["function"]["arguments"])
+                            
+                            from app.rag.tools.map_calculator import calculate_route_distance
+                            tool_result = calculate_route_distance(
+                                args.get("pickup_location", ""),
+                                args.get("dropoff_location", "")
+                            )
+                            
+                            messages.append({
+                                "role": "tool",
+                                "tool_call_id": tool_call["id"],
+                                "name": "calculate_route_distance",
+                                "content": tool_result
+                            })
+                            
+                    # Pemanggilan lapis kedua (Second Pass Inference)
+                    response2 = self._client.post(
+                        OPENAI_CHAT_URL,
+                        json={
+                            "model": self.model_name,
+                            "messages": messages,
+                            "temperature": 0.7,
+                            "max_tokens": 1024,
+                        },
+                    )
+                    response2.raise_for_status()
+                    data2 = response2.json()
+                    answer = data2["choices"][0]["message"]["content"]
+                else:
+                    # Tidak memanggil Tool, langsung jawab lisan
+                    answer = message_resp.get("content", "")
 
                 GENERATION_LATENCY.observe(time.perf_counter() - start)
                 GENERATION_OUTPUT_CHARS.observe(len(answer))

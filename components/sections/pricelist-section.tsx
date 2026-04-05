@@ -16,6 +16,7 @@ import {
   type VehicleType,
   type WeatherCondition,
 } from "@/utils/pricing";
+import MapRoutingDynamic from "@/components/map-routing-dynamic";
 
 interface ImageItem {
   id: number;
@@ -246,30 +247,17 @@ export default function PricelistSection({
               </div>
             )}
 
-            {/* Distance input */}
+            {/* Map Routing Input */}
             <div className="mb-6">
               <h4 className="text-sm font-medium text-foreground mb-3">
-                Jarak (KM)
+                Cari Lokasi & Rute
               </h4>
-              <div className="relative">
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  value={distance}
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[^0-9.,]/g, "");
-                    setDistance(value);
-                  }}
-                  placeholder="0"
-                  className="w-full px-4 py-3 pr-12 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
-                />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">
-                  KM
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                Contoh: 1,5 atau 2.4
-              </p>
+              <MapRoutingDynamic onDistanceFound={(km) => setDistance(km)} />
+              {distance && (
+                <p className="text-sm text-center text-muted-foreground mt-3 bg-muted py-2 rounded-lg font-medium">
+                  Jarak Total: <span className="text-accent">{distance} KM</span>
+                </p>
+              )}
             </div>
 
             {/* Weather / condition — different per vehicle */}
