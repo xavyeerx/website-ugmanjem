@@ -278,7 +278,7 @@
         },
         {
           "expr": "rate(chatbot_generation_duration_seconds_sum[5m]) / rate(chatbot_generation_duration_seconds_count[5m])",
-          "legendFormat": "Generation (Gemini)",
+          "legendFormat": "Generation (OpenAI GPT-4o mini)",
           "refId": "C"
         }
       ],
@@ -375,7 +375,7 @@
       }
     },
     {
-      "title": "Gemini API Retries & Errors",
+      "title": "OpenAI API Retries & Errors",
       "type": "timeseries",
       "gridPos": {
         "h": 8,

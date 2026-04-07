@@ -3,9 +3,9 @@ Prometheus metrics for UGM Anjem Chatbot QoS monitoring.
 
 Metrics are organized by RAG pipeline stage:
   1. HTTP request level (middleware)
-  2. Retrieval (ChromaDB search + Ollama embedding)
+  2. Retrieval (ChromaDB search + OpenAI embedding)
   3. Live context (Supabase fetch)
-  4. Generation (Ollama LLM inference)
+  4. Generation (OpenAI GPT-4o mini inference)
 """
 
 from prometheus_client import (
@@ -62,11 +62,11 @@ CHAT_REQUESTS_TOTAL = Counter(
 )
 
 # ---------------------------------------------------------------------------
-# 3. Retrieval metrics (ChromaDB + Ollama embedding)
+# 3. Retrieval metrics (ChromaDB + OpenAI embedding)
 # ---------------------------------------------------------------------------
 RETRIEVAL_LATENCY = Histogram(
     "chatbot_retrieval_duration_seconds",
-    "Time to embed query via Ollama + search ChromaDB",
+    "Time to embed query via OpenAI (text-embedding-3-small) + search ChromaDB",
     buckets=RETRIEVAL_BUCKETS,
 )
 
@@ -111,17 +111,17 @@ LIVE_CTX_ERRORS = Counter(
 )
 
 # ---------------------------------------------------------------------------
-# 5. Generation metrics (Ollama LLM)
+# 5. Generation metrics (OpenAI GPT-4o mini)
 # ---------------------------------------------------------------------------
 GENERATION_LATENCY = Histogram(
     "chatbot_generation_duration_seconds",
-    "Time for Ollama LLM to generate response",
+    "Time for OpenAI GPT-4o mini to generate response",
     buckets=GENERATION_BUCKETS,
 )
 
 GENERATION_RETRIES = Counter(
     "chatbot_generation_retries_total",
-    "Total Ollama LLM retry attempts",
+    "Total OpenAI API retry attempts",
 )
 
 GENERATION_ERRORS = Counter(
