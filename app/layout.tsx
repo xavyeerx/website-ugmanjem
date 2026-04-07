@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import Preloader from "@/components/preloader";
 import { WhatsAppFloat } from "@/components/shared/whatsapp-float";
 import ChatWidget from "@/components/chatbot/chat-widget";
@@ -31,6 +32,7 @@ export default function RootLayout({
         <WhatsAppFloat />
         <Analytics />
       </body>
+      <GoogleAnalytics gaId="G-VPKJD58X0T" />
     </html>
   );
 }
