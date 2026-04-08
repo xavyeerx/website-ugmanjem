@@ -5,6 +5,13 @@ import type { ChatMessage, RatingValue } from "@/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
+function generateId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
 const WELCOME: ChatMessage = {
   id: "welcome",
   role: "assistant",
@@ -19,7 +26,7 @@ export function useChat() {
   const sendMessage = useCallback(
     async (content: string) => {
       const userMsg: ChatMessage = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         role: "user",
         content,
       };
@@ -52,7 +59,7 @@ export function useChat() {
         setMessages((prev) => [
           ...prev,
           {
-            id: crypto.randomUUID(),
+            id: generateId(),
             role: "assistant",
             content: data.answer,
             sources: data.sources,
@@ -66,7 +73,7 @@ export function useChat() {
         setMessages((prev) => [
           ...prev,
           {
-            id: crypto.randomUUID(),
+            id: generateId(),
             role: "assistant",
             content: errorMessage,
           },
