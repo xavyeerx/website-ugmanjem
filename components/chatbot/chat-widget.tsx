@@ -185,18 +185,6 @@ function MessageBubble({ message, onRate }: MessageBubbleProps) {
           {message.content}
         </div>
 
-        {message.sources && message.sources.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-1.5 ml-1">
-            {message.sources.map((s, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center px-2 py-0.5 rounded-full bg-accent/10 text-accent text-[10px] font-medium"
-              >
-                {s.source}
-              </span>
-            ))}
-          </div>
-        )}
 
         {showRating && (
           <RatingButtons rated={message.rating} onRate={onRate} />
