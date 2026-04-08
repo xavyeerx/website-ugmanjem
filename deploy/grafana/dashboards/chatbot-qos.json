@@ -226,15 +226,21 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(chatbot_chat_requests_total{status!=\"success\"}[5m])) / sum(rate(chatbot_chat_requests_total[5m])) * 100",
-          "legendFormat": "error %",
+          "expr": "clamp_min(sum(increase(chatbot_chat_requests_total{status!=\"success\"}[$__range])) / clamp_min(sum(increase(chatbot_chat_requests_total[$__range])), 1) * 100, 0)",
+          "legendFormat": "Error Rate",
           "refId": "A"
         }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "decimals": 2,
+          "displayName": "Error Rate (range terpilih)",
+          "description": "Persentase request yang gagal dibanding total request pada rentang waktu yang dipilih. Formula: total_error / total_request x 100%.",
           "thresholds": {
+            "mode": "absolute",
             "steps": [
               {
                 "color": "green",
@@ -242,17 +248,25 @@
               },
               {
                 "color": "yellow",
-                "value": 5
+                "value": 1
               },
               {
                 "color": "red",
-                "value": 20
+                "value": 5
               }
             ]
-          },
-          "min": 0,
-          "max": 100
+          }
         }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "orientation": "auto"
       }
     },
     {
@@ -720,8 +734,8 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(chatbot_chat_requests_total{status=\"success\"}[5m])) / sum(rate(chatbot_chat_requests_total[5m])) * 100",
-          "legendFormat": "availability %",
+          "expr": "clamp_max(sum(increase(chatbot_chat_requests_total{status=\"success\"}[$__range])) / clamp_min(sum(increase(chatbot_chat_requests_total[$__range])), 1) * 100, 100)",
+          "legendFormat": "Availability",
           "refId": "A"
         }
       ],
@@ -730,7 +744,11 @@
           "unit": "percent",
           "min": 0,
           "max": 100,
+          "decimals": 2,
+          "displayName": "Availability (range terpilih)",
+          "description": "Persentase request chat yang berhasil (status=success) dari total request pada rentang waktu yang dipilih.",
           "thresholds": {
+            "mode": "absolute",
             "steps": [
               {
                 "color": "red",
@@ -738,7 +756,7 @@
               },
               {
                 "color": "yellow",
-                "value": 95
+                "value": 90
               },
               {
                 "color": "green",
@@ -761,8 +779,8 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(chatbot_chat_requests_total{status=\"success\"}[5m])) / sum(rate(chatbot_chat_requests_total[5m])) * 100",
-          "legendFormat": "success rate %",
+          "expr": "sum(rate(chatbot_chat_requests_total{status=\"success\"}[$__rate_interval])) / clamp_min(sum(rate(chatbot_chat_requests_total[$__rate_interval])), 1e-9) * 100",
+          "legendFormat": "Success Rate",
           "refId": "A"
         }
       ],
