@@ -4,15 +4,20 @@ from typing import Literal
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, field_validator
 
-from app.metrics import RATING_TOTAL, RATING_HELPFUL_RATIO
+from app.metrics import RATING_TOTAL, RATING_HELPFUL_RATIO, RATING_AVG_SCORE
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
 POSITIVE_RATINGS = {"very_helpful", "helpful"}
 ALL_RATING_VALUES = ("very_helpful", "helpful", "not_helpful", "very_not_helpful")
+RATING_WEIGHTS = {
+    "very_helpful": 4,
+    "helpful": 3,
+    "not_helpful": 2,
+    "very_not_helpful": 1,
+}
 
-# Running totals untuk kalkulasi helpful ratio tanpa query ke Supabase
 _rating_counts: dict[str, int] = {v: 0 for v in ALL_RATING_VALUES}
 
 
@@ -46,6 +51,9 @@ async def submit_rating(body: RatingRequest, request: Request):
     total = sum(_rating_counts.values())
     positive = sum(_rating_counts[r] for r in POSITIVE_RATINGS)
     RATING_HELPFUL_RATIO.set(positive / total if total > 0 else 0.0)
+
+    weighted_sum = sum(_rating_counts[r] * RATING_WEIGHTS[r] for r in ALL_RATING_VALUES)
+    RATING_AVG_SCORE.set(weighted_sum / total if total > 0 else 0.0)
 
     # Simpan ke Supabase (graceful fallback jika tidak tersedia)
     supabase_client = getattr(request.app.state, "supabase", None)

@@ -154,6 +154,11 @@ RATING_HELPFUL_RATIO = Gauge(
     "Proportion of positive ratings (very_helpful + helpful) out of all submitted ratings",
 )
 
+RATING_AVG_SCORE = Gauge(
+    "chatbot_rating_avg_score",
+    "Weighted average satisfaction score (1=Tidak Membantu, 4=Sangat Membantu)",
+)
+
 # ---------------------------------------------------------------------------
 # 7. System info
 # ---------------------------------------------------------------------------

@@ -889,7 +889,7 @@
       }
     },
     {
-      "title": "Kepuasan Pengguna — Distribusi Rating & Helpful Ratio",
+      "title": "Kepuasan Pengguna — Umpan Balik Rating Jawaban Chatbot",
       "type": "row",
       "collapsed": false,
       "gridPos": {
@@ -901,55 +901,122 @@
       "id": 2000
     },
     {
-      "title": "Rating Distribution",
-      "type": "barchart",
+      "title": "Distribusi Rating",
+      "description": "Proporsi setiap kategori rating dari seluruh penilaian pengguna. Semakin besar area Sangat Membantu dan Membantu, semakin baik persepsi pengguna terhadap jawaban chatbot.",
+      "type": "piechart",
+      "id": 2010,
       "gridPos": {
-        "h": 8,
-        "w": 16,
+        "h": 9,
+        "w": 10,
         "x": 0,
         "y": 83
       },
-      "id": 2001,
       "targets": [
         {
-          "expr": "chatbot_rating_total",
-          "legendFormat": "{{rating}}",
+          "expr": "chatbot_rating_total{rating=\"very_helpful\"}",
+          "legendFormat": "Sangat Membantu",
           "refId": "A"
+        },
+        {
+          "expr": "chatbot_rating_total{rating=\"helpful\"}",
+          "legendFormat": "Membantu",
+          "refId": "B"
+        },
+        {
+          "expr": "chatbot_rating_total{rating=\"not_helpful\"}",
+          "legendFormat": "Kurang Membantu",
+          "refId": "C"
+        },
+        {
+          "expr": "chatbot_rating_total{rating=\"very_not_helpful\"}",
+          "legendFormat": "Tidak Membantu",
+          "refId": "D"
         }
       ],
       "options": {
-        "xField": "Time",
-        "barWidth": 0.6,
-        "groupWidth": 0.7,
-        "fillOpacity": 80,
-        "gradientMode": "none",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "pieType": "donut",
         "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
         },
         "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
+          "mode": "single"
+        },
+        "displayLabels": [
+          "percent"
+        ]
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
-          "custom": {
-            "lineWidth": 1,
-            "fillOpacity": 80
-          }
+          "unit": "short"
         },
         "overrides": [
           {
             "matcher": {
-              "id": "byFrameRefID",
-              "options": "A"
+              "id": "byName",
+              "options": "Sangat Membantu"
             },
             "properties": [
               {
-                "id": "displayName",
-                "value": "Jumlah Rating"
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Membantu"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "light-green"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Kurang Membantu"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Tidak Membantu"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
               }
             ]
           }
@@ -957,15 +1024,16 @@
       }
     },
     {
-      "title": "Helpful Ratio (%)",
+      "title": "Tingkat Kepuasan",
+      "description": "Persentase pengguna yang menilai jawaban chatbot positif. Formula: (Sangat Membantu + Membantu) / Total Rating x 100%. Threshold: hijau >= 75%, kuning >= 50%, merah < 50%.",
       "type": "stat",
+      "id": 2011,
       "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
+        "h": 9,
+        "w": 7,
+        "x": 10,
         "y": 83
       },
-      "id": 2002,
       "targets": [
         {
           "expr": "chatbot_rating_helpful_ratio * 100",
@@ -980,7 +1048,7 @@
         },
         "colorMode": "background",
         "graphMode": "area",
-        "textMode": "auto",
+        "textMode": "value_and_name",
         "orientation": "auto"
       },
       "fieldConfig": {
@@ -988,6 +1056,7 @@
           "unit": "percent",
           "min": 0,
           "max": 100,
+          "displayName": "Positif (Sangat Membantu + Membantu)",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -1009,15 +1078,132 @@
       }
     },
     {
-      "title": "Total Rating Submitted",
-      "type": "stat",
+      "title": "Skor Rata-rata Kepuasan",
+      "description": "Skor rata-rata tertimbang dari seluruh rating. Formula: (4 x Sangat Membantu + 3 x Membantu + 2 x Kurang Membantu + 1 x Tidak Membantu) / Total. Skala 1.0 - 4.0.",
+      "type": "gauge",
+      "id": 2012,
       "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 0,
-        "y": 91
+        "h": 9,
+        "w": 7,
+        "x": 17,
+        "y": 83
       },
-      "id": 2003,
+      "targets": [
+        {
+          "expr": "chatbot_rating_avg_score",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "orientation": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 1,
+          "max": 4,
+          "decimals": 2,
+          "displayName": "dari 4.0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 2
+              },
+              {
+                "color": "yellow",
+                "value": 2.5
+              },
+              {
+                "color": "green",
+                "value": 3
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Tren Tingkat Kepuasan Seiring Waktu",
+      "description": "Grafik perubahan tingkat kepuasan pengguna dari waktu ke waktu. Berguna untuk melihat apakah kepuasan menurun saat load testing atau beban tinggi.",
+      "type": "timeseries",
+      "id": 2013,
+      "gridPos": {
+        "h": 7,
+        "w": 18,
+        "x": 0,
+        "y": 92
+      },
+      "targets": [
+        {
+          "expr": "chatbot_rating_helpful_ratio * 100",
+          "legendFormat": "Tingkat Kepuasan",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "pointSize": 5,
+            "showPoints": "auto"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 75
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Total Rating Diterima",
+      "description": "Jumlah total penilaian yang telah diberikan oleh pengguna selama pengujian.",
+      "type": "stat",
+      "id": 2014,
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 92
+      },
       "targets": [
         {
           "expr": "sum(chatbot_rating_total)",
@@ -1031,59 +1217,14 @@
           ]
         },
         "colorMode": "value",
-        "graphMode": "none"
+        "graphMode": "area",
+        "textMode": "value_and_name",
+        "orientation": "auto"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "short"
-        }
-      }
-    },
-    {
-      "title": "Rating Over Time",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 4,
-        "w": 18,
-        "x": 6,
-        "y": 91
-      },
-      "id": 2004,
-      "targets": [
-        {
-          "expr": "rate(chatbot_rating_total{rating=\"very_helpful\"}[5m])",
-          "legendFormat": "Sangat Membantu",
-          "refId": "A"
-        },
-        {
-          "expr": "rate(chatbot_rating_total{rating=\"helpful\"}[5m])",
-          "legendFormat": "Membantu",
-          "refId": "B"
-        },
-        {
-          "expr": "rate(chatbot_rating_total{rating=\"not_helpful\"}[5m])",
-          "legendFormat": "Kurang Membantu",
-          "refId": "C"
-        },
-        {
-          "expr": "rate(chatbot_rating_total{rating=\"very_not_helpful\"}[5m])",
-          "legendFormat": "Tidak Membantu",
-          "refId": "D"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "reqps"
-        }
-      },
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
+          "unit": "short",
+          "displayName": "penilaian"
         }
       }
     }
