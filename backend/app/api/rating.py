@@ -1,7 +1,7 @@
 import logging
 from typing import Literal
 
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request
 from pydantic import BaseModel, field_validator
 
 from app.metrics import RATING_TOTAL, RATING_HELPFUL_RATIO
