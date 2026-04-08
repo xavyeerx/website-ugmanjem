@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import type { ChatMessage } from "@/types";
+import type { ChatMessage, RatingValue } from "@/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 const WELCOME: ChatMessage = {
+  id: "welcome",
   role: "assistant",
   content:
     "Halo Sobat Anjem! Saya asisten virtual UGM Anjem. Mau tanya soal tarif, layanan, cara order, atau info lainnya? Langsung aja tanya ya!",
@@ -17,13 +18,17 @@ export function useChat() {
 
   const sendMessage = useCallback(
     async (content: string) => {
-      const userMsg: ChatMessage = { role: "user", content };
+      const userMsg: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: "user",
+        content,
+      };
       setMessages((prev) => [...prev, userMsg]);
       setIsLoading(true);
 
       try {
         const history = messages
-          .filter((m) => m !== WELCOME)
+          .filter((m) => m.id !== "welcome")
           .map((m) => ({ role: m.role, content: m.content }));
 
         const res = await fetch(`${API_URL}/api/chat`, {
@@ -47,6 +52,7 @@ export function useChat() {
         setMessages((prev) => [
           ...prev,
           {
+            id: crypto.randomUUID(),
             role: "assistant",
             content: data.answer,
             sources: data.sources,
@@ -60,6 +66,7 @@ export function useChat() {
         setMessages((prev) => [
           ...prev,
           {
+            id: crypto.randomUUID(),
             role: "assistant",
             content: errorMessage,
           },
@@ -71,9 +78,29 @@ export function useChat() {
     [messages],
   );
 
+  const submitRating = useCallback(
+    async (messageId: string, question: string, answer: string, rating: RatingValue) => {
+      // Kunci tombol rating di UI segera (optimistic update)
+      setMessages((prev) =>
+        prev.map((m) => (m.id === messageId ? { ...m, rating } : m)),
+      );
+
+      try {
+        await fetch(`${API_URL}/api/rating`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question, answer, rating }),
+        });
+      } catch {
+        // Rating tetap terkunci di UI meskipun request gagal
+      }
+    },
+    [],
+  );
+
   const clearMessages = useCallback(() => {
     setMessages([WELCOME]);
   }, []);
 
-  return { messages, isLoading, sendMessage, clearMessages };
+  return { messages, isLoading, sendMessage, submitRating, clearMessages };
 }

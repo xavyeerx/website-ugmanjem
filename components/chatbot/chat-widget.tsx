@@ -2,14 +2,23 @@
 
 import { useState, useRef, useEffect, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Bot } from "lucide-react";
+import { MessageCircle, X, Send, Bot, Check } from "lucide-react";
 import { useChat } from "@/hooks/use-chat";
-import type { ChatMessage } from "@/types";
+import type { ChatMessage, RatingValue } from "@/types";
+
+const RATING_OPTIONS: { value: RatingValue; label: string }[] = [
+  { value: "very_helpful", label: "Sangat Membantu" },
+  { value: "helpful", label: "Membantu" },
+  { value: "not_helpful", label: "Kurang Membantu" },
+  { value: "very_not_helpful", label: "Tidak Membantu" },
+];
+
+const POSITIVE_RATINGS: RatingValue[] = ["very_helpful", "helpful"];
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const { messages, isLoading, sendMessage } = useChat();
+  const { messages, isLoading, sendMessage, submitRating } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -83,9 +92,30 @@ export default function ChatWidget() {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/30">
-              {messages.map((msg, i) => (
-                <MessageBubble key={i} message={msg} />
-              ))}
+              {messages.map((msg, i) => {
+                const prevUserMsg = messages
+                  .slice(0, i)
+                  .filter((m) => m.role === "user")
+                  .at(-1);
+
+                return (
+                  <MessageBubble
+                    key={msg.id ?? i}
+                    message={msg}
+                    questionForRating={prevUserMsg?.content}
+                    onRate={(rating) => {
+                      if (msg.id) {
+                        submitRating(
+                          msg.id,
+                          prevUserMsg?.content ?? "",
+                          msg.content,
+                          rating,
+                        );
+                      }
+                    }}
+                  />
+                );
+              })}
               {isLoading && <TypingIndicator />}
               <div ref={messagesEndRef} />
             </div>
@@ -119,8 +149,16 @@ export default function ChatWidget() {
   );
 }
 
-function MessageBubble({ message }: { message: ChatMessage }) {
+interface MessageBubbleProps {
+  message: ChatMessage;
+  questionForRating?: string;
+  onRate: (rating: RatingValue) => void;
+}
+
+function MessageBubble({ message, onRate }: MessageBubbleProps) {
   const isUser = message.role === "user";
+  const isWelcome = message.id === "welcome";
+  const showRating = !isUser && !isWelcome;
 
   return (
     <motion.div
@@ -146,6 +184,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
         >
           {message.content}
         </div>
+
         {message.sources && message.sources.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-1.5 ml-1">
             {message.sources.map((s, i) => (
@@ -158,6 +197,72 @@ function MessageBubble({ message }: { message: ChatMessage }) {
             ))}
           </div>
         )}
+
+        {showRating && (
+          <RatingButtons rated={message.rating} onRate={onRate} />
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+interface RatingButtonsProps {
+  rated?: RatingValue;
+  onRate: (rating: RatingValue) => void;
+}
+
+function RatingButtons({ rated, onRate }: RatingButtonsProps) {
+  const isLocked = rated !== undefined;
+
+  if (isLocked) {
+    const chosen = RATING_OPTIONS.find((o) => o.value === rated)!;
+    const isPositive = POSITIVE_RATINGS.includes(rated);
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center gap-1.5 mt-2 ml-1"
+      >
+        <Check
+          className={`w-3 h-3 shrink-0 ${isPositive ? "text-green-500" : "text-red-400"}`}
+        />
+        <span
+          className={`text-[10px] font-medium ${
+            isPositive ? "text-green-600" : "text-red-500"
+          }`}
+        >
+          {chosen.label}
+        </span>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 4 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mt-2 ml-1"
+    >
+      <p className="text-[10px] text-muted-foreground mb-1.5">
+        Apakah jawaban ini membantu?
+      </p>
+      <div className="flex flex-wrap gap-1">
+        {RATING_OPTIONS.map((opt) => {
+          const isPositive = POSITIVE_RATINGS.includes(opt.value);
+          return (
+            <button
+              key={opt.value}
+              onClick={() => onRate(opt.value)}
+              className={`px-2.5 py-1 rounded-full text-[10px] font-medium border transition-colors ${
+                isPositive
+                  ? "border-green-200 text-green-700 hover:bg-green-50"
+                  : "border-red-200 text-red-600 hover:bg-red-50"
+              }`}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
       </div>
     </motion.div>
   );

@@ -141,7 +141,35 @@ GENERATION_OUTPUT_CHARS = Summary(
 )
 
 # ---------------------------------------------------------------------------
-# 6. System info
+# 6. Rating metrics (user feedback)
+# ---------------------------------------------------------------------------
+RATING_TOTAL = Counter(
+    "chatbot_rating_total",
+    "Total answer ratings submitted by users",
+    ["rating"],  # helpful, not_helpful
+)
+
+RATING_HELPFUL_RATIO = Gauge(
+    "chatbot_rating_helpful_ratio",
+    "Rolling ratio of helpful ratings (helpful / total), updated on each submission",
+)
+
+# ---------------------------------------------------------------------------
+# 6. Rating metrics (user feedback — 4-scale categorical)
+# ---------------------------------------------------------------------------
+RATING_TOTAL = Counter(
+    "chatbot_rating_total",
+    "Total answer ratings submitted by users (4-scale categorical)",
+    ["rating"],  # very_helpful, helpful, not_helpful, very_not_helpful
+)
+
+RATING_HELPFUL_RATIO = Gauge(
+    "chatbot_rating_helpful_ratio",
+    "Proportion of positive ratings (very_helpful + helpful) out of all submitted ratings",
+)
+
+# ---------------------------------------------------------------------------
+# 7. System info
 # ---------------------------------------------------------------------------
 SYSTEM_INFO = Info(
     "chatbot_system",

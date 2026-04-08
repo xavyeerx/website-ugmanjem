@@ -7,6 +7,7 @@ from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 
 from app.config import settings
 from app.api.chat import router as chat_router
+from app.api.rating import router as rating_router
 from app.rag.retriever import KnowledgeRetriever
 from app.rag.generator import AnswerGenerator
 from app.rag.live_context import LiveContext
@@ -106,6 +107,7 @@ async def prometheus_middleware(request: Request, call_next):
 
 
 app.include_router(chat_router)
+app.include_router(rating_router)
 
 
 @app.get("/metrics")

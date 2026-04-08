@@ -459,7 +459,7 @@
       }
     },
     {
-      "title": "Resource Utilization \u2014 CPU, Memory, Network, Disk (per Container & Host VPS)",
+      "title": "Resource Utilization — CPU, Memory, Network, Disk (per Container & Host VPS)",
       "type": "text",
       "gridPos": {
         "h": 5,
@@ -695,7 +695,7 @@
       }
     },
     {
-      "title": "Reliability & Availability \u2014 Success Rate, Uptime, Error Tracking",
+      "title": "Reliability & Availability — Success Rate, Uptime, Error Tracking",
       "type": "text",
       "gridPos": {
         "h": 5,
@@ -710,7 +710,7 @@
     },
     {
       "title": "Chat Success Rate (Availability %)",
-      "description": "Percentage of successful chat responses \u2014 key SLA metric",
+      "description": "Percentage of successful chat responses — key SLA metric",
       "type": "gauge",
       "gridPos": {
         "h": 8,
@@ -751,7 +751,7 @@
     },
     {
       "title": "Success Rate Over Time",
-      "description": "Chat success rate trend \u2014 tracks reliability over time",
+      "description": "Chat success rate trend — tracks reliability over time",
       "type": "timeseries",
       "gridPos": {
         "h": 8,
@@ -821,7 +821,7 @@
     },
     {
       "title": "Total Requests (Cumulative)",
-      "description": "Total requests processed since startup \u2014 shows overall load",
+      "description": "Total requests processed since startup — shows overall load",
       "type": "stat",
       "gridPos": {
         "h": 8,
@@ -885,6 +885,205 @@
       "fieldConfig": {
         "defaults": {
           "unit": "reqpm"
+        }
+      }
+    },
+    {
+      "title": "Kepuasan Pengguna — Distribusi Rating & Helpful Ratio",
+      "type": "row",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 82
+      },
+      "id": 2000
+    },
+    {
+      "title": "Rating Distribution",
+      "type": "barchart",
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 0,
+        "y": 83
+      },
+      "id": 2001,
+      "targets": [
+        {
+          "expr": "chatbot_rating_total",
+          "legendFormat": "{{rating}}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "xField": "Time",
+        "barWidth": 0.6,
+        "groupWidth": 0.7,
+        "fillOpacity": 80,
+        "gradientMode": "none",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "lineWidth": 1,
+            "fillOpacity": 80
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Jumlah Rating"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Helpful Ratio (%)",
+      "type": "stat",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 83
+      },
+      "id": 2002,
+      "targets": [
+        {
+          "expr": "chatbot_rating_helpful_ratio * 100",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background",
+        "graphMode": "area",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "green",
+                "value": 75
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Total Rating Submitted",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 91
+      },
+      "id": 2003,
+      "targets": [
+        {
+          "expr": "sum(chatbot_rating_total)",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "value",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        }
+      }
+    },
+    {
+      "title": "Rating Over Time",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 4,
+        "w": 18,
+        "x": 6,
+        "y": 91
+      },
+      "id": 2004,
+      "targets": [
+        {
+          "expr": "rate(chatbot_rating_total{rating=\"very_helpful\"}[5m])",
+          "legendFormat": "Sangat Membantu",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(chatbot_rating_total{rating=\"helpful\"}[5m])",
+          "legendFormat": "Membantu",
+          "refId": "B"
+        },
+        {
+          "expr": "rate(chatbot_rating_total{rating=\"not_helpful\"}[5m])",
+          "legendFormat": "Kurang Membantu",
+          "refId": "C"
+        },
+        {
+          "expr": "rate(chatbot_rating_total{rating=\"very_not_helpful\"}[5m])",
+          "legendFormat": "Tidak Membantu",
+          "refId": "D"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        }
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
         }
       }
     }

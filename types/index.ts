@@ -77,10 +77,14 @@ export interface TutorialStep {
 }
 
 // Chat Types
+export type RatingValue = "very_helpful" | "helpful" | "not_helpful" | "very_not_helpful";
+
 export interface ChatMessage {
+  id?: string;
   role: "user" | "assistant";
   content: string;
   sources?: ChatSource[];
+  rating?: RatingValue;
 }
 
 export interface ChatSource {
