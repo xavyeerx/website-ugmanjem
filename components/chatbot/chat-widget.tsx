@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send, Bot, Check } from "lucide-react";
 import { useChat } from "@/hooks/use-chat";
 import type { ChatMessage, RatingValue } from "@/types";
+import ReactMarkdown from "react-markdown";
 
 const RATING_OPTIONS: { value: RatingValue; label: string }[] = [
   { value: "very_helpful", label: "Sangat Membantu" },
@@ -176,13 +177,35 @@ function MessageBubble({ message, onRate }: MessageBubbleProps) {
           </div>
         )}
         <div
-          className={`px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${
+          className={`px-4 py-2.5 text-sm leading-relaxed ${
             isUser
               ? "bg-accent text-white rounded-2xl rounded-br-md"
               : "bg-background text-foreground border border-border rounded-2xl rounded-bl-md shadow-sm"
           }`}
         >
-          {message.content}
+          {isUser ? (
+            <span className="whitespace-pre-wrap">{message.content}</span>
+          ) : (
+            <ReactMarkdown
+              components={{
+                a: ({ href, children }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-accent underline hover:opacity-80 break-all"
+                  >
+                    {children}
+                  </a>
+                ),
+                p: ({ children }) => (
+                  <p className="whitespace-pre-wrap mb-2 last:mb-0">{children}</p>
+                ),
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
+          )}
         </div>
 
 
