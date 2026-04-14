@@ -931,22 +931,22 @@
       },
       "targets": [
         {
-          "expr": "chatbot_rating_total{rating=\"very_helpful\"}",
+          "expr": "clamp_min(increase(chatbot_rating_total{rating=\"very_helpful\"}[$__range]), 0)",
           "legendFormat": "Sangat Membantu",
           "refId": "A"
         },
         {
-          "expr": "chatbot_rating_total{rating=\"helpful\"}",
+          "expr": "clamp_min(increase(chatbot_rating_total{rating=\"helpful\"}[$__range]), 0)",
           "legendFormat": "Membantu",
           "refId": "B"
         },
         {
-          "expr": "chatbot_rating_total{rating=\"not_helpful\"}",
+          "expr": "clamp_min(increase(chatbot_rating_total{rating=\"not_helpful\"}[$__range]), 0)",
           "legendFormat": "Kurang Membantu",
           "refId": "C"
         },
         {
-          "expr": "chatbot_rating_total{rating=\"very_not_helpful\"}",
+          "expr": "clamp_min(increase(chatbot_rating_total{rating=\"very_not_helpful\"}[$__range]), 0)",
           "legendFormat": "Tidak Membantu",
           "refId": "D"
         }
@@ -1054,7 +1054,8 @@
       },
       "targets": [
         {
-          "expr": "chatbot_rating_helpful_ratio * 100",
+          "expr": "clamp_min(sum(increase(chatbot_rating_total{rating=~\"very_helpful|helpful\"}[$__range])), 0) / clamp_min(sum(increase(chatbot_rating_total[$__range])), 1) * 100",
+          "legendFormat": "Positif (Sangat Membantu + Membantu)",
           "refId": "A"
         }
       ],
@@ -1108,7 +1109,8 @@
       },
       "targets": [
         {
-          "expr": "chatbot_rating_avg_score",
+          "expr": "(4 * clamp_min(increase(chatbot_rating_total{rating=\"very_helpful\"}[$__range]), 0) + 3 * clamp_min(increase(chatbot_rating_total{rating=\"helpful\"}[$__range]), 0) + 2 * clamp_min(increase(chatbot_rating_total{rating=\"not_helpful\"}[$__range]), 0) + 1 * clamp_min(increase(chatbot_rating_total{rating=\"very_not_helpful\"}[$__range]), 0)) / clamp_min(sum(increase(chatbot_rating_total[$__range])), 1)",
+          "legendFormat": "Skor Rata-rata",
           "refId": "A"
         }
       ],
@@ -1166,7 +1168,7 @@
       },
       "targets": [
         {
-          "expr": "chatbot_rating_helpful_ratio * 100",
+          "expr": "clamp_min(sum(rate(chatbot_rating_total{rating=~\"very_helpful|helpful\"}[$__rate_interval])), 0) / clamp_min(sum(rate(chatbot_rating_total[$__rate_interval])), 1e-9) * 100",
           "legendFormat": "Tingkat Kepuasan",
           "refId": "A"
         }
@@ -1224,7 +1226,8 @@
       },
       "targets": [
         {
-          "expr": "sum(chatbot_rating_total)",
+          "expr": "clamp_min(sum(increase(chatbot_rating_total[$__range])), 0)",
+          "legendFormat": "penilaian",
           "refId": "A"
         }
       ],
