@@ -1,16 +1,23 @@
 """
-Skenario 2 — Pengujian Akurasi Jawaban Chatbot (RAG Quality)
+Skenario 2 — Pengujian Akurasi Jawaban Chatbot (RAG Quality) dengan ROUGE-L
 
-Skrip ini mengirim 30 pertanyaan ground truth ke chatbot API secara otomatis
-dan menyimpan jawaban bot ke CSV. Penilaian dilakukan MANUAL setelahnya.
+Skrip ini mengirim 30 pertanyaan ground truth ke chatbot API secara otomatis,
+lalu menghitung skor ROUGE-L antara jawaban bot dan ground truth.
 
-Skala penilaian (isi kolom 'score' di CSV):
-  2 = Benar          — jawaban sesuai fakta, lengkap, tidak menyesatkan
-  1 = Sebagian Benar — mengandung info benar tapi tidak lengkap / kurang tepat
-  0 = Salah          — tidak relevan, salah fakta, atau tidak menjawab
+Metrik ROUGE-L (Recall-Oriented Understudy for Gisting Evaluation - Longest
+Common Subsequence):
+  - rouge_l_precision : seberapa banyak jawaban bot yang sesuai ground truth
+  - rouge_l_recall    : seberapa banyak ground truth yang tercakup jawaban bot
+  - rouge_l_f1        : F1-score (harmonic mean precision & recall) ← metrik utama
+
+Rentang nilai: 0.0 (tidak relevan) — 1.0 (identik dengan ground truth)
+
+Referensi:
+  Lin, C. Y. (2004). ROUGE: A Package for Automatic Evaluation of Summaries.
+  In Proceedings of Workshop on Text Summarization, ACL 2004.
 
 Cara menjalankan (dari root project):
-  pip install requests
+  pip install rouge-score requests
   python tests/accuracy_test.py
 
 Output: results/accuracy_results.csv
@@ -18,13 +25,16 @@ Output: results/accuracy_results.csv
 
 import csv
 import os
+import statistics
 import time
 
 import requests
+from rouge_score import rouge_scorer
 
-TARGET = os.getenv("CHATBOT_URL", "http://10.33.109.173")
+TARGET  = os.getenv("CHATBOT_URL", "http://10.33.109.173")
 OUTPUT  = os.path.join(os.path.dirname(__file__), "..", "results", "accuracy_results.csv")
 DELAY   = 3  # detik antar request agar tidak rate-limited
+SCORER  = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=False)
 
 # ---------------------------------------------------------------------------
 # 30 Pertanyaan Ground Truth — berdasarkan FAQ & konten resmi UGM Anjem
@@ -209,8 +219,21 @@ QUESTIONS = [
 ]
 
 # ---------------------------------------------------------------------------
-# Kirim ke chatbot & simpan hasil
+# Kirim ke chatbot, hitung ROUGE-L, simpan hasil
 # ---------------------------------------------------------------------------
+def compute_rouge_l(reference: str, hypothesis: str) -> dict:
+    """Hitung ROUGE-L antara ground truth (reference) dan jawaban bot (hypothesis)."""
+    if not hypothesis or hypothesis.startswith(("HTTP", "TIMEOUT", "ERROR")):
+        return {"precision": 0.0, "recall": 0.0, "f1": 0.0}
+    scores = SCORER.score(reference.lower(), hypothesis.lower())
+    rl = scores["rougeL"]
+    return {
+        "precision": round(rl.precision, 4),
+        "recall":    round(rl.recall,    4),
+        "f1":        round(rl.fmeasure,  4),
+    }
+
+
 def run():
     os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
 
@@ -218,9 +241,10 @@ def run():
     total = len(QUESTIONS)
 
     print(f"Mengirim {total} pertanyaan ke {TARGET} ...\n")
+    print(f"{'ID':<4} {'ROUGE-L F1':>10}  Pertanyaan")
+    print("-" * 70)
 
     for item in QUESTIONS:
-        print(f"[{item['id']:02d}/{total}] {item['question'][:60]}...")
         try:
             resp = requests.post(
                 f"{TARGET}/api/chat",
@@ -229,49 +253,73 @@ def run():
             )
             if resp.ok:
                 bot_answer = resp.json().get("answer", "").strip()
-                status = "ok"
+                api_status = "ok"
             else:
                 bot_answer = f"HTTP {resp.status_code}"
-                status = "error"
+                api_status = "error"
         except requests.exceptions.Timeout:
             bot_answer = "TIMEOUT"
-            status = "error"
+            api_status = "error"
         except Exception as exc:
             bot_answer = f"ERROR: {exc}"
-            status = "error"
+            api_status = "error"
+
+        rl = compute_rouge_l(item["ground_truth"], bot_answer)
+
+        print(f"[{item['id']:02d}/{total}] {rl['f1']:>10.4f}  {item['question'][:55]}...")
 
         results.append({
-            "id":           item["id"],
-            "category":     item["category"],
-            "question":     item["question"],
-            "ground_truth": item["ground_truth"],
-            "bot_answer":   bot_answer,
-            "api_status":   status,
-            "score":        "",   # ← isi manual: 0 / 1 / 2
-            "notes":        "",   # ← isi manual: catatan penilai
+            "id":               item["id"],
+            "category":         item["category"],
+            "question":         item["question"],
+            "ground_truth":     item["ground_truth"],
+            "bot_answer":       bot_answer,
+            "api_status":       api_status,
+            "rouge_l_precision": rl["precision"],
+            "rouge_l_recall":   rl["recall"],
+            "rouge_l_f1":       rl["f1"],
         })
 
         if item["id"] < total:
             time.sleep(DELAY)
 
     # Tulis CSV
-    fieldnames = ["id", "category", "question", "ground_truth", "bot_answer",
-                  "api_status", "score", "notes"]
+    fieldnames = [
+        "id", "category", "question", "ground_truth", "bot_answer",
+        "api_status", "rouge_l_precision", "rouge_l_recall", "rouge_l_f1",
+    ]
     with open(OUTPUT, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(results)
 
-    ok_count  = sum(1 for r in results if r["api_status"] == "ok")
-    err_count = total - ok_count
+    # Ringkasan per kategori
+    ok_results = [r for r in results if r["api_status"] == "ok"]
+    categories  = dict.fromkeys(item["category"] for item in QUESTIONS)
 
-    print(f"\nSelesai. {ok_count} berhasil, {err_count} error.")
-    print(f"Hasil disimpan di: {os.path.abspath(OUTPUT)}")
-    print("\nLangkah berikutnya:")
-    print("  1. Buka results/accuracy_results.csv")
-    print("  2. Isi kolom 'score' untuk setiap baris: 2 (Benar), 1 (Sebagian Benar), 0 (Salah)")
-    print("  3. Isi kolom 'notes' jika ada catatan tambahan")
-    print("  4. Hitung akurasi: sum(score) / (jumlah_soal × 2) × 100%")
+    print("\n" + "=" * 70)
+    print(f"{'Kategori':<30} {'N':>4} {'Avg F1':>8} {'Min F1':>8} {'Max F1':>8}")
+    print("-" * 70)
+
+    all_f1 = []
+    for cat in categories:
+        cat_scores = [r["rouge_l_f1"] for r in ok_results if r["category"] == cat]
+        if cat_scores:
+            avg = statistics.mean(cat_scores)
+            all_f1.extend(cat_scores)
+            print(f"{cat:<30} {len(cat_scores):>4} {avg:>8.4f} "
+                  f"{min(cat_scores):>8.4f} {max(cat_scores):>8.4f}")
+
+    print("-" * 70)
+    if all_f1:
+        print(f"{'TOTAL / RATA-RATA':<30} {len(all_f1):>4} "
+              f"{statistics.mean(all_f1):>8.4f} "
+              f"{min(all_f1):>8.4f} {max(all_f1):>8.4f}")
+
+    print(f"\nHasil disimpan di: {os.path.abspath(OUTPUT)}")
+    err_count = sum(1 for r in results if r["api_status"] != "ok")
+    if err_count:
+        print(f"⚠  {err_count} request gagal (cek kolom api_status di CSV)")
 
 
 if __name__ == "__main__":
