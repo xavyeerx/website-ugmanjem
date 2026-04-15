@@ -19,7 +19,7 @@ const POSITIVE_RATINGS: RatingValue[] = ["very_helpful", "helpful"];
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const { messages, isLoading, sendMessage, submitRating } = useChat();
+  const { messages, isLoading, mustRate, sendMessage, submitRating } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -36,7 +36,7 @@ export default function ChatWidget() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const trimmed = input.trim();
-    if (!trimmed || isLoading) return;
+    if (!trimmed || isLoading || mustRate) return;
     setInput("");
     sendMessage(trimmed);
   };
@@ -122,27 +122,36 @@ export default function ChatWidget() {
             </div>
 
             {/* Input */}
-            <form
-              onSubmit={handleSubmit}
-              className="p-3 border-t border-border bg-background flex gap-2 shrink-0"
-            >
-              <input
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ketik pertanyaan..."
-                disabled={isLoading}
-                className="flex-1 px-4 py-2.5 rounded-full bg-muted text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 disabled:opacity-50"
-              />
-              <button
-                type="submit"
-                disabled={isLoading || !input.trim()}
-                className="w-10 h-10 rounded-full bg-accent hover:bg-accent/90 text-white flex items-center justify-center transition-colors disabled:opacity-40 shrink-0"
-                aria-label="Kirim pesan"
+            <div className="border-t border-border bg-background shrink-0">
+              {mustRate && (
+                <div className="px-3 pt-2.5 pb-1">
+                  <p className="text-[11px] text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 text-center font-medium">
+                    Beri rating jawaban di atas sebelum bertanya lagi
+                  </p>
+                </div>
+              )}
+              <form
+                onSubmit={handleSubmit}
+                className="p-3 flex gap-2"
               >
-                <Send className="w-4 h-4" />
-              </button>
-            </form>
+                <input
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder={mustRate ? "Beri rating dulu..." : "Ketik pertanyaan..."}
+                  disabled={isLoading || mustRate}
+                  className="flex-1 px-4 py-2.5 rounded-full bg-muted text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+                <button
+                  type="submit"
+                  disabled={isLoading || mustRate || !input.trim()}
+                  className="w-10 h-10 rounded-full bg-accent hover:bg-accent/90 text-white flex items-center justify-center transition-colors disabled:opacity-40 shrink-0 disabled:cursor-not-allowed"
+                  aria-label="Kirim pesan"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </form>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

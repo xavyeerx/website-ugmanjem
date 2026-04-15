@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import type { ChatMessage, RatingValue } from "@/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
@@ -105,9 +105,16 @@ export function useChat() {
     [],
   );
 
+  const mustRate = useMemo(() => {
+    const lastAssistant = [...messages]
+      .reverse()
+      .find((m) => m.role === "assistant" && m.id !== "welcome");
+    return lastAssistant !== undefined && lastAssistant.rating === undefined;
+  }, [messages]);
+
   const clearMessages = useCallback(() => {
     setMessages([WELCOME]);
   }, []);
 
-  return { messages, isLoading, sendMessage, submitRating, clearMessages };
+  return { messages, isLoading, mustRate, sendMessage, submitRating, clearMessages };
 }
