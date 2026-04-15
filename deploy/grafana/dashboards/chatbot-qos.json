@@ -331,7 +331,7 @@
       "type": "timeseries",
       "gridPos": {
         "h": 8,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 20
       },
@@ -353,8 +353,8 @@
       "type": "gauge",
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 6,
         "y": 20
       },
       "targets": [
@@ -393,8 +393,8 @@
       "type": "timeseries",
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 12,
         "y": 20
       },
       "targets": [
@@ -409,6 +409,34 @@
           "refId": "B"
         }
       ]
+    },
+    {
+      "title": "Avg Retrieval Chunks Returned",
+      "description": "Rata-rata jumlah chunk dokumen yang diambil RAG per query. Nilai ideal sesuai konfigurasi top_k retriever. Nilai rendah menandakan knowledge base tidak menemukan konteks yang cukup relevan.",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 20
+      },
+      "targets": [
+        {
+          "expr": "rate(chatbot_retrieval_chunks_returned_sum[5m]) / rate(chatbot_retrieval_chunks_returned_count[5m])",
+          "legendFormat": "avg chunks",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
     },
     {
       "title": "In-Flight Requests",
@@ -685,9 +713,9 @@
       }
     },
     {
-      "title": "Container Memory Breakdown",
-      "description": "Memory per container as a stacked bar",
-      "type": "barchart",
+      "title": "Avg Throughput (RPS)",
+      "description": "Rata-rata throughput (requests per second) selama rentang waktu yang dipilih. Berguna untuk mencatat kapasitas layanan per skenario load test.",
+      "type": "stat",
       "gridPos": {
         "h": 8,
         "w": 12,
@@ -696,15 +724,24 @@
       },
       "targets": [
         {
-          "expr": "docker_container_memory_bytes / 1024 / 1024",
-          "legendFormat": "{{ compose_service }}",
-          "refId": "A",
-          "instant": true
+          "expr": "sum(increase(chatbot_chat_requests_total[$__range])) / $__range_s",
+          "legendFormat": "RPS",
+          "refId": "A"
         }
       ],
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"]
+        },
+        "colorMode": "value",
+        "graphMode": "area",
+        "textMode": "value_and_name"
+      },
       "fieldConfig": {
         "defaults": {
-          "unit": "decmbytes"
+          "unit": "reqps",
+          "decimals": 2,
+          "displayName": "Avg RPS"
         }
       }
     },
