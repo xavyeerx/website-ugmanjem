@@ -1,23 +1,30 @@
 """
-Skenario 2 — Pengujian Akurasi Jawaban Chatbot (RAG Quality) dengan ROUGE-L
+Skenario 2 — Pengujian Akurasi Jawaban Chatbot (RAG Quality) dengan RAGAS
 
 Skrip ini mengirim 30 pertanyaan ground truth ke chatbot API secara otomatis,
-lalu menghitung skor ROUGE-L antara jawaban bot dan ground truth.
+lalu mengevaluasi kualitas jawaban menggunakan framework RAGAS.
 
-Metrik ROUGE-L (Recall-Oriented Understudy for Gisting Evaluation - Longest
-Common Subsequence):
-  - rouge_l_precision : seberapa banyak jawaban bot yang sesuai ground truth
-  - rouge_l_recall    : seberapa banyak ground truth yang tercakup jawaban bot
-  - rouge_l_f1        : F1-score (harmonic mean precision & recall) ← metrik utama
+Metrik RAGAS yang digunakan:
+  - answer_relevancy  : seberapa relevan jawaban bot terhadap pertanyaan
+                        (0.0 = tidak relevan, 1.0 = sangat relevan)
+  - answer_correctness: seberapa benar jawaban bot dibanding ground truth,
+                        menggabungkan kemiripan faktual dan semantik
+                        (0.0 = salah, 1.0 = identik dengan ground truth)
 
-Rentang nilai: 0.0 (tidak relevan) — 1.0 (identik dengan ground truth)
+Kedua metrik menggunakan LLM (OpenAI GPT) sebagai evaluator otomatis.
 
 Referensi:
-  Lin, C. Y. (2004). ROUGE: A Package for Automatic Evaluation of Summaries.
-  In Proceedings of Workshop on Text Summarization, ACL 2004.
+  Es, S., James, J., Espinosa-Anke, L., & Schockaert, S. (2024).
+  RAGAs: Automated Evaluation of Retrieval Augmented Generation.
+  EACL 2024 System Demonstrations.
+
+Prasyarat:
+  - OPENAI_API_KEY harus di-set di environment (sama dengan key di backend/.env)
 
 Cara menjalankan (dari root project):
-  pip install rouge-score requests
+  pip install ragas openai requests
+  set OPENAI_API_KEY=sk-proj-...        (Windows)
+  export OPENAI_API_KEY=sk-proj-...     (Linux/Mac)
   python tests/accuracy_test.py
 
 Output: results/accuracy_results.csv
@@ -29,12 +36,13 @@ import statistics
 import time
 
 import requests
-from rouge_score import rouge_scorer
+from ragas import evaluate
+from ragas.dataset_schema import EvaluationDataset, SingleTurnSample
+from ragas.metrics import AnswerCorrectness, AnswerRelevancy
 
-TARGET  = os.getenv("CHATBOT_URL", "http://10.33.109.173")
-OUTPUT  = os.path.join(os.path.dirname(__file__), "..", "results", "accuracy_results.csv")
-DELAY   = 3  # detik antar request agar tidak rate-limited
-SCORER  = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=False)
+TARGET = os.getenv("CHATBOT_URL", "http://10.33.109.173")
+OUTPUT = os.path.join(os.path.dirname(__file__), "..", "results", "accuracy_results.csv")
+DELAY  = 3  # detik antar request agar tidak rate-limited
 
 # ---------------------------------------------------------------------------
 # 30 Pertanyaan Ground Truth — berdasarkan FAQ & konten resmi UGM Anjem
@@ -219,107 +227,143 @@ QUESTIONS = [
 ]
 
 # ---------------------------------------------------------------------------
-# Kirim ke chatbot, hitung ROUGE-L, simpan hasil
+# Phase 1: Kumpulkan jawaban bot dari API
 # ---------------------------------------------------------------------------
-def compute_rouge_l(reference: str, hypothesis: str) -> dict:
-    """Hitung ROUGE-L antara ground truth (reference) dan jawaban bot (hypothesis)."""
-    if not hypothesis or hypothesis.startswith(("HTTP", "TIMEOUT", "ERROR")):
-        return {"precision": 0.0, "recall": 0.0, "f1": 0.0}
-    scores = SCORER.score(reference.lower(), hypothesis.lower())
-    rl = scores["rougeL"]
-    return {
-        "precision": round(rl.precision, 4),
-        "recall":    round(rl.recall,    4),
-        "f1":        round(rl.fmeasure,  4),
-    }
-
-
-def run():
-    os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
-
-    results = []
+def collect_answers() -> list[dict]:
     total = len(QUESTIONS)
+    print(f"[Phase 1] Mengirim {total} pertanyaan ke {TARGET} ...\n")
 
-    print(f"Mengirim {total} pertanyaan ke {TARGET} ...\n")
-    print(f"{'ID':<4} {'ROUGE-L F1':>10}  Pertanyaan")
-    print("-" * 70)
-
+    collected = []
     for item in QUESTIONS:
+        print(f"  [{item['id']:02d}/{total}] {item['question'][:65]}...")
         try:
             resp = requests.post(
                 f"{TARGET}/api/chat",
                 json={"message": item["question"], "conversation_history": []},
                 timeout=60,
             )
-            if resp.ok:
-                bot_answer = resp.json().get("answer", "").strip()
-                api_status = "ok"
-            else:
-                bot_answer = f"HTTP {resp.status_code}"
-                api_status = "error"
+            bot_answer = resp.json().get("answer", "").strip() if resp.ok \
+                else f"HTTP {resp.status_code}"
+            api_status = "ok" if resp.ok else "error"
         except requests.exceptions.Timeout:
-            bot_answer = "TIMEOUT"
-            api_status = "error"
+            bot_answer, api_status = "TIMEOUT", "error"
         except Exception as exc:
-            bot_answer = f"ERROR: {exc}"
-            api_status = "error"
+            bot_answer, api_status = f"ERROR: {exc}", "error"
 
-        rl = compute_rouge_l(item["ground_truth"], bot_answer)
-
-        print(f"[{item['id']:02d}/{total}] {rl['f1']:>10.4f}  {item['question'][:55]}...")
-
-        results.append({
-            "id":               item["id"],
-            "category":         item["category"],
-            "question":         item["question"],
-            "ground_truth":     item["ground_truth"],
-            "bot_answer":       bot_answer,
-            "api_status":       api_status,
-            "rouge_l_precision": rl["precision"],
-            "rouge_l_recall":   rl["recall"],
-            "rouge_l_f1":       rl["f1"],
+        collected.append({
+            "id":          item["id"],
+            "category":    item["category"],
+            "question":    item["question"],
+            "ground_truth": item["ground_truth"],
+            "bot_answer":  bot_answer,
+            "api_status":  api_status,
         })
 
         if item["id"] < total:
             time.sleep(DELAY)
 
-    # Tulis CSV
+    ok = sum(1 for r in collected if r["api_status"] == "ok")
+    print(f"\n  Selesai: {ok}/{total} berhasil.\n")
+    return collected
+
+
+# ---------------------------------------------------------------------------
+# Phase 2: Evaluasi dengan RAGAS
+# ---------------------------------------------------------------------------
+def evaluate_ragas(collected: list[dict]) -> list[dict]:
+    if not os.getenv("OPENAI_API_KEY"):
+        raise EnvironmentError(
+            "OPENAI_API_KEY belum di-set.\n"
+            "  Windows : set OPENAI_API_KEY=sk-proj-...\n"
+            "  Linux   : export OPENAI_API_KEY=sk-proj-..."
+        )
+
+    ok_items = [r for r in collected if r["api_status"] == "ok"]
+    print(f"[Phase 2] Mengevaluasi {len(ok_items)} jawaban dengan RAGAS ...")
+    print("  Metrik: AnswerRelevancy + AnswerCorrectness (via OpenAI LLM)\n")
+
+    samples = [
+        SingleTurnSample(
+            user_input=r["question"],
+            response=r["bot_answer"],
+            reference=r["ground_truth"],
+        )
+        for r in ok_items
+    ]
+
+    dataset = EvaluationDataset(samples=samples)
+    result  = evaluate(
+        dataset=dataset,
+        metrics=[AnswerRelevancy(), AnswerCorrectness()],
+    )
+    df = result.to_pandas()
+
+    # Gabungkan skor RAGAS kembali ke data asli
+    score_map = {
+        r["question"]: {
+            "answer_relevancy":   round(float(row["answer_relevancy"]),   4),
+            "answer_correctness": round(float(row["answer_correctness"]), 4),
+        }
+        for r, (_, row) in zip(ok_items, df.iterrows())
+    }
+
+    for item in collected:
+        scores = score_map.get(item["question"], {})
+        item["answer_relevancy"]   = scores.get("answer_relevancy",   "")
+        item["answer_correctness"] = scores.get("answer_correctness", "")
+
+    return collected
+
+
+# ---------------------------------------------------------------------------
+# Simpan CSV & tampilkan ringkasan
+# ---------------------------------------------------------------------------
+def save_and_summarize(results: list[dict]):
+    os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
+
     fieldnames = [
         "id", "category", "question", "ground_truth", "bot_answer",
-        "api_status", "rouge_l_precision", "rouge_l_recall", "rouge_l_f1",
+        "api_status", "answer_relevancy", "answer_correctness",
     ]
     with open(OUTPUT, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(results)
 
-    # Ringkasan per kategori
-    ok_results = [r for r in results if r["api_status"] == "ok"]
-    categories  = dict.fromkeys(item["category"] for item in QUESTIONS)
+    ok = [r for r in results if r["api_status"] == "ok" and r["answer_relevancy"] != ""]
+    categories = dict.fromkeys(item["category"] for item in QUESTIONS)
 
-    print("\n" + "=" * 70)
-    print(f"{'Kategori':<30} {'N':>4} {'Avg F1':>8} {'Min F1':>8} {'Max F1':>8}")
-    print("-" * 70)
+    print("\n" + "=" * 75)
+    print(f"{'Kategori':<25} {'N':>3}  {'Relevancy':>10}  {'Correctness':>12}")
+    print("-" * 75)
 
-    all_f1 = []
+    all_rel, all_cor = [], []
     for cat in categories:
-        cat_scores = [r["rouge_l_f1"] for r in ok_results if r["category"] == cat]
-        if cat_scores:
-            avg = statistics.mean(cat_scores)
-            all_f1.extend(cat_scores)
-            print(f"{cat:<30} {len(cat_scores):>4} {avg:>8.4f} "
-                  f"{min(cat_scores):>8.4f} {max(cat_scores):>8.4f}")
+        cat_items = [r for r in ok if r["category"] == cat]
+        if not cat_items:
+            continue
+        rel = [r["answer_relevancy"]   for r in cat_items]
+        cor = [r["answer_correctness"] for r in cat_items]
+        all_rel.extend(rel); all_cor.extend(cor)
+        print(f"{cat:<25} {len(cat_items):>3}  "
+              f"{statistics.mean(rel):>10.4f}  {statistics.mean(cor):>12.4f}")
 
-    print("-" * 70)
-    if all_f1:
-        print(f"{'TOTAL / RATA-RATA':<30} {len(all_f1):>4} "
-              f"{statistics.mean(all_f1):>8.4f} "
-              f"{min(all_f1):>8.4f} {max(all_f1):>8.4f}")
+    print("-" * 75)
+    if all_rel:
+        print(f"{'TOTAL / RATA-RATA':<25} {len(all_rel):>3}  "
+              f"{statistics.mean(all_rel):>10.4f}  {statistics.mean(all_cor):>12.4f}")
 
     print(f"\nHasil disimpan di: {os.path.abspath(OUTPUT)}")
-    err_count = sum(1 for r in results if r["api_status"] != "ok")
-    if err_count:
-        print(f"⚠  {err_count} request gagal (cek kolom api_status di CSV)")
+    err = sum(1 for r in results if r["api_status"] != "ok")
+    if err:
+        print(f"  ⚠  {err} request gagal (cek kolom api_status)")
+
+
+# ---------------------------------------------------------------------------
+def run():
+    collected = collect_answers()
+    evaluated = evaluate_ragas(collected)
+    save_and_summarize(evaluated)
 
 
 if __name__ == "__main__":
