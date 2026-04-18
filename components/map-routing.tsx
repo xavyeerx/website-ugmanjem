@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -58,6 +58,12 @@ export default function MapRouting({ onDistanceFound }: MapRoutingProps) {
   const [pickup, setPickup] = useState<LocationInfo | null>(null);
   const [dropoff, setDropoff] = useState<LocationInfo | null>(null);
   const [routeLine, setRouteLine] = useState<[number, number][]>([]);
+
+  // Stable ref so the callback never needs to be in dependency arrays
+  const onDistanceFoundRef = useRef(onDistanceFound);
+  useLayoutEffect(() => {
+    onDistanceFoundRef.current = onDistanceFound;
+  });
 
   // Search States
   const [activeInput, setActiveInput] = useState<"pickup" | "dropoff" | null>(null);
@@ -164,7 +170,7 @@ export default function MapRouting({ onDistanceFound }: MapRoutingProps) {
       if (data.routes && data.routes.length > 0) {
         const route = data.routes[0];
         const distKm = (route.distance / 1000).toFixed(1);
-        onDistanceFound(distKm);
+        onDistanceFoundRef.current(distKm);
 
         // GeoJSON uses [lon, lat], Leaflet uses [lat, lon]
         const coords = route.geometry.coordinates.map((c: [number, number]) => [c[1], c[0]] as [number, number]);
@@ -173,7 +179,7 @@ export default function MapRouting({ onDistanceFound }: MapRoutingProps) {
     } catch (err) {
       console.error("OSRM routing error", err);
     }
-  }, [pickup, dropoff, onDistanceFound]);
+  }, [pickup, dropoff]);
 
   useEffect(() => {
     if (pickup && dropoff) {
@@ -181,10 +187,10 @@ export default function MapRouting({ onDistanceFound }: MapRoutingProps) {
     } else {
       setRouteLine([]);
       if (!pickup && !dropoff) {
-        onDistanceFound("");
+        onDistanceFoundRef.current("");
       }
     }
-  }, [pickup, dropoff, calculateRoute, onDistanceFound]);
+  }, [pickup, dropoff, calculateRoute]);
 
   return (
     <div className="flex flex-col gap-4">
