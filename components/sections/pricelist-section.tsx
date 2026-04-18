@@ -266,11 +266,15 @@ export default function PricelistSection({
                 </p>
                 <div className="flex items-center gap-2">
                   <input
-                    type="number"
-                    min="0"
-                    step="0.1"
+                    type="text"
+                    inputMode="decimal"
                     value={distance}
-                    onChange={(e) => setDistance(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(",", ".");
+                      if (val === "" || /^\d*\.?\d*$/.test(val)) {
+                        setDistance(val);
+                      }
+                    }}
                     placeholder="Contoh: 3.5"
                     className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
                   />
