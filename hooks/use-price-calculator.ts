@@ -15,6 +15,7 @@ export interface PriceCalculatorState {
   serviceType: ServiceType;
   distance: string;
   isRainy: boolean;
+  isEarlyMorning: boolean;
   weatherCondition: WeatherCondition;
 }
 
@@ -22,6 +23,7 @@ export type MotorBreakdown = {
   type: "motor";
   basePrice: number;
   weatherFee: number;
+  earlyMorningFee: number;
   jastipFee: number;
 };
 
@@ -32,6 +34,7 @@ export type CarBreakdown = {
   subtotal: number;
   multiplier: number;
   fareAfterMultiplier: number;
+  earlyMorningFee: number;
 };
 
 export type PriceBreakdown = MotorBreakdown | CarBreakdown;
@@ -45,6 +48,7 @@ export function usePriceCalculator(config?: PricingConfig) {
     serviceType: "antar-jemput",
     distance: "",
     isRainy: false,
+    isEarlyMorning: false,
     weatherCondition: "normal",
   });
 
@@ -68,6 +72,10 @@ export function usePriceCalculator(config?: PricingConfig) {
     setState((prev) => ({ ...prev, isRainy: !prev.isRainy }));
   };
 
+  const toggleEarlyMorning = () => {
+    setState((prev) => ({ ...prev, isEarlyMorning: !prev.isEarlyMorning }));
+  };
+
   const setWeatherCondition = (weatherCondition: WeatherCondition) => {
     setState((prev) => ({ ...prev, weatherCondition }));
   };
@@ -83,6 +91,7 @@ export function usePriceCalculator(config?: PricingConfig) {
       const result = calculateMotorFare({
         distance: distanceNum,
         isRainy: state.isRainy,
+        isEarlyMorning: state.isEarlyMorning,
         jastipFee: applicableJastipFee,
       });
 
@@ -97,6 +106,7 @@ export function usePriceCalculator(config?: PricingConfig) {
     const result = calculateCarFare({
       distance: distanceNum,
       condition: state.weatherCondition,
+      isEarlyMorning: state.isEarlyMorning,
     });
 
     const breakdown: CarBreakdown = {
@@ -114,6 +124,7 @@ export function usePriceCalculator(config?: PricingConfig) {
     setDistance,
     setIsRainy,
     toggleRainy,
+    toggleEarlyMorning,
     setWeatherCondition,
     estimatedPrice,
     priceBreakdown,

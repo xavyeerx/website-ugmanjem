@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Bike, Car, Cloud, ChevronLeft, ChevronRight } from "lucide-react";
+import { Bike, Car, Cloud, Moon, ChevronLeft, ChevronRight } from "lucide-react";
 import FadeIn from "@/components/fade-in";
 import {
   usePriceCalculator,
@@ -59,11 +59,13 @@ export default function PricelistSection({
     serviceType,
     distance,
     isRainy,
+    isEarlyMorning,
     weatherCondition,
     setVehicleType,
     setServiceType,
     setDistance,
     toggleRainy,
+    toggleEarlyMorning,
     setWeatherCondition,
     estimatedPrice,
     priceBreakdown,
@@ -258,6 +260,25 @@ export default function PricelistSection({
                   Jarak Total: <span className="text-accent">{distance} KM</span>
                 </p>
               )}
+              <div className="mt-3">
+                <p className="text-xs text-muted-foreground mb-2">
+                  Titik tidak ditemukan di peta? Masukkan jarak manual:
+                </p>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={distance}
+                    onChange={(e) => setDistance(e.target.value)}
+                    placeholder="Contoh: 3.5"
+                    className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+                  />
+                  <span className="text-sm text-muted-foreground font-medium whitespace-nowrap">
+                    KM
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* Weather / condition — different per vehicle */}
@@ -266,18 +287,34 @@ export default function PricelistSection({
                 <h4 className="text-sm font-medium text-foreground mb-3">
                   Kondisi Opsional
                 </h4>
-                <button
-                  type="button"
-                  onClick={toggleRainy}
-                  className={`flex items-center justify-center gap-2 p-4 border rounded-lg transition-colors w-full ${
-                    isRainy
-                      ? "bg-accent text-white border-accent"
-                      : "bg-background text-foreground border-border hover:bg-muted"
-                  }`}
-                >
-                  <Cloud className="w-5 h-5" />
-                  <span className="text-sm font-medium">Hujan (+Rp2.000)</span>
-                </button>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={toggleRainy}
+                    className={`flex items-center justify-center gap-2 p-4 border rounded-lg transition-colors w-full ${
+                      isRainy
+                        ? "bg-accent text-white border-accent"
+                        : "bg-background text-foreground border-border hover:bg-muted"
+                    }`}
+                  >
+                    <Cloud className="w-5 h-5" />
+                    <span className="text-sm font-medium">Hujan (+Rp2.000)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={toggleEarlyMorning}
+                    className={`flex items-center justify-center gap-2 p-4 border rounded-lg transition-colors w-full ${
+                      isEarlyMorning
+                        ? "bg-accent text-white border-accent"
+                        : "bg-background text-foreground border-border hover:bg-muted"
+                    }`}
+                  >
+                    <Moon className="w-5 h-5" />
+                    <span className="text-sm font-medium">
+                      Dini Hari &gt;10:00 PM (+Rp2.000)
+                    </span>
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="mb-6">
@@ -300,6 +337,20 @@ export default function PricelistSection({
                     </button>
                   ))}
                 </div>
+                <button
+                  type="button"
+                  onClick={toggleEarlyMorning}
+                  className={`flex items-center justify-center gap-2 p-4 border rounded-lg transition-colors w-full mt-2 ${
+                    isEarlyMorning
+                      ? "bg-accent text-white border-accent"
+                      : "bg-background text-foreground border-border hover:bg-muted"
+                  }`}
+                >
+                  <Moon className="w-5 h-5" />
+                  <span className="text-sm font-medium">
+                    Dini Hari &gt;10:00 PM (+Rp2.000)
+                  </span>
+                </button>
               </div>
             )}
 
@@ -363,6 +414,12 @@ function MotorBreakdownView({
           <span>+ Rp. {fmt(breakdown.weatherFee)}</span>
         </div>
       )}
+      {breakdown.earlyMorningFee > 0 && (
+        <div className="flex justify-between">
+          <span>Biaya dini hari</span>
+          <span>+ Rp. {fmt(breakdown.earlyMorningFee)}</span>
+        </div>
+      )}
       {breakdown.jastipFee > 0 && (
         <div className="flex justify-between">
           <span>Biaya jastip</span>
@@ -396,6 +453,12 @@ function CarBreakdownView({
         <div className="flex justify-between">
           <span>Cuaca (×{breakdown.multiplier})</span>
           <span>Rp. {fmt(breakdown.fareAfterMultiplier)}</span>
+        </div>
+      )}
+      {breakdown.earlyMorningFee > 0 && (
+        <div className="flex justify-between">
+          <span>Biaya dini hari</span>
+          <span>+ Rp. {fmt(breakdown.earlyMorningFee)}</span>
         </div>
       )}
     </div>

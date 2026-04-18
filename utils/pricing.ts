@@ -14,6 +14,7 @@ export const PRICING_CONFIG: Record<VehicleType, VehiclePricingConfig> = {
 
 export const MOTOR_MINIMUM_PRICE = 5000;
 export const MOTOR_RAINY_FEE = 2000;
+export const EARLY_MORNING_FEE = 2000;
 
 export const WEATHER_MULTIPLIERS: Record<WeatherCondition, number> = {
   normal: 1.0,
@@ -39,6 +40,7 @@ export const VEHICLE_LABELS: Record<VehicleType, string> = {
 export interface MotorFareInput {
   distance: number;
   isRainy: boolean;
+  isEarlyMorning?: boolean;
   jastipFee?: number;
 }
 
@@ -47,6 +49,7 @@ export interface MotorFareResult {
   breakdown: {
     basePrice: number;
     weatherFee: number;
+    earlyMorningFee: number;
     jastipFee: number;
   };
 }
@@ -54,6 +57,7 @@ export interface MotorFareResult {
 export function calculateMotorFare({
   distance,
   isRainy,
+  isEarlyMorning = false,
   jastipFee = 0,
 }: MotorFareInput): MotorFareResult {
   let basePrice = distance * PRICING_CONFIG.motor.price_per_km;
@@ -62,11 +66,12 @@ export function calculateMotorFare({
   }
 
   const weatherFee = isRainy ? MOTOR_RAINY_FEE : 0;
-  const totalFare = basePrice + weatherFee + jastipFee;
+  const earlyMorningFee = isEarlyMorning ? EARLY_MORNING_FEE : 0;
+  const totalFare = basePrice + weatherFee + earlyMorningFee + jastipFee;
 
   return {
     totalFare,
-    breakdown: { basePrice, weatherFee, jastipFee },
+    breakdown: { basePrice, weatherFee, earlyMorningFee, jastipFee },
   };
 }
 
@@ -75,6 +80,7 @@ export function calculateMotorFare({
 export interface CarFareInput {
   distance: number;
   condition: WeatherCondition;
+  isEarlyMorning?: boolean;
 }
 
 export interface CarFareResult {
@@ -85,12 +91,14 @@ export interface CarFareResult {
     subtotal: number;
     multiplier: number;
     fareAfterMultiplier: number;
+    earlyMorningFee: number;
   };
 }
 
 export function calculateCarFare({
   distance,
   condition,
+  isEarlyMorning = false,
 }: CarFareInput): CarFareResult {
   const config = PRICING_CONFIG.car;
   const multiplier = WEATHER_MULTIPLIERS[condition];
@@ -99,9 +107,10 @@ export function calculateCarFare({
   const distanceFare = distance * config.price_per_km;
   const subtotal = baseFare + distanceFare;
   const fareAfterMultiplier = subtotal * multiplier;
+  const earlyMorningFee = isEarlyMorning ? EARLY_MORNING_FEE : 0;
 
   return {
-    totalFare: fareAfterMultiplier,
-    breakdown: { baseFare, distanceFare, subtotal, multiplier, fareAfterMultiplier },
+    totalFare: fareAfterMultiplier + earlyMorningFee,
+    breakdown: { baseFare, distanceFare, subtotal, multiplier, fareAfterMultiplier, earlyMorningFee },
   };
 }
