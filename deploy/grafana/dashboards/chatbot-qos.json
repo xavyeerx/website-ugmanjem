@@ -1,1306 +1,220 @@
 {
-  "annotations": {
-    "list": []
-  },
+  "annotations": { "list": [] },
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
   "links": [],
   "panels": [
-    {
-      "title": "Total CPU Cores",
-      "type": "stat",
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 0,
-        "y": 0
-      },
+
+    { "title": "Total CPU Cores", "type": "stat",
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+      "targets": [{ "expr": "count(count(node_cpu_seconds_total) by (cpu))", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "id": 1000 },
+
+    { "title": "Total RAM (GB)", "type": "stat",
+      "gridPos": { "h": 4, "w": 5, "x": 4, "y": 0 },
+      "targets": [{ "expr": "node_memory_MemTotal_bytes", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "bytes" } },
+      "id": 1001 },
+
+    { "title": "Available RAM", "type": "stat",
+      "gridPos": { "h": 4, "w": 5, "x": 9, "y": 0 },
+      "targets": [{ "expr": "node_memory_MemAvailable_bytes", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "area" },
+      "fieldConfig": { "defaults": { "unit": "bytes" } },
+      "id": 1002 },
+
+    { "title": "Total Storage (Root)", "type": "stat",
+      "gridPos": { "h": 4, "w": 5, "x": 14, "y": 0 },
+      "targets": [{ "expr": "node_filesystem_size_bytes{mountpoint=\"/\"}", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "bytes" } },
+      "id": 1003 },
+
+    { "title": "Available Storage", "type": "stat",
+      "gridPos": { "h": 4, "w": 5, "x": 19, "y": 0 },
+      "targets": [{ "expr": "node_filesystem_avail_bytes{mountpoint=\"/\"}", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "area" },
+      "fieldConfig": { "defaults": { "unit": "bytes" } },
+      "id": 1004 },
+
+    { "title": "Chat Requests / min", "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 4 },
+      "targets": [{ "expr": "rate(chatbot_chat_requests_total[1m]) * 60", "legendFormat": "{{ status }}", "refId": "A" }],
+      "fieldConfig": { "defaults": { "unit": "reqpm" } } },
+
+    { "title": "End-to-End Latency (p50 / p95 / p99)", "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 4 },
       "targets": [
-        {
-          "expr": "count(count(node_cpu_seconds_total) by (cpu))",
-          "refId": "A"
+        { "expr": "histogram_quantile(0.50, rate(chatbot_chat_e2e_duration_seconds_bucket[5m]))", "legendFormat": "p50", "refId": "A" },
+        { "expr": "histogram_quantile(0.95, rate(chatbot_chat_e2e_duration_seconds_bucket[5m]))", "legendFormat": "p95", "refId": "B" },
+        { "expr": "histogram_quantile(0.99, rate(chatbot_chat_e2e_duration_seconds_bucket[5m]))", "legendFormat": "p99", "refId": "C" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } } },
+
+    { "title": "Error Rate (%)", "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 4 },
+      "targets": [{
+        "expr": "clamp_min(sum(increase(chatbot_chat_requests_total{status!=\"success\"}[$__range])) / clamp_min(sum(increase(chatbot_chat_requests_total[$__range])), 1) * 100, 0)",
+        "legendFormat": "Error Rate", "refId": "A"
+      }],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100, "decimals": 2,
+          "displayName": "Error Rate (%)",
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "yellow", "value": 1 },
+            { "color": "red", "value": 5 }
+          ]}
         }
+      },
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": true, "showThresholdMarkers": true } },
+
+    { "title": "In-Flight Requests", "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "targets": [{ "expr": "chatbot_http_requests_in_progress", "legendFormat": "{{ endpoint }}", "refId": "A" }] },
+
+    { "title": "HTTP Request Rate by Status", "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "targets": [{ "expr": "rate(chatbot_http_requests_total[1m]) * 60", "legendFormat": "{{ method }} {{ endpoint }} {{ status }}", "refId": "A" }],
+      "fieldConfig": { "defaults": { "unit": "reqpm" } } },
+
+    { "title": "Container CPU Usage (%)", "description": "CPU usage per Docker container saat load testing",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+      "targets": [{ "expr": "docker_container_cpu_percent", "legendFormat": "{{ compose_service }}", "refId": "A" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0 } } },
+
+    { "title": "Container Memory Usage (MB)", "description": "Memory usage per Docker container",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+      "targets": [{ "expr": "docker_container_memory_bytes / 1024 / 1024", "legendFormat": "{{ compose_service }}", "refId": "A" }],
+      "fieldConfig": { "defaults": { "unit": "decmbytes" } } },
+
+    { "title": "Host CPU Usage (%)", "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 28 },
+      "targets": [{ "expr": "(1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m]))) * 100", "legendFormat": "CPU %", "refId": "A" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100,
+        "thresholds": { "steps": [{"color":"green","value":null},{"color":"yellow","value":60},{"color":"red","value":85}] }
+      }} },
+
+    { "title": "Host Memory Usage (%)", "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 28 },
+      "targets": [{ "expr": "(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100", "legendFormat": "Memory %", "refId": "A" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100,
+        "thresholds": { "steps": [{"color":"green","value":null},{"color":"yellow","value":70},{"color":"red","value":90}] }
+      }} },
+
+    { "title": "Host Disk Usage (%)", "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 28 },
+      "targets": [{ "expr": "(1 - node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100", "legendFormat": "Disk %", "refId": "A" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100,
+        "thresholds": { "steps": [{"color":"green","value":null},{"color":"yellow","value":70},{"color":"red","value":90}] }
+      }} },
+
+    { "title": "Avg Throughput (RPS)", "type": "stat",
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 36 },
+      "targets": [{ "expr": "sum(increase(chatbot_chat_requests_total[$__range])) / $__range_s", "legendFormat": "RPS", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "area", "textMode": "value_and_name" },
+      "fieldConfig": { "defaults": { "unit": "reqps", "decimals": 2, "displayName": "Avg RPS" } } },
+
+    { "title": "Total Requests (Cumulative)", "type": "stat",
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 36 },
+      "targets": [{ "expr": "sum(chatbot_chat_requests_total)", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "area" },
+      "fieldConfig": { "defaults": { "unit": "short", "displayName": "Total Requests" } } },
+
+    { "title": "Uptime (Backend Container)", "type": "stat",
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 36 },
+      "targets": [{ "expr": "time() - process_start_time_seconds{job=\"chatbot-backend\"}", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "unit": "s", "displayName": "Uptime" } } },
+
+    { "title": "Kepuasan Pengguna — Umpan Balik Rating Jawaban Chatbot",
+      "type": "row", "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 42 },
+      "id": 2000 },
+
+    { "title": "Distribusi Rating",
+      "description": "Proporsi setiap kategori rating. Semakin besar area Sangat Membantu dan Membantu, semakin baik persepsi pengguna.",
+      "type": "piechart", "id": 2010,
+      "gridPos": { "h": 9, "w": 10, "x": 0, "y": 43 },
+      "targets": [
+        { "expr": "clamp_min(increase(chatbot_rating_total{rating=\"very_helpful\"}[$__range]), 0)", "legendFormat": "Sangat Membantu", "refId": "A" },
+        { "expr": "clamp_min(increase(chatbot_rating_total{rating=\"helpful\"}[$__range]), 0)", "legendFormat": "Membantu", "refId": "B" },
+        { "expr": "clamp_min(increase(chatbot_rating_total{rating=\"not_helpful\"}[$__range]), 0)", "legendFormat": "Kurang Membantu", "refId": "C" },
+        { "expr": "clamp_min(increase(chatbot_rating_total{rating=\"very_not_helpful\"}[$__range]), 0)", "legendFormat": "Tidak Membantu", "refId": "D" }
       ],
       "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "colorMode": "value",
-        "graphMode": "none"
-      },
-      "id": 1000
-    },
-    {
-      "title": "Total RAM (GB)",
-      "type": "stat",
-      "gridPos": {
-        "h": 4,
-        "w": 5,
-        "x": 4,
-        "y": 0
-      },
-      "targets": [
-        {
-          "expr": "node_memory_MemTotal_bytes",
-          "refId": "A"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "colorMode": "value",
-        "graphMode": "none"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "bytes"
-        }
-      },
-      "id": 1001
-    },
-    {
-      "title": "Available RAM",
-      "type": "stat",
-      "gridPos": {
-        "h": 4,
-        "w": 5,
-        "x": 9,
-        "y": 0
-      },
-      "targets": [
-        {
-          "expr": "node_memory_MemAvailable_bytes",
-          "refId": "A"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "colorMode": "value",
-        "graphMode": "area"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "bytes",
-          "color": {
-            "mode": "thresholds"
-          }
-        }
-      },
-      "id": 1002
-    },
-    {
-      "title": "Total Storage (Root)",
-      "type": "stat",
-      "gridPos": {
-        "h": 4,
-        "w": 5,
-        "x": 14,
-        "y": 0
-      },
-      "targets": [
-        {
-          "expr": "node_filesystem_size_bytes{mountpoint=\"/\"}",
-          "refId": "A"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "colorMode": "value",
-        "graphMode": "none"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "bytes"
-        }
-      },
-      "id": 1003
-    },
-    {
-      "title": "Available Storage",
-      "type": "stat",
-      "gridPos": {
-        "h": 4,
-        "w": 5,
-        "x": 19,
-        "y": 0
-      },
-      "targets": [
-        {
-          "expr": "node_filesystem_avail_bytes{mountpoint=\"/\"}",
-          "refId": "A"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "colorMode": "value",
-        "graphMode": "area"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "bytes"
-        }
-      },
-      "id": 1004
-    },
-    {
-      "title": "Chat Requests / min",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 4
-      },
-      "targets": [
-        {
-          "expr": "rate(chatbot_chat_requests_total[1m]) * 60",
-          "legendFormat": "{{ status }}",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "reqpm"
-        }
-      }
-    },
-    {
-      "title": "End-to-End Latency (p50 / p95 / p99)",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 4
-      },
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.50, rate(chatbot_chat_e2e_duration_seconds_bucket[5m]))",
-          "legendFormat": "p50",
-          "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(0.95, rate(chatbot_chat_e2e_duration_seconds_bucket[5m]))",
-          "legendFormat": "p95",
-          "refId": "B"
-        },
-        {
-          "expr": "histogram_quantile(0.99, rate(chatbot_chat_e2e_duration_seconds_bucket[5m]))",
-          "legendFormat": "p99",
-          "refId": "C"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "s"
-        }
-      }
-    },
-    {
-      "title": "Error Rate (%)",
-      "type": "gauge",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 4
-      },
-      "targets": [
-        {
-          "expr": "clamp_min(sum(increase(chatbot_chat_requests_total{status!=\"success\"}[$__range])) / clamp_min(sum(increase(chatbot_chat_requests_total[$__range])), 1) * 100, 0)",
-          "legendFormat": "Error Rate",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
-          "decimals": 2,
-          "displayName": "Error Rate (range terpilih)",
-          "description": "Persentase request yang gagal dibanding total request pada rentang waktu yang dipilih. Formula: total_error / total_request x 100%.",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 1
-              },
-              {
-                "color": "red",
-                "value": 5
-              }
-            ]
-          }
-        }
-      },
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "showThresholdLabels": true,
-        "showThresholdMarkers": true,
-        "orientation": "auto"
-      }
-    },
-    {
-      "title": "Pipeline Latency Breakdown",
-      "description": "Avg latency per RAG pipeline stage",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 12
-      },
-      "targets": [
-        {
-          "expr": "rate(chatbot_retrieval_duration_seconds_sum[5m]) / rate(chatbot_retrieval_duration_seconds_count[5m])",
-          "legendFormat": "Retrieval (ChromaDB)",
-          "refId": "A"
-        },
-        {
-          "expr": "rate(chatbot_live_context_duration_seconds_sum[5m]) / rate(chatbot_live_context_duration_seconds_count[5m])",
-          "legendFormat": "Live Context (Supabase)",
-          "refId": "B"
-        },
-        {
-          "expr": "rate(chatbot_generation_duration_seconds_sum[5m]) / rate(chatbot_generation_duration_seconds_count[5m])",
-          "legendFormat": "Generation (OpenAI GPT-4o mini)",
-          "refId": "C"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "s"
-        }
-      }
-    },
-    {
-      "title": "Generation Latency Distribution",
-      "type": "histogram",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 12
-      },
-      "targets": [
-        {
-          "expr": "rate(chatbot_generation_duration_seconds_bucket[5m])",
-          "legendFormat": "{{ le }}",
-          "refId": "A",
-          "format": "heatmap"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "s"
-        }
-      }
-    },
-    {
-      "title": "Retrieval Quality (Avg Distance)",
-      "description": "Lower distance = more relevant retrieval. Track retrieval quality over time.",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 0,
-        "y": 20
-      },
-      "targets": [
-        {
-          "expr": "chatbot_retrieval_distance_sum / chatbot_retrieval_distance_count",
-          "legendFormat": "avg distance",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none"
-        }
-      }
-    },
-    {
-      "title": "Live Context Cache Hit Rate (%)",
-      "type": "gauge",
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 6,
-        "y": 20
-      },
-      "targets": [
-        {
-          "expr": "rate(chatbot_live_context_cache_hits_total[5m]) / (rate(chatbot_live_context_cache_hits_total[5m]) + rate(chatbot_live_context_cache_misses_total[5m])) * 100",
-          "legendFormat": "hit rate %",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "thresholds": {
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 50
-              },
-              {
-                "color": "green",
-                "value": 80
-              }
-            ]
-          },
-          "min": 0,
-          "max": 100
-        }
-      }
-    },
-    {
-      "title": "OpenAI API Retries & Errors",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 12,
-        "y": 20
-      },
-      "targets": [
-        {
-          "expr": "rate(chatbot_generation_retries_total[5m]) * 60",
-          "legendFormat": "retries/min",
-          "refId": "A"
-        },
-        {
-          "expr": "rate(chatbot_generation_errors_total[5m]) * 60",
-          "legendFormat": "errors/min ({{ error_type }})",
-          "refId": "B"
-        }
-      ]
-    },
-    {
-      "title": "Avg Retrieval Chunks Returned",
-      "description": "Rata-rata jumlah chunk dokumen yang diambil RAG per query. Nilai ideal sesuai konfigurasi top_k retriever. Nilai rendah menandakan knowledge base tidak menemukan konteks yang cukup relevan.",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 18,
-        "y": 20
-      },
-      "targets": [
-        {
-          "expr": "rate(chatbot_retrieval_chunks_returned_sum[5m]) / rate(chatbot_retrieval_chunks_returned_count[5m])",
-          "legendFormat": "avg chunks",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short",
-          "decimals": 1,
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 10
-          }
-        }
-      }
-    },
-    {
-      "title": "In-Flight Requests",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 28
-      },
-      "targets": [
-        {
-          "expr": "chatbot_http_requests_in_progress",
-          "legendFormat": "{{ endpoint }}",
-          "refId": "A"
-        }
-      ]
-    },
-    {
-      "title": "Input / Output Characters (Avg)",
-      "description": "Average prompt size and response size per request",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 28
-      },
-      "targets": [
-        {
-          "expr": "chatbot_generation_input_chars_sum / chatbot_generation_input_chars_count",
-          "legendFormat": "avg input chars",
-          "refId": "A"
-        },
-        {
-          "expr": "chatbot_generation_output_chars_sum / chatbot_generation_output_chars_count",
-          "legendFormat": "avg output chars",
-          "refId": "B"
-        }
-      ]
-    },
-    {
-      "title": "HTTP Request Rate by Status",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 28
-      },
-      "targets": [
-        {
-          "expr": "rate(chatbot_http_requests_total[1m]) * 60",
-          "legendFormat": "{{ method }} {{ endpoint }} {{ status }}",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "reqpm"
-        }
-      }
-    },
-    {
-      "title": "Resource Utilization — CPU, Memory, Network, Disk (per Container & Host VPS)",
-      "type": "text",
-      "gridPos": {
-        "h": 5,
-        "w": 24,
-        "x": 0,
-        "y": 36
-      },
-      "options": {
-        "mode": "html",
-        "content": "<div style=\"padding:8px 0\"><h2 style=\"margin:0;color:#73BF69\">Resource Utilization</h2><p style=\"margin:4px 0 0;color:#8e8e8e\">CPU, Memory, Network, dan Disk usage per container dan host VPS</p></div>"
-      }
-    },
-    {
-      "title": "Container CPU Usage (%)",
-      "description": "CPU usage percentage per Docker container",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 39
-      },
-      "targets": [
-        {
-          "expr": "docker_container_cpu_percent",
-          "legendFormat": "{{ compose_service }}",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0
-        }
-      }
-    },
-    {
-      "title": "Container Memory Usage",
-      "description": "Memory usage per Docker container",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 39
-      },
-      "targets": [
-        {
-          "expr": "docker_container_memory_bytes / 1024 / 1024",
-          "legendFormat": "{{ compose_service }}",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "decmbytes"
-        }
-      }
-    },
-    {
-      "title": "Host CPU Usage (%)",
-      "description": "Overall VPS CPU utilization",
-      "type": "gauge",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 47
-      },
-      "targets": [
-        {
-          "expr": "(1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m]))) * 100",
-          "legendFormat": "CPU %",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
-          "thresholds": {
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 60
-              },
-              {
-                "color": "red",
-                "value": 85
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "title": "Host Memory Usage (%)",
-      "description": "Overall VPS RAM utilization",
-      "type": "gauge",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 47
-      },
-      "targets": [
-        {
-          "expr": "(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100",
-          "legendFormat": "Memory %",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
-          "thresholds": {
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 70
-              },
-              {
-                "color": "red",
-                "value": 90
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "title": "Host Disk Usage (%)",
-      "description": "VPS disk utilization",
-      "type": "gauge",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 47
-      },
-      "targets": [
-        {
-          "expr": "(1 - node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100",
-          "legendFormat": "Disk %",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
-          "thresholds": {
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 70
-              },
-              {
-                "color": "red",
-                "value": 90
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "title": "Container Network I/O",
-      "description": "Network receive/transmit per container",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 55
-      },
-      "targets": [
-        {
-          "expr": "docker_container_network_rx_bytes",
-          "legendFormat": "{{ compose_service }} RX",
-          "refId": "A"
-        },
-        {
-          "expr": "docker_container_network_tx_bytes",
-          "legendFormat": "{{ compose_service }} TX",
-          "refId": "B"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "Bps"
-        }
-      }
-    },
-    {
-      "title": "Avg Throughput (RPS)",
-      "description": "Rata-rata throughput (requests per second) selama rentang waktu yang dipilih. Berguna untuk mencatat kapasitas layanan per skenario load test.",
-      "type": "stat",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 55
-      },
-      "targets": [
-        {
-          "expr": "sum(increase(chatbot_chat_requests_total[$__range])) / $__range_s",
-          "legendFormat": "RPS",
-          "refId": "A"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": ["lastNotNull"]
-        },
-        "colorMode": "value",
-        "graphMode": "area",
-        "textMode": "value_and_name"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "reqps",
-          "decimals": 2,
-          "displayName": "Avg RPS"
-        }
-      }
-    },
-    {
-      "title": "Reliability & Availability — Success Rate, Uptime, Error Tracking",
-      "type": "text",
-      "gridPos": {
-        "h": 5,
-        "w": 24,
-        "x": 0,
-        "y": 63
-      },
-      "options": {
-        "mode": "html",
-        "content": "<div style=\"padding:8px 0\"><h2 style=\"margin:0;color:#FF9830\">Reliability & Availability</h2><p style=\"margin:4px 0 0;color:#8e8e8e\">Success rate, uptime, error tracking, dan service availability</p></div>"
-      }
-    },
-    {
-      "title": "Chat Success Rate (Availability %)",
-      "description": "Percentage of successful chat responses — key SLA metric",
-      "type": "gauge",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 66
-      },
-      "targets": [
-        {
-          "expr": "clamp_max(sum(increase(chatbot_chat_requests_total{status=\"success\"}[$__range])) / clamp_min(sum(increase(chatbot_chat_requests_total[$__range])), 1) * 100, 100)",
-          "legendFormat": "Availability",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
-          "decimals": 2,
-          "displayName": "Availability (range terpilih)",
-          "description": "Persentase request chat yang berhasil (status=success) dari total request pada rentang waktu yang dipilih.",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 90
-              },
-              {
-                "color": "green",
-                "value": 99
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "title": "Success Rate Over Time",
-      "description": "Chat success rate trend — tracks reliability over time",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 66
-      },
-      "targets": [
-        {
-          "expr": "sum(rate(chatbot_chat_requests_total{status=\"success\"}[$__rate_interval])) / clamp_min(sum(rate(chatbot_chat_requests_total[$__rate_interval])), 1e-9) * 100",
-          "legendFormat": "Success Rate",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
-          "thresholds": {
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "green",
-                "value": 99
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "title": "Error Breakdown by Type",
-      "description": "Errors categorized: rate_limited vs other failures",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 66
-      },
-      "targets": [
-        {
-          "expr": "rate(chatbot_chat_requests_total{status=\"error\"}[5m]) * 60",
-          "legendFormat": "general errors/min",
-          "refId": "A"
-        },
-        {
-          "expr": "rate(chatbot_chat_requests_total{status=\"rate_limited\"}[5m]) * 60",
-          "legendFormat": "rate limited/min",
-          "refId": "B"
-        },
-        {
-          "expr": "rate(chatbot_retrieval_errors_total[5m]) * 60",
-          "legendFormat": "retrieval errors/min",
-          "refId": "C"
-        },
-        {
-          "expr": "rate(chatbot_live_context_errors_total[5m]) * 60",
-          "legendFormat": "live context errors/min",
-          "refId": "D"
-        }
-      ]
-    },
-    {
-      "title": "Total Requests (Cumulative)",
-      "description": "Total requests processed since startup — shows overall load",
-      "type": "stat",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 74
-      },
-      "targets": [
-        {
-          "expr": "sum(chatbot_chat_requests_total)",
-          "legendFormat": "total chats",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short"
-        }
-      }
-    },
-    {
-      "title": "Uptime (Backend Container)",
-      "description": "How long the backend has been running",
-      "type": "stat",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 74
-      },
-      "targets": [
-        {
-          "expr": "time() - process_start_time_seconds{job=\"chatbot-backend\"}",
-          "legendFormat": "uptime",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "s"
-        }
-      }
-    },
-    {
-      "title": "HTTP Error Codes Over Time",
-      "description": "All non-200 HTTP responses tracked over time",
-      "type": "timeseries",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 74
-      },
-      "targets": [
-        {
-          "expr": "rate(chatbot_http_requests_total{status!=\"200\"}[1m]) * 60",
-          "legendFormat": "{{ status }} {{ endpoint }}",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "reqpm"
-        }
-      }
-    },
-    {
-      "title": "Kepuasan Pengguna — Umpan Balik Rating Jawaban Chatbot",
-      "type": "row",
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 82
-      },
-      "id": 2000
-    },
-    {
-      "title": "Distribusi Rating",
-      "description": "Proporsi setiap kategori rating dari seluruh penilaian pengguna. Semakin besar area Sangat Membantu dan Membantu, semakin baik persepsi pengguna terhadap jawaban chatbot.",
-      "type": "piechart",
-      "id": 2010,
-      "gridPos": {
-        "h": 9,
-        "w": 10,
-        "x": 0,
-        "y": 83
-      },
-      "targets": [
-        {
-          "expr": "clamp_min(increase(chatbot_rating_total{rating=\"very_helpful\"}[$__range]), 0)",
-          "legendFormat": "Sangat Membantu",
-          "refId": "A"
-        },
-        {
-          "expr": "clamp_min(increase(chatbot_rating_total{rating=\"helpful\"}[$__range]), 0)",
-          "legendFormat": "Membantu",
-          "refId": "B"
-        },
-        {
-          "expr": "clamp_min(increase(chatbot_rating_total{rating=\"not_helpful\"}[$__range]), 0)",
-          "legendFormat": "Kurang Membantu",
-          "refId": "C"
-        },
-        {
-          "expr": "clamp_min(increase(chatbot_rating_total{rating=\"very_not_helpful\"}[$__range]), 0)",
-          "legendFormat": "Tidak Membantu",
-          "refId": "D"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
+        "reduceOptions": { "calcs": ["lastNotNull"] },
         "pieType": "donut",
-        "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "values": [
-            "value",
-            "percent"
-          ]
-        },
-        "tooltip": {
-          "mode": "single"
-        },
-        "displayLabels": [
-          "percent"
-        ]
+        "legend": { "displayMode": "table", "placement": "right", "values": ["value","percent"] },
+        "displayLabels": ["percent"]
       },
       "fieldConfig": {
-        "defaults": {
-          "unit": "short"
-        },
+        "defaults": { "unit": "short" },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Sangat Membantu"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "mode": "fixed",
-                  "fixedColor": "green"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Membantu"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "mode": "fixed",
-                  "fixedColor": "light-green"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Kurang Membantu"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "mode": "fixed",
-                  "fixedColor": "orange"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Tidak Membantu"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "mode": "fixed",
-                  "fixedColor": "red"
-                }
-              }
-            ]
-          }
+          { "matcher": { "id": "byName", "options": "Sangat Membantu" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }] },
+          { "matcher": { "id": "byName", "options": "Membantu" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "light-green" } }] },
+          { "matcher": { "id": "byName", "options": "Kurang Membantu" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } }] },
+          { "matcher": { "id": "byName", "options": "Tidak Membantu" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } }] }
         ]
-      }
-    },
-    {
-      "title": "Tingkat Kepuasan",
-      "description": "Persentase pengguna yang menilai jawaban chatbot positif. Formula: (Sangat Membantu + Membantu) / Total Rating x 100%. Threshold: hijau >= 75%, kuning >= 50%, merah < 50%.",
-      "type": "stat",
-      "id": 2011,
-      "gridPos": {
-        "h": 9,
-        "w": 7,
-        "x": 10,
-        "y": 83
-      },
-      "targets": [
-        {
-          "expr": "clamp_min(sum(increase(chatbot_rating_total{rating=~\"very_helpful|helpful\"}[$__range])), 0) / clamp_min(sum(increase(chatbot_rating_total[$__range])), 1) * 100",
-          "legendFormat": "Positif (Sangat Membantu + Membantu)",
-          "refId": "A"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "colorMode": "background",
-        "graphMode": "area",
-        "textMode": "value_and_name",
-        "orientation": "auto"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
-          "displayName": "Positif (Sangat Membantu + Membantu)",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 50
-              },
-              {
-                "color": "green",
-                "value": 75
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "title": "Skor Rata-rata Kepuasan",
-      "description": "Skor rata-rata tertimbang dari seluruh rating. Formula: (4 x Sangat Membantu + 3 x Membantu + 2 x Kurang Membantu + 1 x Tidak Membantu) / Total. Skala 1.0 - 4.0.",
-      "type": "gauge",
-      "id": 2012,
-      "gridPos": {
-        "h": 9,
-        "w": 7,
-        "x": 17,
-        "y": 83
-      },
-      "targets": [
-        {
-          "expr": "(4 * clamp_min(increase(chatbot_rating_total{rating=\"very_helpful\"}[$__range]), 0) + 3 * clamp_min(increase(chatbot_rating_total{rating=\"helpful\"}[$__range]), 0) + 2 * clamp_min(increase(chatbot_rating_total{rating=\"not_helpful\"}[$__range]), 0) + 1 * clamp_min(increase(chatbot_rating_total{rating=\"very_not_helpful\"}[$__range]), 0)) / clamp_min(sum(increase(chatbot_rating_total[$__range])), 1)",
-          "legendFormat": "Skor Rata-rata",
-          "refId": "A"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "showThresholdLabels": true,
-        "showThresholdMarkers": true,
-        "orientation": "auto"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "none",
-          "min": 1,
-          "max": 4,
-          "decimals": 2,
-          "displayName": "dari 4.0",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 2
-              },
-              {
-                "color": "yellow",
-                "value": 2.5
-              },
-              {
-                "color": "green",
-                "value": 3
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "title": "Tren Tingkat Kepuasan Seiring Waktu",
-      "description": "Grafik perubahan tingkat kepuasan pengguna dari waktu ke waktu. Berguna untuk melihat apakah kepuasan menurun saat load testing atau beban tinggi.",
-      "type": "timeseries",
-      "id": 2013,
-      "gridPos": {
-        "h": 7,
-        "w": 18,
-        "x": 0,
-        "y": 92
-      },
-      "targets": [
-        {
-          "expr": "clamp_min(sum(rate(chatbot_rating_total{rating=~\"very_helpful|helpful\"}[$__rate_interval])), 0) / clamp_min(sum(rate(chatbot_rating_total[$__rate_interval])), 1e-9) * 100",
-          "legendFormat": "Tingkat Kepuasan",
-          "refId": "A"
-        }
-      ],
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
-          "custom": {
-            "lineWidth": 2,
-            "fillOpacity": 15,
-            "pointSize": 5,
-            "showPoints": "auto"
-          },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 50
-              },
-              {
-                "color": "green",
-                "value": 75
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "title": "Total Rating Diterima",
-      "description": "Jumlah total penilaian yang telah diberikan oleh pengguna selama pengujian.",
-      "type": "stat",
-      "id": 2014,
-      "gridPos": {
-        "h": 7,
-        "w": 6,
-        "x": 18,
-        "y": 92
-      },
-      "targets": [
-        {
-          "expr": "clamp_min(sum(increase(chatbot_rating_total[$__range])), 0)",
-          "legendFormat": "penilaian",
-          "refId": "A"
-        }
-      ],
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        },
-        "colorMode": "value",
-        "graphMode": "area",
-        "textMode": "value_and_name",
-        "orientation": "auto"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short",
-          "displayName": "penilaian"
-        }
-      }
-    }
+      } },
+
+    { "title": "Tingkat Kepuasan (%)",
+      "description": "Persentase penilaian positif (Membantu + Sangat Membantu) dari total rating.",
+      "type": "stat", "id": 2011,
+      "gridPos": { "h": 9, "w": 7, "x": 10, "y": 43 },
+      "targets": [{
+        "expr": "clamp_min(sum(increase(chatbot_rating_total{rating=~\"very_helpful|helpful\"}[$__range])), 0) / clamp_min(sum(increase(chatbot_rating_total[$__range])), 1) * 100",
+        "legendFormat": "Positif (%)", "refId": "A"
+      }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "area", "textMode": "value_and_name" },
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100, "displayName": "Rating Positif",
+        "thresholds": { "mode": "absolute", "steps": [{"color":"red","value":null},{"color":"yellow","value":50},{"color":"green","value":75}] }
+      }} },
+
+    { "title": "Skor Rata-rata Kepuasan (1–4)",
+      "description": "Skor tertimbang: (4×SangatMembantu + 3×Membantu + 2×KurangMembantu + 1×TidakMembantu) / Total.",
+      "type": "gauge", "id": 2012,
+      "gridPos": { "h": 9, "w": 7, "x": 17, "y": 43 },
+      "targets": [{
+        "expr": "(4 * clamp_min(increase(chatbot_rating_total{rating=\"very_helpful\"}[$__range]), 0) + 3 * clamp_min(increase(chatbot_rating_total{rating=\"helpful\"}[$__range]), 0) + 2 * clamp_min(increase(chatbot_rating_total{rating=\"not_helpful\"}[$__range]), 0) + 1 * clamp_min(increase(chatbot_rating_total{rating=\"very_not_helpful\"}[$__range]), 0)) / clamp_min(sum(increase(chatbot_rating_total[$__range])), 1)",
+        "legendFormat": "Skor Rata-rata", "refId": "A"
+      }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": true, "showThresholdMarkers": true },
+      "fieldConfig": { "defaults": { "unit": "none", "min": 1, "max": 4, "decimals": 2, "displayName": "dari 4.0",
+        "thresholds": { "mode": "absolute", "steps": [{"color":"red","value":null},{"color":"orange","value":2},{"color":"yellow","value":2.5},{"color":"green","value":3}] }
+      }} },
+
+    { "title": "Tren Tingkat Kepuasan Seiring Waktu",
+      "description": "Perubahan persentase rating positif dari waktu ke waktu.",
+      "type": "timeseries", "id": 2013,
+      "gridPos": { "h": 7, "w": 18, "x": 0, "y": 52 },
+      "targets": [{
+        "expr": "clamp_min(sum(rate(chatbot_rating_total{rating=~\"very_helpful|helpful\"}[$__rate_interval])), 0) / clamp_min(sum(rate(chatbot_rating_total[$__rate_interval])), 1e-9) * 100",
+        "legendFormat": "Tingkat Kepuasan (%)", "refId": "A"
+      }],
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0, "max": 100,
+        "custom": { "lineWidth": 2, "fillOpacity": 15, "showPoints": "auto" },
+        "thresholds": { "mode": "absolute", "steps": [{"color":"red","value":null},{"color":"yellow","value":50},{"color":"green","value":75}] }
+      }} },
+
+    { "title": "Total Rating Diterima", "type": "stat", "id": 2014,
+      "gridPos": { "h": 7, "w": 6, "x": 18, "y": 52 },
+      "targets": [{ "expr": "clamp_min(sum(increase(chatbot_rating_total[$__range])), 0)", "legendFormat": "penilaian", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "value", "graphMode": "area", "textMode": "value_and_name" },
+      "fieldConfig": { "defaults": { "unit": "short", "displayName": "Total Rating" } } }
+
   ],
   "schemaVersion": 39,
-  "tags": [
-    "chatbot",
-    "rag",
-    "qos",
-    "ugm-anjem"
-  ],
-  "templating": {
-    "list": []
-  },
-  "time": {
-    "from": "now-1h",
-    "to": "now"
-  },
+  "tags": ["chatbot", "rag", "qos", "ugm-anjem"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
   "title": "UGM Anjem Chatbot - QoS Dashboard",
   "uid": "ugm-anjem-qos",
   "version": 1
