@@ -38,13 +38,17 @@ import os
 import statistics
 import time
 
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 import requests
-from openai import OpenAI
 from ragas import evaluate
 from ragas.dataset_schema import EvaluationDataset, SingleTurnSample
-from ragas.metrics.collections import AnswerCorrectness, Faithfulness, AnswerRelevancy
-from ragas.llms import llm_factory
-from ragas.embeddings import OpenAIEmbeddings
+from ragas.metrics import answer_correctness, faithfulness, answer_relevancy
+from ragas.llms import LangchainLLMWrapper
+from ragas.embeddings import LangchainEmbeddingsWrapper
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 # ---------------------------------------------------------------------------
 # Load .env dari backend/.env jika OPENAI_API_KEY belum ada di environment
@@ -267,9 +271,15 @@ def collect_answers() -> list[dict]:
                 retrieved_contexts = data.get("retrieved_contexts", [])
                 api_status         = "ok"
             else:
-                bot_answer         = f"HTTP {resp.status_code}"
+                detail = ""
+                try:
+                    detail = resp.json().get("detail", "")[:120]
+                except Exception:
+                    pass
+                bot_answer         = f"HTTP {resp.status_code} | {detail}"
                 retrieved_contexts = []
                 api_status         = "error"
+                print(f"        ↳ {bot_answer}")
         except requests.exceptions.Timeout:
             bot_answer, retrieved_contexts, api_status = "TIMEOUT", [], "error"
         except Exception as exc:
@@ -308,10 +318,13 @@ def evaluate_ragas(collected: list[dict]) -> list[dict]:
     print(f"[Phase 2] Mengevaluasi {len(ok_items)} jawaban dengan RAGAS ...")
     print("  Metrik: AnswerCorrectness, Faithfulness, AnswerRelevancy\n")
 
-    api_key = os.getenv("OPENAI_API_KEY")
-    openai_client = OpenAI(api_key=api_key)
-    evaluator_llm = llm_factory("gpt-4o-mini", client=openai_client)
-    evaluator_emb = OpenAIEmbeddings(client=openai_client, model="text-embedding-3-small")
+    api_key       = os.getenv("OPENAI_API_KEY")
+    evaluator_llm = LangchainLLMWrapper(
+        ChatOpenAI(model="gpt-4o-mini", api_key=api_key, temperature=0)
+    )
+    evaluator_emb = LangchainEmbeddingsWrapper(
+        OpenAIEmbeddings(model="text-embedding-3-small", api_key=api_key)
+    )
 
     samples = [
         SingleTurnSample(
@@ -326,11 +339,9 @@ def evaluate_ragas(collected: list[dict]) -> list[dict]:
     dataset = EvaluationDataset(samples=samples)
     result  = evaluate(
         dataset=dataset,
-        metrics=[
-            AnswerCorrectness(llm=evaluator_llm, embeddings=evaluator_emb),
-            Faithfulness(llm=evaluator_llm),
-            AnswerRelevancy(llm=evaluator_llm, embeddings=evaluator_emb),
-        ],
+        metrics=[answer_correctness, faithfulness, answer_relevancy],
+        llm=evaluator_llm,
+        embeddings=evaluator_emb,
     )
     df = result.to_pandas()
 
