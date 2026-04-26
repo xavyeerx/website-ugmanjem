@@ -1,3 +1,5 @@
+import asyncio
+import json
 import time
 import logging
 
@@ -21,7 +23,7 @@ class AnswerGenerator:
     def __init__(self, api_key: str, model_name: str = "gpt-4o-mini"):
         self.api_key = api_key
         self.model_name = model_name
-        self._client = httpx.Client(
+        self._client = httpx.AsyncClient(
             timeout=OPENAI_TIMEOUT,
             headers={
                 "Authorization": f"Bearer {api_key}",
@@ -29,15 +31,20 @@ class AnswerGenerator:
             },
         )
 
-        # Verify API key is reachable
+        # One-time sync check at startup only — tidak memblokir event loop
+        # karena ini dijalankan saat inisialisasi, sebelum server menerima request.
         try:
-            resp = self._client.get("https://api.openai.com/v1/models")
-            resp.raise_for_status()
+            with httpx.Client(timeout=10.0) as sync_client:
+                resp = sync_client.get(
+                    "https://api.openai.com/v1/models",
+                    headers={"Authorization": f"Bearer {api_key}"},
+                )
+                resp.raise_for_status()
             logger.info(f"OpenAI API connected — model '{model_name}' ready")
         except Exception as e:
             logger.warning(f"Could not verify OpenAI API key: {e}")
 
-    def generate(
+    async def generate(
         self,
         query: str,
         context_chunks: list[dict],
@@ -74,7 +81,6 @@ class AnswerGenerator:
         total_input_chars = sum(len(m["content"]) for m in messages)
         GENERATION_INPUT_CHARS.observe(total_input_chars)
 
-        # Define Tools
         tools = [
             {
                 "type": "function",
@@ -102,7 +108,7 @@ class AnswerGenerator:
         start = time.perf_counter()
         for attempt in range(max_retries + 1):
             try:
-                response = self._client.post(
+                response = await self._client.post(
                     OPENAI_CHAT_URL,
                     json={
                         "model": self.model_name,
@@ -115,43 +121,41 @@ class AnswerGenerator:
                 )
 
                 if response.status_code == 429:
-                    # Rate limited
                     wait = 5 * (attempt + 1)
                     logger.warning(f"OpenAI rate limited, retrying in {wait}s...")
                     GENERATION_RETRIES.inc()
-                    time.sleep(wait)
+                    await asyncio.sleep(wait)
                     continue
 
                 response.raise_for_status()
                 data = response.json()
                 message_resp = data["choices"][0]["message"]
-                
-                # Cek jika LLM menggunakan Tool Calling
+
                 if message_resp.get("tool_calls"):
                     tool_calls = message_resp["tool_calls"]
-                    # Append respon assistant agar valid untuk role berantai
                     messages.append(message_resp)
-                    
+
                     for tool_call in tool_calls:
                         if tool_call["function"]["name"] == "calculate_route_distance":
-                            import json
                             args = json.loads(tool_call["function"]["arguments"])
-                            
+
                             from app.rag.tools.map_calculator import calculate_route_distance
-                            tool_result = calculate_route_distance(
+                            # Jalankan di thread pool agar tidak memblokir event loop
+                            tool_result = await asyncio.to_thread(
+                                calculate_route_distance,
                                 args.get("pickup_location", ""),
-                                args.get("dropoff_location", "")
+                                args.get("dropoff_location", ""),
                             )
-                            
+
                             messages.append({
                                 "role": "tool",
                                 "tool_call_id": tool_call["id"],
                                 "name": "calculate_route_distance",
-                                "content": tool_result
+                                "content": tool_result,
                             })
-                            
-                    # Pemanggilan lapis kedua (Second Pass Inference)
-                    response2 = self._client.post(
+
+                    # Second pass inference setelah tool result
+                    response2 = await self._client.post(
                         OPENAI_CHAT_URL,
                         json={
                             "model": self.model_name,
@@ -164,7 +168,6 @@ class AnswerGenerator:
                     data2 = response2.json()
                     answer = data2["choices"][0]["message"]["content"]
                 else:
-                    # Tidak memanggil Tool, langsung jawab lisan
                     answer = message_resp.get("content", "")
 
                 GENERATION_LATENCY.observe(time.perf_counter() - start)
@@ -176,7 +179,7 @@ class AnswerGenerator:
                     GENERATION_RETRIES.inc()
                     wait = 3 * (attempt + 1)
                     logger.warning(f"OpenAI timeout (attempt {attempt + 1}), retrying in {wait}s...")
-                    time.sleep(wait)
+                    await asyncio.sleep(wait)
                     continue
                 GENERATION_ERRORS.labels(error_type="timeout").inc()
                 GENERATION_LATENCY.observe(time.perf_counter() - start)
@@ -187,14 +190,11 @@ class AnswerGenerator:
                     GENERATION_RETRIES.inc()
                     wait = 3 * (attempt + 1)
                     logger.warning(f"Generation error (attempt {attempt + 1}): {e}, retrying in {wait}s...")
-                    time.sleep(wait)
+                    await asyncio.sleep(wait)
                     continue
                 GENERATION_ERRORS.labels(error_type="other").inc()
                 GENERATION_LATENCY.observe(time.perf_counter() - start)
                 raise
 
-    def __del__(self):
-        try:
-            self._client.close()
-        except Exception:
-            pass
+    async def aclose(self):
+        await self._client.aclose()

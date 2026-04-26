@@ -1,3 +1,4 @@
+import asyncio
 import time
 import logging
 
@@ -27,7 +28,7 @@ class KnowledgeRetriever:
     ):
         self.api_key = api_key
         self.embedding_model = embedding_model
-        self._client = httpx.Client(
+        self._client = httpx.AsyncClient(
             timeout=EMBED_TIMEOUT,
             headers={
                 "Authorization": f"Bearer {api_key}",
@@ -48,9 +49,9 @@ class KnowledgeRetriever:
     def count(self) -> int:
         return self.collection.count()
 
-    def _get_embedding(self, text: str) -> list[float]:
-        """Get embedding vector from OpenAI."""
-        response = self._client.post(
+    async def _get_embedding(self, text: str) -> list[float]:
+        """Get embedding vector from OpenAI (async, non-blocking)."""
+        response = await self._client.post(
             OPENAI_EMBED_URL,
             json={
                 "model": self.embedding_model,
@@ -61,12 +62,15 @@ class KnowledgeRetriever:
         data = response.json()
         return data["data"][0]["embedding"]
 
-    def search(self, query: str, n_results: int = 5) -> list[dict]:
+    async def search(self, query: str, n_results: int = 5) -> list[dict]:
         start = time.perf_counter()
         try:
-            query_embedding = self._get_embedding(query)
+            query_embedding = await self._get_embedding(query)
 
-            results = self.collection.query(
+            # ChromaDB adalah library synchronous — jalankan di thread pool
+            # agar tidak memblokir event loop FastAPI saat concurrent requests.
+            results = await asyncio.to_thread(
+                self.collection.query,
                 query_embeddings=[query_embedding],
                 n_results=n_results,
                 include=["documents", "metadatas", "distances"],
@@ -91,8 +95,5 @@ class KnowledgeRetriever:
         finally:
             RETRIEVAL_LATENCY.observe(time.perf_counter() - start)
 
-    def __del__(self):
-        try:
-            self._client.close()
-        except Exception:
-            pass
+    async def aclose(self):
+        await self._client.aclose()

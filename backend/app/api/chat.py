@@ -1,3 +1,4 @@
+import asyncio
 import time
 import logging
 
@@ -52,7 +53,7 @@ def _build_sources(chunks: list[dict]) -> list[SourceItem]:
 
 
 async def _run_rag(body: ChatRequest, request: Request) -> tuple[str, list[dict], str]:
-    """Shared RAG pipeline. Returns (answer, chunks, live_ctx)."""
+    """Shared RAG pipeline — fully async, non-blocking concurrent requests."""
     retriever = request.app.state.retriever
     generator = request.app.state.generator
 
@@ -64,7 +65,7 @@ async def _run_rag(body: ChatRequest, request: Request) -> tuple[str, list[dict]
         )
 
     try:
-        chunks = retriever.search(body.message, n_results=5)
+        chunks = await retriever.search(body.message, n_results=5)
     except Exception as e:
         CHAT_REQUESTS_TOTAL.labels(status="error").inc()
         logger.error(f"Retriever error: {e}")
@@ -79,12 +80,13 @@ async def _run_rag(body: ChatRequest, request: Request) -> tuple[str, list[dict]
     live_context_provider = getattr(request.app.state, "live_context", None)
     if live_context_provider:
         try:
-            live_ctx = live_context_provider.get_context()
+            # Supabase client bersifat synchronous — jalankan di thread pool
+            live_ctx = await asyncio.to_thread(live_context_provider.get_context)
         except Exception as e:
             logger.warning(f"Live context fetch failed: {e}")
 
     try:
-        answer = generator.generate(
+        answer = await generator.generate(
             query=body.message,
             context_chunks=chunks,
             history=history,
