@@ -36,7 +36,10 @@ class KnowledgeRetriever:
         )
 
         self.db_client = chromadb.PersistentClient(path=db_path)
-        self.collection = self.db_client.get_collection(collection_name)
+        self.collection = self.db_client.get_collection(
+            collection_name,
+            embedding_function=None,
+        )
         logger.info(
             f"KnowledgeRetriever ready — {self.collection.count()} chunks, "
             f"embedding model: {embedding_model}"

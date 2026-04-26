@@ -30,10 +30,29 @@ class ChatResponse(BaseModel):
     sources: list[SourceItem] = []
 
 
-@router.post("/api/chat", response_model=ChatResponse)
-async def chat(body: ChatRequest, request: Request):
-    start = time.perf_counter()
+class EvalChatResponse(BaseModel):
+    answer: str
+    sources: list[SourceItem] = []
+    retrieved_contexts: list[str] = []
 
+
+def _build_sources(chunks: list[dict]) -> list[SourceItem]:
+    seen: set[tuple[str, str]] = set()
+    sources: list[SourceItem] = []
+    for c in chunks:
+        meta = c.get("metadata", {})
+        key = (meta.get("source", ""), meta.get("section", ""))
+        if key not in seen:
+            seen.add(key)
+            sources.append(SourceItem(
+                source=meta.get("source", "unknown"),
+                section=meta.get("section", ""),
+            ))
+    return sources
+
+
+async def _run_rag(body: ChatRequest, request: Request) -> tuple[str, list[dict], str]:
+    """Shared RAG pipeline. Returns (answer, chunks, live_ctx)."""
     retriever = request.app.state.retriever
     generator = request.app.state.generator
 
@@ -76,28 +95,49 @@ async def chat(body: ChatRequest, request: Request):
         logger.error(f"Generator error: {error_msg}")
         if "timeout" in error_msg.lower():
             CHAT_REQUESTS_TOTAL.labels(status="timeout").inc()
-            CHAT_E2E_LATENCY.observe(time.perf_counter() - start)
             raise HTTPException(
                 status_code=504,
                 detail="LLM inference timeout. Model mungkin sedang loading atau server sibuk.",
             )
         CHAT_REQUESTS_TOTAL.labels(status="error").inc()
-        CHAT_E2E_LATENCY.observe(time.perf_counter() - start)
         raise HTTPException(status_code=502, detail="Gagal menghasilkan jawaban dari AI.")
 
-    seen = set()
-    sources = []
-    for c in chunks:
-        meta = c.get("metadata", {})
-        key = (meta.get("source", ""), meta.get("section", ""))
-        if key not in seen:
-            seen.add(key)
-            sources.append(SourceItem(
-                source=meta.get("source", "unknown"),
-                section=meta.get("section", ""),
-            ))
+    return answer, chunks, live_ctx
 
+
+@router.post("/api/chat", response_model=ChatResponse)
+async def chat(body: ChatRequest, request: Request):
+    start = time.perf_counter()
+    try:
+        answer, chunks, _ = await _run_rag(body, request)
+    except HTTPException:
+        CHAT_E2E_LATENCY.observe(time.perf_counter() - start)
+        raise
     CHAT_REQUESTS_TOTAL.labels(status="success").inc()
     CHAT_E2E_LATENCY.observe(time.perf_counter() - start)
+    return ChatResponse(answer=answer, sources=_build_sources(chunks))
 
-    return ChatResponse(answer=answer, sources=sources)
+
+@router.post("/api/chat/eval", response_model=EvalChatResponse)
+async def chat_eval(body: ChatRequest, request: Request):
+    """Endpoint khusus evaluasi RAGAS.
+
+    Identik dengan /api/chat, namun turut mengembalikan retrieved_contexts
+    (teks tiap chunk yang diambil dari knowledge base) sehingga metrik
+    faithfulness dan answer_relevancy dapat dihitung oleh RAGAS.
+    Endpoint ini TIDAK dimaksudkan untuk digunakan oleh pengguna akhir.
+    """
+    start = time.perf_counter()
+    try:
+        answer, chunks, _ = await _run_rag(body, request)
+    except HTTPException:
+        CHAT_E2E_LATENCY.observe(time.perf_counter() - start)
+        raise
+    CHAT_REQUESTS_TOTAL.labels(status="success").inc()
+    CHAT_E2E_LATENCY.observe(time.perf_counter() - start)
+    retrieved_contexts = [c.get("content", "") for c in chunks]
+    return EvalChatResponse(
+        answer=answer,
+        sources=_build_sources(chunks),
+        retrieved_contexts=retrieved_contexts,
+    )

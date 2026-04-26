@@ -1,17 +1,21 @@
 """
 Skenario 2 — Pengujian Akurasi Jawaban Chatbot (RAG Quality) dengan RAGAS
 
-Skrip ini mengirim 30 pertanyaan ground truth ke chatbot API secara otomatis,
+Skrip ini mengirim 30 pertanyaan ground truth ke endpoint /api/chat/eval,
 lalu mengevaluasi kualitas jawaban menggunakan framework RAGAS.
 
 Metrik RAGAS yang digunakan:
-  - answer_relevancy  : seberapa relevan jawaban bot terhadap pertanyaan
-                        (0.0 = tidak relevan, 1.0 = sangat relevan)
-  - answer_correctness: seberapa benar jawaban bot dibanding ground truth,
-                        menggabungkan kemiripan faktual dan semantik
-                        (0.0 = salah, 1.0 = identik dengan ground truth)
+  - answer_correctness  : seberapa benar jawaban bot dibanding ground truth,
+                          menggabungkan kemiripan faktual dan semantik
+                          (0.0 = salah, 1.0 = identik dengan ground truth)
+  - faithfulness        : seberapa setia jawaban terhadap konteks yang diambil
+                          RAG — mendeteksi halusinasi di luar konteks
+                          (butuh retrieved_contexts dari endpoint /api/chat/eval)
+  - answer_relevancy    : seberapa relevan jawaban terhadap pertanyaan pengguna
+                          (butuh retrieved_contexts dari endpoint /api/chat/eval)
 
-Kedua metrik menggunakan LLM (OpenAI GPT) sebagai evaluator otomatis.
+Semua metrik menggunakan LLM (OpenAI GPT) sebagai evaluator otomatis.
+answer_relevancy juga membutuhkan model embedding untuk menghitung similaritas.
 
 Referensi:
   Es, S., James, J., Espinosa-Anke, L., & Schockaert, S. (2024).
@@ -19,12 +23,11 @@ Referensi:
   EACL 2024 System Demonstrations.
 
 Prasyarat:
-  - OPENAI_API_KEY harus di-set di environment (sama dengan key di backend/.env)
+  - OPENAI_API_KEY di backend/.env akan dibaca otomatis oleh script ini.
+  - Atau bisa di-set manual: set OPENAI_API_KEY=sk-proj-... (Windows)
 
 Cara menjalankan (dari root project):
-  pip install ragas openai requests
-  set OPENAI_API_KEY=sk-proj-...        (Windows)
-  export OPENAI_API_KEY=sk-proj-...     (Linux/Mac)
+  pip install ragas openai langchain-openai requests
   python tests/accuracy_test.py
 
 Output: results/accuracy_results.csv
@@ -36,11 +39,27 @@ import statistics
 import time
 
 import requests
+from openai import OpenAI
 from ragas import evaluate
 from ragas.dataset_schema import EvaluationDataset, SingleTurnSample
-from ragas.metrics import AnswerCorrectness, AnswerRelevancy
+from ragas.metrics.collections import AnswerCorrectness, Faithfulness, AnswerRelevancy
+from ragas.llms import llm_factory
+from ragas.embeddings import embedding_factory
 
-TARGET = os.getenv("CHATBOT_URL", "http://10.33.109.173")
+# ---------------------------------------------------------------------------
+# Load .env dari backend/.env jika OPENAI_API_KEY belum ada di environment
+# ---------------------------------------------------------------------------
+_ENV_FILE = os.path.join(os.path.dirname(__file__), "..", "backend", ".env")
+if not os.getenv("OPENAI_API_KEY") and os.path.exists(_ENV_FILE):
+    with open(_ENV_FILE, encoding="utf-8") as _f:
+        for _line in _f:
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _key, _, _val = _line.partition("=")
+                os.environ.setdefault(_key.strip(), _val.strip())
+
+TARGET      = os.getenv("CHATBOT_URL", "http://10.33.109.173")
+EVAL_ENDPOINT = f"{TARGET}/api/chat/eval"
 OUTPUT = os.path.join(os.path.dirname(__file__), "..", "results", "accuracy_results.csv")
 DELAY  = 3  # detik antar request agar tidak rate-limited
 
@@ -231,32 +250,39 @@ QUESTIONS = [
 # ---------------------------------------------------------------------------
 def collect_answers() -> list[dict]:
     total = len(QUESTIONS)
-    print(f"[Phase 1] Mengirim {total} pertanyaan ke {TARGET} ...\n")
+    print(f"[Phase 1] Mengirim {total} pertanyaan ke {EVAL_ENDPOINT} ...\n")
 
     collected = []
     for item in QUESTIONS:
         print(f"  [{item['id']:02d}/{total}] {item['question'][:65]}...")
         try:
             resp = requests.post(
-                f"{TARGET}/api/chat",
+                EVAL_ENDPOINT,
                 json={"message": item["question"], "conversation_history": []},
                 timeout=60,
             )
-            bot_answer = resp.json().get("answer", "").strip() if resp.ok \
-                else f"HTTP {resp.status_code}"
-            api_status = "ok" if resp.ok else "error"
+            if resp.ok:
+                data = resp.json()
+                bot_answer         = data.get("answer", "").strip()
+                retrieved_contexts = data.get("retrieved_contexts", [])
+                api_status         = "ok"
+            else:
+                bot_answer         = f"HTTP {resp.status_code}"
+                retrieved_contexts = []
+                api_status         = "error"
         except requests.exceptions.Timeout:
-            bot_answer, api_status = "TIMEOUT", "error"
+            bot_answer, retrieved_contexts, api_status = "TIMEOUT", [], "error"
         except Exception as exc:
-            bot_answer, api_status = f"ERROR: {exc}", "error"
+            bot_answer, retrieved_contexts, api_status = f"ERROR: {exc}", [], "error"
 
         collected.append({
-            "id":          item["id"],
-            "category":    item["category"],
-            "question":    item["question"],
-            "ground_truth": item["ground_truth"],
-            "bot_answer":  bot_answer,
-            "api_status":  api_status,
+            "id":                item["id"],
+            "category":          item["category"],
+            "question":          item["question"],
+            "ground_truth":      item["ground_truth"],
+            "bot_answer":        bot_answer,
+            "retrieved_contexts": retrieved_contexts,
+            "api_status":        api_status,
         })
 
         if item["id"] < total:
@@ -280,13 +306,20 @@ def evaluate_ragas(collected: list[dict]) -> list[dict]:
 
     ok_items = [r for r in collected if r["api_status"] == "ok"]
     print(f"[Phase 2] Mengevaluasi {len(ok_items)} jawaban dengan RAGAS ...")
-    print("  Metrik: AnswerRelevancy + AnswerCorrectness (via OpenAI LLM)\n")
+    print("  Metrik: AnswerCorrectness, Faithfulness, AnswerRelevancy\n")
+
+    api_key = os.getenv("OPENAI_API_KEY")
+    openai_client    = OpenAI(api_key=api_key)
+    evaluator_llm    = llm_factory("gpt-4o-mini", client=openai_client)
+    evaluator_emb    = embedding_factory("openai", model="text-embedding-3-small",
+                                         client=openai_client)
 
     samples = [
         SingleTurnSample(
             user_input=r["question"],
             response=r["bot_answer"],
             reference=r["ground_truth"],
+            retrieved_contexts=r["retrieved_contexts"] if r["retrieved_contexts"] else [""],
         )
         for r in ok_items
     ]
@@ -294,23 +327,28 @@ def evaluate_ragas(collected: list[dict]) -> list[dict]:
     dataset = EvaluationDataset(samples=samples)
     result  = evaluate(
         dataset=dataset,
-        metrics=[AnswerRelevancy(), AnswerCorrectness()],
+        metrics=[
+            AnswerCorrectness(llm=evaluator_llm),
+            Faithfulness(llm=evaluator_llm),
+            AnswerRelevancy(llm=evaluator_llm, embeddings=evaluator_emb),
+        ],
     )
     df = result.to_pandas()
 
-    # Gabungkan skor RAGAS kembali ke data asli
     score_map = {
         r["question"]: {
-            "answer_relevancy":   round(float(row["answer_relevancy"]),   4),
             "answer_correctness": round(float(row["answer_correctness"]), 4),
+            "faithfulness":       round(float(row["faithfulness"]), 4),
+            "answer_relevancy":   round(float(row["answer_relevancy"]), 4),
         }
         for r, (_, row) in zip(ok_items, df.iterrows())
     }
 
     for item in collected:
         scores = score_map.get(item["question"], {})
-        item["answer_relevancy"]   = scores.get("answer_relevancy",   "")
         item["answer_correctness"] = scores.get("answer_correctness", "")
+        item["faithfulness"]       = scores.get("faithfulness", "")
+        item["answer_relevancy"]   = scores.get("answer_relevancy", "")
 
     return collected
 
@@ -323,35 +361,60 @@ def save_and_summarize(results: list[dict]):
 
     fieldnames = [
         "id", "category", "question", "ground_truth", "bot_answer",
-        "api_status", "answer_relevancy", "answer_correctness",
+        "api_status", "answer_correctness", "faithfulness", "answer_relevancy",
     ]
-    with open(OUTPUT, "w", newline="", encoding="utf-8") as f:
+    out_path = OUTPUT
+    try:
+        open(out_path, "w").close()
+    except PermissionError:
+        base, ext = os.path.splitext(out_path)
+        import time as _t
+        out_path = f"{base}_{int(_t.time())}{ext}"
+        print(f"[!] File utama terkunci, menyimpan ke: {os.path.basename(out_path)}")
+
+    with open(out_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(results)
 
-    ok = [r for r in results if r["api_status"] == "ok" and r["answer_relevancy"] != ""]
+    print(f"\nHasil disimpan ke: {out_path}")
+
+    ok = [
+        r for r in results
+        if r["api_status"] == "ok" and r["answer_correctness"] != ""
+    ]
     categories = dict.fromkeys(item["category"] for item in QUESTIONS)
 
     print("\n" + "=" * 75)
-    print(f"{'Kategori':<25} {'N':>3}  {'Relevancy':>10}  {'Correctness':>12}")
+    print(f"{'Kategori':<25} {'N':>3}  {'Correctness':>12}  {'Faithfulness':>12}  {'Relevancy':>10}")
     print("-" * 75)
 
-    all_rel, all_cor = [], []
+    all_cor, all_faith, all_rel = [], [], []
     for cat in categories:
         cat_items = [r for r in ok if r["category"] == cat]
         if not cat_items:
             continue
-        rel = [r["answer_relevancy"]   for r in cat_items]
-        cor = [r["answer_correctness"] for r in cat_items]
-        all_rel.extend(rel); all_cor.extend(cor)
-        print(f"{cat:<25} {len(cat_items):>3}  "
-              f"{statistics.mean(rel):>10.4f}  {statistics.mean(cor):>12.4f}")
+        cor   = [r["answer_correctness"] for r in cat_items]
+        faith = [r["faithfulness"]       for r in cat_items if r["faithfulness"] != ""]
+        rel   = [r["answer_relevancy"]   for r in cat_items if r["answer_relevancy"] != ""]
+        all_cor.extend(cor)
+        all_faith.extend(faith)
+        all_rel.extend(rel)
+        print(
+            f"{cat:<25} {len(cat_items):>3}"
+            f"  {statistics.mean(cor):>12.4f}"
+            f"  {statistics.mean(faith) if faith else 'N/A':>12}"
+            f"  {statistics.mean(rel) if rel else 'N/A':>10}"
+        )
 
     print("-" * 75)
-    if all_rel:
-        print(f"{'TOTAL / RATA-RATA':<25} {len(all_rel):>3}  "
-              f"{statistics.mean(all_rel):>10.4f}  {statistics.mean(all_cor):>12.4f}")
+    if all_cor:
+        print(
+            f"{'TOTAL / RATA-RATA':<25} {len(all_cor):>3}"
+            f"  {statistics.mean(all_cor):>12.4f}"
+            f"  {statistics.mean(all_faith) if all_faith else 'N/A':>12}"
+            f"  {statistics.mean(all_rel) if all_rel else 'N/A':>10}"
+        )
 
     print(f"\nHasil disimpan di: {os.path.abspath(OUTPUT)}")
     err = sum(1 for r in results if r["api_status"] != "ok")
