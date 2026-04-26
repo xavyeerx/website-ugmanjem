@@ -5,19 +5,19 @@ Usage (from project root):
   pip install locust
   locust -f tests/locustfile.py --host http://10.33.109.173
 
-Scenarios (jalankan satu per satu secara headless):
-  1. Light load  : 10  users, spawn rate 2/s,  duration 5min
+Scenarios (jalankan satu per satu secara headless, jeda 2 menit antar skenario):
+  1. Light load  : 10  users, spawn rate 2/s,  duration 10min
      locust -f tests/locustfile.py --host http://10.33.109.173 \
-            --users 10  --spawn-rate 2  --run-time 5m  --headless --csv results/locust_10
-  2. Normal load : 25  users, spawn rate 5/s,  duration 5min
+            --users 10  --spawn-rate 2  --run-time 10m --headless --csv results/locust_10
+  2. Normal load : 25  users, spawn rate 5/s,  duration 10min
      locust -f tests/locustfile.py --host http://10.33.109.173 \
-            --users 25  --spawn-rate 5  --run-time 5m  --headless --csv results/locust_25
-  3. Stress test : 50  users, spawn rate 10/s, duration 5min
+            --users 25  --spawn-rate 5  --run-time 10m --headless --csv results/locust_25
+  3. Stress test : 50  users, spawn rate 10/s, duration 10min
      locust -f tests/locustfile.py --host http://10.33.109.173 \
-            --users 50  --spawn-rate 10 --run-time 5m  --headless --csv results/locust_50
-  4. Spike test  : 100 users, spawn rate 20/s, duration 5min
+            --users 50  --spawn-rate 10 --run-time 10m --headless --csv results/locust_50
+  4. Spike test  : 100 users, spawn rate 20/s, duration 10min
      locust -f tests/locustfile.py --host http://10.33.109.173 \
-            --users 100 --spawn-rate 20 --run-time 5m  --headless --csv results/locust_100
+            --users 100 --spawn-rate 20 --run-time 10m --headless --csv results/locust_100
 """
 
 import random
