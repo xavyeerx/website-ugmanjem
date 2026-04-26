@@ -74,12 +74,23 @@
       },
       "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": true, "showThresholdMarkers": true } },
 
+    { "title": "Pipeline Latency Breakdown (Rata-rata per Tahap)",
+      "description": "Dekomposisi latensi pipeline RAG per tahap: Retrieval (embedding+ChromaDB), Live Context (Supabase), Generation (GPT-4o-mini). Membantu mengidentifikasi bottleneck pipeline.",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
+      "targets": [
+        { "expr": "rate(chatbot_retrieval_duration_seconds_sum[5m]) / rate(chatbot_retrieval_duration_seconds_count[5m])", "legendFormat": "Retrieval — Embedding + ChromaDB", "refId": "A" },
+        { "expr": "rate(chatbot_live_context_duration_seconds_sum[5m]) / rate(chatbot_live_context_duration_seconds_count[5m])", "legendFormat": "Live Context — Supabase", "refId": "B" },
+        { "expr": "rate(chatbot_generation_duration_seconds_sum[5m]) / rate(chatbot_generation_duration_seconds_count[5m])", "legendFormat": "Generation — GPT-4o-mini", "refId": "C" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "lineWidth": 2 } } } },
+
     { "title": "In-Flight Requests", "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
       "targets": [{ "expr": "chatbot_http_requests_in_progress", "legendFormat": "{{ endpoint }}", "refId": "A" }] },
 
     { "title": "HTTP Request Rate by Status", "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
       "targets": [{ "expr": "rate(chatbot_http_requests_total[1m]) * 60", "legendFormat": "{{ method }} {{ endpoint }} {{ status }}", "refId": "A" }],
       "fieldConfig": { "defaults": { "unit": "reqpm" } } },
 
