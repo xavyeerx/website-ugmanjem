@@ -6,8 +6,8 @@ global:
 scrape_configs:
   - job_name: "chatbot-backend"
     metrics_path: /metrics
-    scrape_timeout: 30s
-    scrape_interval: 15s
+    scrape_interval: 30s
+    scrape_timeout: 25s
     static_configs:
       - targets: ["backend:8000"]
         labels:
