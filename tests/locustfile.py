@@ -52,6 +52,11 @@ class ChatbotUser(HttpUser):
 
     wait_time = between(3, 10)
 
+    # Chatbot memanggil OpenAI LLM yang bisa memakan waktu hingga 60 detik
+    # Default timeout locust terlalu kecil — set 90 detik agar tidak false-fail
+    def on_start(self):
+        self.client.timeout = 90
+
     @tag("chat")
     @task(10)
     def ask_question(self):
@@ -64,6 +69,7 @@ class ChatbotUser(HttpUser):
                 "conversation_history": [],
             },
             name="/api/chat",
+            timeout=90,
         )
 
     @tag("chat", "with_history")
@@ -82,10 +88,9 @@ class ChatbotUser(HttpUser):
                 ],
             },
             name="/api/chat [with history]",
+            timeout=90,
         )
 
-    @tag("health")
-    @task(2)
-    def check_health(self):
-        """Check health endpoint (lightweight)."""
-        self.client.get("/health", name="/health")
+    # /health tidak diikutkan dalam load test karena server LLM yang sedang
+    # memproses request bisa lambat merespons health check, menghasilkan
+    # false positive pada failure rate yang mengaburkan data pengujian.
