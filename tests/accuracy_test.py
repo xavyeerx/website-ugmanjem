@@ -44,7 +44,7 @@ from ragas import evaluate
 from ragas.dataset_schema import EvaluationDataset, SingleTurnSample
 from ragas.metrics.collections import AnswerCorrectness, Faithfulness, AnswerRelevancy
 from ragas.llms import llm_factory
-from ragas.embeddings import embedding_factory
+from ragas.embeddings import OpenAIEmbeddings
 
 # ---------------------------------------------------------------------------
 # Load .env dari backend/.env jika OPENAI_API_KEY belum ada di environment
@@ -309,10 +309,9 @@ def evaluate_ragas(collected: list[dict]) -> list[dict]:
     print("  Metrik: AnswerCorrectness, Faithfulness, AnswerRelevancy\n")
 
     api_key = os.getenv("OPENAI_API_KEY")
-    openai_client    = OpenAI(api_key=api_key)
-    evaluator_llm    = llm_factory("gpt-4o-mini", client=openai_client)
-    evaluator_emb    = embedding_factory("openai", model="text-embedding-3-small",
-                                         client=openai_client)
+    openai_client = OpenAI(api_key=api_key)
+    evaluator_llm = llm_factory("gpt-4o-mini", client=openai_client)
+    evaluator_emb = OpenAIEmbeddings(client=openai_client, model="text-embedding-3-small")
 
     samples = [
         SingleTurnSample(
@@ -328,7 +327,7 @@ def evaluate_ragas(collected: list[dict]) -> list[dict]:
     result  = evaluate(
         dataset=dataset,
         metrics=[
-            AnswerCorrectness(llm=evaluator_llm),
+            AnswerCorrectness(llm=evaluator_llm, embeddings=evaluator_emb),
             Faithfulness(llm=evaluator_llm),
             AnswerRelevancy(llm=evaluator_llm, embeddings=evaluator_emb),
         ],
