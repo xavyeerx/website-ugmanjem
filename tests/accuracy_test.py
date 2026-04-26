@@ -383,7 +383,7 @@ def save_and_summarize(results: list[dict]):
         print(f"[!] File utama terkunci, menyimpan ke: {os.path.basename(out_path)}")
 
     with open(out_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(results)
 
