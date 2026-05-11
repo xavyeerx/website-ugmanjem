@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import type { ChatMessage, RatingValue } from "@/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
@@ -23,6 +23,16 @@ export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Read ?tester=P1 from URL on mount and persist to sessionStorage
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tester = params.get("tester") ?? "anon";
+    sessionStorage.setItem("tester_id", tester);
+    if (!sessionStorage.getItem("question_no")) {
+      sessionStorage.setItem("question_no", "0");
+    }
+  }, []);
+
   const sendMessage = useCallback(
     async (content: string) => {
       const userMsg: ChatMessage = {
@@ -30,6 +40,9 @@ export function useChat() {
         role: "user",
         content,
       };
+      // Increment question counter each time user sends a new message
+      const next = (parseInt(sessionStorage.getItem("question_no") ?? "0", 10) + 1);
+      sessionStorage.setItem("question_no", String(next));
       setMessages((prev) => [...prev, userMsg]);
       setIsLoading(true);
 
@@ -93,10 +106,12 @@ export function useChat() {
       );
 
       try {
+        const tester_id = sessionStorage.getItem("tester_id") ?? "anon";
+        const question_no = parseInt(sessionStorage.getItem("question_no") ?? "0", 10);
         await fetch(`${API_URL}/api/rating`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question, answer, rating }),
+          body: JSON.stringify({ question, answer, rating, tester_id, question_no }),
         });
       } catch {
         // Rating tetap terkunci di UI meskipun request gagal

@@ -25,6 +25,8 @@ class RatingRequest(BaseModel):
     question: str
     answer: str
     rating: Literal["very_helpful", "helpful", "not_helpful", "very_not_helpful"]
+    tester_id: str = "anon"
+    question_no: int = 0
 
     @field_validator("answer")
     @classmethod
@@ -68,6 +70,8 @@ async def submit_rating(body: RatingRequest, request: Request):
                 "question": body.question,
                 "answer": body.answer,
                 "rating": body.rating,
+                "tester_id": body.tester_id,
+                "question_no": body.question_no,
             }).execute()
         except Exception as e:
             logger.warning(f"Supabase insert rating failed (metric still recorded): {e}")
