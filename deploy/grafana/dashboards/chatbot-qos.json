@@ -1089,7 +1089,7 @@
       },
       "targets": [
         {
-          "expr": "100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)",
+          "expr": "avg_over_time((100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))[$__range:])",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -1148,7 +1148,7 @@
     {
       "type": "stat",
       "title": "Skor Rata-rata (1–4)",
-      "description": "Rata-rata skor kepuasan pengguna skala 1–4",
+      "description": "Rata-rata skor kepuasan pengguna skala 1–4 dalam periode yang dipilih",
       "id": 22,
       "gridPos": {
         "h": 8,
@@ -1158,7 +1158,7 @@
       },
       "targets": [
         {
-          "expr": "chatbot_rating_avg_score",
+          "expr": "avg_over_time(chatbot_rating_avg_score[$__range])",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
