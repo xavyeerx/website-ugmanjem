@@ -1,0 +1,143 @@
+# ---------------------------------------------------------------------------
+# Four Golden Signals — SLO Alerting Rules
+# UGM Anjem Chatbot
+#
+# SLO targets (for a campus-scale chatbot):
+#   LATENCY   : p95 end-to-end < 20 s
+#   TRAFFIC   : baseline informational only (no alert)
+#   ERRORS    : error rate < 5 % over 5-minute window
+#   SATURATION: in-flight < 80 % of max capacity
+# ---------------------------------------------------------------------------
+
+groups:
+  - name: four_golden_signals
+    interval: 30s
+    rules:
+
+      # ── LATENCY ──────────────────────────────────────────────────────────
+
+      - alert: HighLatencyP95
+        expr: >
+          histogram_quantile(0.95,
+            rate(chatbot_chat_e2e_duration_seconds_bucket[5m])
+          ) > 20
+        for: 2m
+        labels:
+          signal:   latency
+          severity: warning
+        annotations:
+          summary:     "p95 chat latency > 20 s"
+          description: >
+            p95 end-to-end latency is {{ $value | humanizeDuration }}.
+            Possible cause: OpenAI API slow or ChromaDB overloaded.
+
+      - alert: CriticalLatencyP99
+        expr: >
+          histogram_quantile(0.99,
+            rate(chatbot_chat_e2e_duration_seconds_bucket[5m])
+          ) > 45
+        for: 2m
+        labels:
+          signal:   latency
+          severity: critical
+        annotations:
+          summary:     "p99 chat latency > 45 s (near timeout)"
+          description: >
+            p99 latency is {{ $value | humanizeDuration }}.
+            Users experience near-timeout waits.
+
+      # ── ERRORS ───────────────────────────────────────────────────────────
+
+      - alert: HighErrorRate
+        expr: >
+          rate(chatbot_chat_requests_total{status!="success"}[5m])
+          / clamp_min(rate(chatbot_chat_requests_total[5m]), 1e-9)
+          * 100 > 5
+        for: 2m
+        labels:
+          signal:   errors
+          severity: warning
+        annotations:
+          summary:     "Chat error rate > 5 %"
+          description: >
+            Current error rate is {{ $value | humanize }} %.
+            Check OpenAI API status and ChromaDB health.
+
+      - alert: CriticalErrorRate
+        expr: >
+          rate(chatbot_chat_requests_total{status!="success"}[5m])
+          / clamp_min(rate(chatbot_chat_requests_total[5m]), 1e-9)
+          * 100 > 20
+        for: 1m
+        labels:
+          signal:   errors
+          severity: critical
+        annotations:
+          summary:     "Chat error rate > 20 % — service degraded"
+          description: >
+            Error rate is {{ $value | humanize }} %.
+            Most requests are failing. Immediate action required.
+
+      - alert: OpenAIRateLimitErrors
+        expr: >
+          increase(chatbot_generation_errors_total{cause="openai_rate_limit"}[5m]) > 3
+        for: 1m
+        labels:
+          signal:   errors
+          severity: warning
+        annotations:
+          summary:     "OpenAI rate limit errors detected"
+          description: >
+            {{ $value }} rate-limit errors in the last 5 minutes.
+            Consider request throttling or upgrading OpenAI tier.
+
+      # ── SATURATION ───────────────────────────────────────────────────────
+
+      - alert: HighSaturation
+        expr: chatbot_saturation_ratio > 80
+        for: 1m
+        labels:
+          signal:   saturation
+          severity: warning
+        annotations:
+          summary:     "Saturation > 80 % of capacity"
+          description: >
+            {{ $value | humanize }} % of concurrent request capacity is in use.
+            Latency will start degrading.
+
+      - alert: CriticalSaturation
+        expr: chatbot_saturation_ratio >= 100
+        for: 30s
+        labels:
+          signal:   saturation
+          severity: critical
+        annotations:
+          summary:     "System at 100 % concurrency capacity"
+          description: >
+            All {{ $value }} slots are occupied.
+            New requests may queue or be rejected.
+
+      - alert: HighCPUSaturation
+        expr: >
+          (1 - avg(rate(node_cpu_seconds_total{mode="idle"}[5m]))) * 100 > 85
+        for: 3m
+        labels:
+          signal:   saturation
+          severity: warning
+        annotations:
+          summary:     "Host CPU saturation > 85 %"
+          description: >
+            CPU usage is {{ $value | humanize }} %.
+
+      - alert: HighMemorySaturation
+        expr: >
+          (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 90
+        for: 3m
+        labels:
+          signal:   saturation
+          severity: critical
+        annotations:
+          summary:     "Host memory saturation > 90 %"
+          description: >
+            Memory usage is {{ $value | humanize }} %.
+            Risk of OOM kill.

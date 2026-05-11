@@ -1,26 +1,38 @@
 global:
-  scrape_interval: 15s
-  scrape_timeout: 10s
+  scrape_interval:     15s
+  scrape_timeout:      10s
   evaluation_interval: 15s
 
+# ---------------------------------------------------------------------------
+# Alerting rules (Four Golden Signals SLO thresholds)
+# ---------------------------------------------------------------------------
+rule_files:
+  - "alerts.yml"
+
 scrape_configs:
+
+  # ── Application backend (FastAPI + RAG pipeline) ─────────────────────────
   - job_name: "chatbot-backend"
     metrics_path: /metrics
-    scrape_interval: 30s
-    scrape_timeout: 25s
+    scrape_interval: 15s
+    scrape_timeout: 10s
     static_configs:
       - targets: ["backend:8000"]
         labels:
-          service: "anjem-chatbot"
+          service:     "anjem-chatbot"
           environment: "production"
 
+  # ── Docker container metrics ──────────────────────────────────────────────
   - job_name: "docker-exporter"
+    scrape_interval: 30s
     static_configs:
       - targets: ["docker-exporter:9200"]
         labels:
           environment: "production"
 
+  # ── Host OS metrics (CPU, RAM, Disk, Network) ─────────────────────────────
   - job_name: "node-exporter"
+    scrape_interval: 15s
     static_configs:
       - targets: ["node-exporter:9100"]
         labels:
