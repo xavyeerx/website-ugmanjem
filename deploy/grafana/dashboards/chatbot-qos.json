@@ -754,7 +754,7 @@
       },
       "targets": [
         {
-          "expr": "sum(chatbot_chat_requests_total)",
+          "expr": "sum(increase(chatbot_chat_requests_total[$__range]))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
