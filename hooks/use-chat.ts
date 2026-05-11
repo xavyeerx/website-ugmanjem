@@ -24,11 +24,15 @@ export function useChat() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Read ?tester=P1 from URL on mount and persist to sessionStorage
+  // question_no always resets to 0 when ?tester= is present in URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const tester = params.get("tester") ?? "anon";
-    sessionStorage.setItem("tester_id", tester);
-    if (!sessionStorage.getItem("question_no")) {
+    const tester = params.get("tester");
+    if (tester) {
+      sessionStorage.setItem("tester_id", tester);
+      sessionStorage.setItem("question_no", "0");
+    } else if (!sessionStorage.getItem("tester_id")) {
+      sessionStorage.setItem("tester_id", "anon");
       sessionStorage.setItem("question_no", "0");
     }
   }, []);
