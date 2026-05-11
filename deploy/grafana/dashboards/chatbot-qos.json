@@ -199,7 +199,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.50, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.50, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__range])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -256,7 +256,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__range])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -313,7 +313,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__range])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -425,7 +425,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_retrieval_duration_seconds_bucket[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_retrieval_duration_seconds_bucket[$__range])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -482,7 +482,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_live_context_duration_seconds_bucket[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_live_context_duration_seconds_bucket[$__range])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -539,7 +539,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_generation_duration_seconds_bucket[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_generation_duration_seconds_bucket[$__range])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
