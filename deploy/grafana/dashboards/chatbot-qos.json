@@ -1215,7 +1215,7 @@
       },
       "targets": [
         {
-          "expr": "chatbot_rating_avg_score",
+          "expr": "(\n  sum(increase(chatbot_rating_total{rating=\"very_helpful\"}[$__rate_interval])) * 4 +\n  sum(increase(chatbot_rating_total{rating=\"helpful\"}[$__rate_interval])) * 3 +\n  sum(increase(chatbot_rating_total{rating=\"not_helpful\"}[$__rate_interval])) * 2 +\n  sum(increase(chatbot_rating_total{rating=\"very_not_helpful\"}[$__rate_interval])) * 1\n) / sum(increase(chatbot_rating_total[$__rate_interval]))",
           "legendFormat": "Avg Score",
           "refId": "A",
           "datasource": {
