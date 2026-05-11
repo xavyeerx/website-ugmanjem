@@ -199,7 +199,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.50, sum(rate(chatbot_e2e_latency_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.50, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -256,7 +256,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_e2e_latency_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -313,7 +313,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum(rate(chatbot_e2e_latency_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -370,7 +370,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.50, sum(rate(chatbot_e2e_latency_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.50, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
           "legendFormat": "p50 (median)",
           "refId": "A",
           "datasource": {
@@ -379,7 +379,7 @@
           }
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_e2e_latency_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
           "legendFormat": "p95",
           "refId": "B",
           "datasource": {
@@ -388,7 +388,7 @@
           }
         },
         {
-          "expr": "histogram_quantile(0.99, sum(rate(chatbot_e2e_latency_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
           "legendFormat": "p99",
           "refId": "C",
           "datasource": {
@@ -535,7 +535,7 @@
       },
       "targets": [
         {
-          "expr": "sum(chatbot_in_progress)",
+          "expr": "sum(chatbot_http_requests_in_progress)",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -642,7 +642,7 @@
       },
       "targets": [
         {
-          "expr": "100 * sum(rate(chatbot_http_errors_total[5m])) / sum(rate(chatbot_http_requests_total[5m]))",
+          "expr": "100 * (sum(rate(chatbot_http_errors_total[5m])) or vector(0)) / clamp_min(sum(rate(chatbot_http_requests_total[5m])), 1)",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -890,7 +890,7 @@
       },
       "targets": [
         {
-          "expr": "sum(chatbot_user_rating_score_total) / sum(chatbot_user_rating_total)",
+          "expr": "chatbot_rating_avg_score",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -947,7 +947,7 @@
       },
       "targets": [
         {
-          "expr": "sum(chatbot_user_rating_score_total) / sum(chatbot_user_rating_total)",
+          "expr": "chatbot_rating_avg_score",
           "legendFormat": "Avg Score",
           "refId": "A",
           "datasource": {
