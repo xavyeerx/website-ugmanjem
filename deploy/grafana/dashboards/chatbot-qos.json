@@ -1158,7 +1158,7 @@
       },
       "targets": [
         {
-          "expr": "avg_over_time(chatbot_rating_avg_score[$__range])",
+          "expr": "(\n  sum(increase(chatbot_rating_total{rating=\"very_helpful\"}[$__range])) * 4 +\n  sum(increase(chatbot_rating_total{rating=\"helpful\"}[$__range])) * 3 +\n  sum(increase(chatbot_rating_total{rating=\"not_helpful\"}[$__range])) * 2 +\n  sum(increase(chatbot_rating_total{rating=\"very_not_helpful\"}[$__range])) * 1\n) / clamp_min(sum(increase(chatbot_rating_total[$__range])), 1)",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
