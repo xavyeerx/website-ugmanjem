@@ -199,7 +199,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.50, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.50, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__rate_interval])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -256,7 +256,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__rate_interval])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -313,7 +313,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.99, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__rate_interval])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -370,7 +370,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.50, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.50, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__rate_interval])) by (le))",
           "legendFormat": "p50 (median)",
           "refId": "A",
           "datasource": {
@@ -379,7 +379,7 @@
           }
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__rate_interval])) by (le))",
           "legendFormat": "p95",
           "refId": "B",
           "datasource": {
@@ -388,7 +388,7 @@
           }
         },
         {
-          "expr": "histogram_quantile(0.99, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__rate_interval])) by (le))",
           "legendFormat": "p99",
           "refId": "C",
           "datasource": {
@@ -425,7 +425,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_retrieval_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_retrieval_duration_seconds_bucket[$__rate_interval])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -482,7 +482,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_live_context_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_live_context_duration_seconds_bucket[$__rate_interval])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -539,7 +539,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_generation_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_generation_duration_seconds_bucket[$__rate_interval])) by (le))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -596,7 +596,7 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_retrieval_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_retrieval_duration_seconds_bucket[$__rate_interval])) by (le))",
           "legendFormat": "Retrieval (embed + ChromaDB)",
           "refId": "A",
           "datasource": {
@@ -605,7 +605,7 @@
           }
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_live_context_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_live_context_duration_seconds_bucket[$__rate_interval])) by (le))",
           "legendFormat": "Live Context (Supabase)",
           "refId": "B",
           "datasource": {
@@ -614,7 +614,7 @@
           }
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_generation_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_generation_duration_seconds_bucket[$__rate_interval])) by (le))",
           "legendFormat": "Generation (GPT-4o-mini)",
           "refId": "C",
           "datasource": {
@@ -623,7 +623,7 @@
           }
         },
         {
-          "expr": "histogram_quantile(0.95, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[$__rate_interval])) by (le))",
           "legendFormat": "End-to-End Total",
           "refId": "D",
           "datasource": {
