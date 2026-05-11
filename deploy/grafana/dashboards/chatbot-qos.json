@@ -413,6 +413,274 @@
       }
     },
     {
+      "type": "stat",
+      "title": "Retrieval p95",
+      "description": "Waktu embedding query + pencarian ChromaDB (p95)",
+      "id": 50,
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 0,
+        "y": 17
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_retrieval_duration_seconds_bucket[5m])) by (le))",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.5
+              },
+              {
+                "color": "red",
+                "value": 1.0
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Live Context p95",
+      "description": "Waktu fetch konteks live dari Supabase (p95)",
+      "id": 51,
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 8,
+        "y": 17
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_live_context_duration_seconds_bucket[5m])) by (le))",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0.5
+              },
+              {
+                "color": "red",
+                "value": 1.5
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Generation p95",
+      "description": "Waktu generate respons GPT-4o-mini (p95)",
+      "id": 52,
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 16,
+        "y": 17
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_generation_duration_seconds_bucket[5m])) by (le))",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+      ],
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 20
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Pipeline Stage Latency Breakdown (p95)",
+      "description": "Perbandingan waktu tiap tahap RAG pipeline: Retrieval, Live Context (Supabase), Generation (LLM), dan total end-to-end",
+      "id": 53,
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_retrieval_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "Retrieval (embed + ChromaDB)",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_live_context_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "Live Context (Supabase)",
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_generation_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "Generation (GPT-4o-mini)",
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(chatbot_chat_e2e_duration_seconds_bucket[5m])) by (le))",
+          "legendFormat": "End-to-End Total",
+          "refId": "D",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 8
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "End-to-End Total"
+            },
+            "properties": [
+              {
+                "id": "custom.lineWidth",
+                "value": 3
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "dash": [
+                    8,
+                    4
+                  ],
+                  "fill": "dash"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        }
+      }
+    },
+    {
       "type": "row",
       "title": "📊 TRAFFIC — How much demand is on the system",
       "collapsed": false,
@@ -420,7 +688,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 29
       },
       "id": 10
     },
@@ -433,7 +701,7 @@
         "h": 4,
         "w": 8,
         "x": 0,
-        "y": 18
+        "y": 30
       },
       "targets": [
         {
@@ -482,7 +750,7 @@
         "h": 4,
         "w": 8,
         "x": 8,
-        "y": 18
+        "y": 30
       },
       "targets": [
         {
@@ -531,7 +799,7 @@
         "h": 4,
         "w": 8,
         "x": 16,
-        "y": 18
+        "y": 30
       },
       "targets": [
         {
@@ -580,7 +848,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 34
       },
       "targets": [
         {
@@ -625,7 +893,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 42
       },
       "id": 15
     },
@@ -638,7 +906,7 @@
         "h": 4,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 43
       },
       "targets": [
         {
@@ -695,7 +963,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 47
       },
       "targets": [
         {
@@ -749,7 +1017,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 55
       },
       "id": 18
     },
@@ -761,7 +1029,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 44
+        "y": 56
       },
       "targets": [
         {
@@ -817,7 +1085,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 44
+        "y": 56
       },
       "targets": [
         {
@@ -873,7 +1141,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 52
+        "y": 64
       },
       "id": 21
     },
@@ -886,7 +1154,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 53
+        "y": 65
       },
       "targets": [
         {
@@ -943,7 +1211,7 @@
         "h": 8,
         "w": 16,
         "x": 8,
-        "y": 53
+        "y": 65
       },
       "targets": [
         {
