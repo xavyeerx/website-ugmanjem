@@ -1033,7 +1033,7 @@
       },
       "targets": [
         {
-          "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval])) * 100)",
+          "expr": "avg_over_time((100 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m])) * 100)[$__range:])",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
