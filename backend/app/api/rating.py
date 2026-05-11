@@ -62,7 +62,7 @@ async def submit_rating(body: RatingRequest, request: Request):
     if supabase_client is None:
         live_ctx = getattr(request.app.state, "live_context", None)
         if live_ctx is not None:
-            supabase_client = getattr(live_ctx, "_client", None)
+            supabase_client = getattr(live_ctx, "client", None)
 
     if supabase_client is not None:
         try:
