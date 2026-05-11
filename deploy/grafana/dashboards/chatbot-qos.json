@@ -852,7 +852,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(chatbot_http_requests_total{status=~\"2..\"}[$__rate_interval]))",
+          "expr": "sum(rate(chatbot_chat_requests_total{status=\"success\"}[$__rate_interval]))",
           "legendFormat": "Berhasil (2xx)",
           "refId": "A",
           "datasource": {
@@ -861,7 +861,7 @@
           }
         },
         {
-          "expr": "sum(rate(chatbot_http_requests_total{status=~\"[45]..\"}[$__rate_interval]))",
+          "expr": "sum(rate(chatbot_chat_requests_total{status=~\"error|timeout\"}[$__rate_interval]))",
           "legendFormat": "Gagal (4xx/5xx)",
           "refId": "B",
           "datasource": {
