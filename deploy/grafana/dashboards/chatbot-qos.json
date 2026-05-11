@@ -705,7 +705,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(chatbot_chat_requests_total[1m]))",
+          "expr": "sum(rate(chatbot_chat_requests_total[$__rate_interval]))",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -852,7 +852,7 @@
       },
       "targets": [
         {
-          "expr": "sum(rate(chatbot_http_requests_total{status=~\"2..\"}[5m]))",
+          "expr": "sum(rate(chatbot_http_requests_total{status=~\"2..\"}[$__rate_interval]))",
           "legendFormat": "Berhasil (2xx)",
           "refId": "A",
           "datasource": {
@@ -861,7 +861,7 @@
           }
         },
         {
-          "expr": "sum(rate(chatbot_http_requests_total{status=~\"[45]..\"}[5m]))",
+          "expr": "sum(rate(chatbot_http_requests_total{status=~\"[45]..\"}[$__rate_interval]))",
           "legendFormat": "Gagal (4xx/5xx)",
           "refId": "B",
           "datasource": {
@@ -910,7 +910,7 @@
       },
       "targets": [
         {
-          "expr": "100 * (sum(rate(chatbot_http_errors_total[5m])) or vector(0)) / clamp_min(sum(rate(chatbot_http_requests_total[5m])), 1)",
+          "expr": "100 * (sum(rate(chatbot_http_errors_total[$__rate_interval])) or vector(0)) / clamp_min(sum(rate(chatbot_http_requests_total[$__rate_interval])), 1)",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -967,7 +967,7 @@
       },
       "targets": [
         {
-          "expr": "sum by (cause) (rate(chatbot_retrieval_errors_total[5m]))",
+          "expr": "sum by (cause) (rate(chatbot_retrieval_errors_total[$__rate_interval]))",
           "legendFormat": "Retrieval: {{cause}}",
           "refId": "A",
           "datasource": {
@@ -976,7 +976,7 @@
           }
         },
         {
-          "expr": "sum by (cause) (rate(chatbot_generation_errors_total[5m]))",
+          "expr": "sum by (cause) (rate(chatbot_generation_errors_total[$__rate_interval]))",
           "legendFormat": "Generation: {{cause}}",
           "refId": "B",
           "datasource": {
@@ -985,7 +985,7 @@
           }
         },
         {
-          "expr": "sum by (cause) (rate(chatbot_live_context_errors_total[5m]))",
+          "expr": "sum by (cause) (rate(chatbot_live_context_errors_total[$__rate_interval]))",
           "legendFormat": "LiveCtx: {{cause}}",
           "refId": "C",
           "datasource": {
@@ -1033,7 +1033,7 @@
       },
       "targets": [
         {
-          "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval])) * 100)",
           "refId": "A",
           "datasource": {
             "type": "prometheus",
