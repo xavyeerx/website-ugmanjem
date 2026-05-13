@@ -956,8 +956,8 @@
     },
     {
       "type": "timeseries",
-      "title": "Errors per Komponen Pipeline — by Cause",
-      "description": "Error per tahap pipeline RAG, dilabeli berdasarkan penyebab",
+      "title": "Errors per Komponen Pipeline & HTTP — by Cause/Status",
+      "description": "Error per tahap pipeline RAG (dilabeli penyebab) dan HTTP 4xx/5xx (dilabeli status code)",
       "id": 17,
       "gridPos": {
         "h": 8,
@@ -988,6 +988,15 @@
           "expr": "sum by (cause) (rate(chatbot_live_context_errors_total[$__rate_interval]))",
           "legendFormat": "LiveCtx: {{cause}}",
           "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          }
+        },
+        {
+          "expr": "sum by (status_code) (rate(chatbot_http_errors_total[$__rate_interval]))",
+          "legendFormat": "HTTP {{status_code}}",
+          "refId": "D",
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
