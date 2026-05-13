@@ -50,7 +50,7 @@ SAMPLE_QUESTIONS = [
 class ChatbotUser(HttpUser):
     """Simulates a user interacting with the chatbot."""
 
-    wait_time = between(3, 10)
+    wait_time = between(10, 20)
 
     # Chatbot memanggil OpenAI LLM yang bisa memakan waktu hingga 60 detik
     # Default timeout locust terlalu kecil — set 90 detik agar tidak false-fail
