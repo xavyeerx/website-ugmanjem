@@ -21,9 +21,7 @@ _ERR_UNKNOWN        = "unknown"
 logger = logging.getLogger(__name__)
 
 OPENAI_EMBED_URL = "https://api.openai.com/v1/embeddings"
-# Selaraskan read timeout dengan generation (60 s) agar ekor latensi tidak
-# terkumpul di plafon 30 s embedding saat OpenAI sibuk di bawah beban tinggi.
-EMBED_TIMEOUT = httpx.Timeout(connect=10.0, read=60.0, write=10.0, pool=10.0)
+EMBED_TIMEOUT = httpx.Timeout(connect=10.0, read=30.0, write=10.0, pool=10.0)
 
 
 class KnowledgeRetriever:
