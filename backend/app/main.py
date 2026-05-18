@@ -14,7 +14,10 @@ from app.rag.live_context import LiveContext
 from app.metrics import (
     REQUEST_COUNT,
     REQUEST_LATENCY,
+    HTTP_ERRORS_TOTAL,
     IN_PROGRESS,
+    SATURATION_RATIO,
+    MAX_CONCURRENT_REQUESTS,
     SYSTEM_INFO,
 )
 
@@ -28,6 +31,7 @@ async def lifespan(app: FastAPI):
         "vectorstore_path": settings.VECTORSTORE_PATH,
         "collection_name": settings.COLLECTION_NAME,
         "supabase_enabled": str(bool(settings.SUPABASE_URL)),
+        "max_concurrent_requests": str(MAX_CONCURRENT_REQUESTS),
     })
 
     try:
@@ -82,28 +86,59 @@ app.add_middleware(
 
 @app.middleware("http")
 async def prometheus_middleware(request: Request, call_next):
+    # Skip instrumentation for the /metrics endpoint itself
     if request.url.path == "/metrics":
         return await call_next(request)
 
     endpoint = request.url.path
     method = request.method
+
+    # ── SATURATION: track in-flight requests ──────────────────────────────
     IN_PROGRESS.labels(endpoint=endpoint).inc()
+
+    # Update saturation ratio based on /api/chat in-flight count
+    # (we only measure chat saturation, not all endpoints)
+    if endpoint == "/api/chat":
+        chat_in_flight = IN_PROGRESS.labels(endpoint="/api/chat")._value.get()
+        SATURATION_RATIO.set(min(chat_in_flight / MAX_CONCURRENT_REQUESTS * 100, 100))
+
     start = time.perf_counter()
 
     try:
         response = await call_next(request)
+        status_code = response.status_code
+
+        # ── TRAFFIC: count all requests ────────────────────────────────────
         REQUEST_COUNT.labels(
-            method=method, endpoint=endpoint, status=response.status_code,
+            method=method, endpoint=endpoint, status=status_code,
         ).inc()
+
+        # ── ERRORS: track 4xx / 5xx at HTTP level ─────────────────────────
+        if status_code >= 400:
+            HTTP_ERRORS_TOTAL.labels(
+                method=method, endpoint=endpoint, status_code=str(status_code),
+            ).inc()
+
         return response
+
     except Exception:
         REQUEST_COUNT.labels(method=method, endpoint=endpoint, status=500).inc()
+        HTTP_ERRORS_TOTAL.labels(
+            method=method, endpoint=endpoint, status_code="500",
+        ).inc()
         raise
+
     finally:
+        # ── LATENCY: observe duration for every request ────────────────────
         REQUEST_LATENCY.labels(method=method, endpoint=endpoint).observe(
             time.perf_counter() - start
         )
         IN_PROGRESS.labels(endpoint=endpoint).dec()
+
+        # Re-compute saturation after decrement
+        if endpoint == "/api/chat":
+            chat_in_flight = IN_PROGRESS.labels(endpoint="/api/chat")._value.get()
+            SATURATION_RATIO.set(min(chat_in_flight / MAX_CONCURRENT_REQUESTS * 100, 100))
 
 
 app.include_router(chat_router)

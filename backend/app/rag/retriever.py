@@ -12,10 +12,18 @@ from app.metrics import (
     RETRIEVAL_ERRORS,
 )
 
+# Error cause labels (matches chatbot_retrieval_errors_total label schema)
+_ERR_EMBED_TIMEOUT  = "openai_timeout"
+_ERR_EMBED_LIMIT    = "openai_rate_limit"
+_ERR_CHROMADB       = "chromadb_error"
+_ERR_UNKNOWN        = "unknown"
+
 logger = logging.getLogger(__name__)
 
 OPENAI_EMBED_URL = "https://api.openai.com/v1/embeddings"
-EMBED_TIMEOUT = httpx.Timeout(connect=10.0, read=30.0, write=10.0, pool=10.0)
+# Selaraskan read timeout dengan generation (60 s) agar ekor latensi tidak
+# terkumpul di plafon 30 s embedding saat OpenAI sibuk di bawah beban tinggi.
+EMBED_TIMEOUT = httpx.Timeout(connect=10.0, read=60.0, write=10.0, pool=10.0)
 
 
 class KnowledgeRetriever:
@@ -89,8 +97,18 @@ class KnowledgeRetriever:
 
             RETRIEVAL_CHUNKS.observe(len(chunks))
             return chunks
+        except httpx.TimeoutException:
+            RETRIEVAL_ERRORS.labels(cause=_ERR_EMBED_TIMEOUT).inc()
+            raise
+        except httpx.HTTPStatusError as e:
+            cause = _ERR_EMBED_LIMIT if e.response.status_code == 429 else _ERR_UNKNOWN
+            RETRIEVAL_ERRORS.labels(cause=cause).inc()
+            raise
+        except chromadb.errors.ChromaError:
+            RETRIEVAL_ERRORS.labels(cause=_ERR_CHROMADB).inc()
+            raise
         except Exception:
-            RETRIEVAL_ERRORS.inc()
+            RETRIEVAL_ERRORS.labels(cause=_ERR_UNKNOWN).inc()
             raise
         finally:
             RETRIEVAL_LATENCY.observe(time.perf_counter() - start)

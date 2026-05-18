@@ -13,6 +13,12 @@ from app.metrics import (
     GENERATION_OUTPUT_CHARS,
 )
 
+# Error cause labels (matches chatbot_generation_errors_total label schema)
+_ERR_RATE_LIMIT   = "openai_rate_limit"
+_ERR_TIMEOUT      = "openai_timeout"
+_ERR_API_ERROR    = "openai_api_error"
+_ERR_UNKNOWN      = "unknown"
+
 logger = logging.getLogger(__name__)
 
 OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions"
@@ -123,7 +129,16 @@ class AnswerGenerator:
                 if response.status_code == 429:
                     wait = 5 * (attempt + 1)
                     logger.warning(f"OpenAI rate limited, retrying in {wait}s...")
-                    GENERATION_RETRIES.inc()
+                    GENERATION_RETRIES.labels(reason="rate_limit").inc()
+                    if attempt == max_retries:
+                        GENERATION_ERRORS.labels(cause=_ERR_RATE_LIMIT).inc()
+                        GENERATION_LATENCY.observe(time.perf_counter() - start)
+                        from httpx import HTTPStatusError
+                        raise HTTPStatusError(
+                            "OpenAI 429 rate limit exceeded after retries",
+                            request=response.request,
+                            response=response,
+                        )
                     await asyncio.sleep(wait)
                     continue
 
@@ -176,23 +191,24 @@ class AnswerGenerator:
 
             except httpx.TimeoutException:
                 if attempt < max_retries:
-                    GENERATION_RETRIES.inc()
+                    GENERATION_RETRIES.labels(reason="timeout").inc()
                     wait = 3 * (attempt + 1)
                     logger.warning(f"OpenAI timeout (attempt {attempt + 1}), retrying in {wait}s...")
                     await asyncio.sleep(wait)
                     continue
-                GENERATION_ERRORS.labels(error_type="timeout").inc()
+                GENERATION_ERRORS.labels(cause=_ERR_TIMEOUT).inc()
                 GENERATION_LATENCY.observe(time.perf_counter() - start)
                 raise
 
             except Exception as e:
+                cause = _ERR_API_ERROR if "httpx" in type(e).__module__ else _ERR_UNKNOWN
                 if attempt < max_retries:
-                    GENERATION_RETRIES.inc()
+                    GENERATION_RETRIES.labels(reason="other").inc()
                     wait = 3 * (attempt + 1)
                     logger.warning(f"Generation error (attempt {attempt + 1}): {e}, retrying in {wait}s...")
                     await asyncio.sleep(wait)
                     continue
-                GENERATION_ERRORS.labels(error_type="other").inc()
+                GENERATION_ERRORS.labels(cause=cause).inc()
                 GENERATION_LATENCY.observe(time.perf_counter() - start)
                 raise
 

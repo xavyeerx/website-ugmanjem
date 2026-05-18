@@ -18,6 +18,11 @@ from app.metrics import (
     LIVE_CTX_ERRORS,
 )
 
+# Error cause labels (matches chatbot_live_context_errors_total label schema)
+_ERR_TIMEOUT     = "supabase_timeout"
+_ERR_UNAVAILABLE = "supabase_unavailable"
+_ERR_UNKNOWN     = "unknown"
+
 logger = logging.getLogger(__name__)
 
 CACHE_TTL_SECONDS = 300  # 5 minutes
@@ -50,8 +55,18 @@ class LiveContext:
             self._cache = _Cache(text=text, fetched_at=time.time())
             LIVE_CTX_LATENCY.observe(time.perf_counter() - start)
             return text
+        except TimeoutError:
+            LIVE_CTX_ERRORS.labels(cause=_ERR_TIMEOUT).inc()
+            LIVE_CTX_LATENCY.observe(time.perf_counter() - start)
+            logger.warning("Supabase fetch timeout, using stale cache")
+            return self._cache.text
+        except ConnectionError:
+            LIVE_CTX_ERRORS.labels(cause=_ERR_UNAVAILABLE).inc()
+            LIVE_CTX_LATENCY.observe(time.perf_counter() - start)
+            logger.warning("Supabase connection failed, using stale cache")
+            return self._cache.text
         except Exception as e:
-            LIVE_CTX_ERRORS.inc()
+            LIVE_CTX_ERRORS.labels(cause=_ERR_UNKNOWN).inc()
             LIVE_CTX_LATENCY.observe(time.perf_counter() - start)
             logger.warning(f"Supabase fetch failed, using stale cache: {e}")
             return self._cache.text

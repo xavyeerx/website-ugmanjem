@@ -12,10 +12,10 @@ Scenarios (jalankan satu per satu secara headless, jeda 2 menit antar skenario):
   2. Normal load : 25  users, spawn rate 5/s,  duration 10min
      locust -f tests/locustfile.py --host http://10.33.109.173 \
             --users 25  --spawn-rate 5  --run-time 10m --headless --csv results/locust_25
-  3. Stress test : 50  users, spawn rate 10/s, duration 10min
+  3. Heavy load       : 50  users, spawn rate 10/s, duration 10min
      locust -f tests/locustfile.py --host http://10.33.109.173 \
             --users 50  --spawn-rate 10 --run-time 10m --headless --csv results/locust_50
-  4. Spike test  : 100 users, spawn rate 20/s, duration 10min
+  4. Very heavy load  : 100 users, spawn rate 20/s, duration 10min
      locust -f tests/locustfile.py --host http://10.33.109.173 \
             --users 100 --spawn-rate 20 --run-time 10m --headless --csv results/locust_100
 """
